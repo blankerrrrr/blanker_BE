@@ -9,7 +9,7 @@ from app.core.response import error_response
 class AppException(Exception):
     def __init__(
         self,
-        code: ErrorCode,
+        code: ErrorCode | str,
         message: str,
         status_code: int = status.HTTP_400_BAD_REQUEST,
     ) -> None:
