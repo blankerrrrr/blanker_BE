@@ -16,10 +16,12 @@ services:
     image: nginx:1.27-alpine
     ports:
       - "80:80"
+      - "443:443"
     environment:
       SERVER_NAME: ${SERVER_NAME:-localhost}
     volumes:
       - ./nginx/templates:/etc/nginx/templates:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - api
 
