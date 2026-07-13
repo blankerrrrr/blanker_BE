@@ -20,7 +20,7 @@
   "data": {
     "items": [
       {
-        "blockedItemId": "blocked_01HZX...",
+        "blockedItemId": "blocked_item_1",
         "summary": "차단된 콘텐츠 요약",
         "categories": ["SPOILER"],
         "relatedTopics": ["작품명"],

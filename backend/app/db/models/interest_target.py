@@ -19,10 +19,11 @@ class InterestTarget(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    interest_target_id: Mapped[str] = mapped_column(
+    interest_target_id: Mapped[str | None] = mapped_column(
         String(64),
         unique=True,
         index=True,
+        nullable=True,
     )
     user_id: Mapped[str] = mapped_column(
         String(64),

@@ -21,7 +21,12 @@ class InterestItemGroup(Base):
     __tablename__ = "interest_item_groups"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    group_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    group_id: Mapped[str | None] = mapped_column(
+        String(64),
+        unique=True,
+        index=True,
+        nullable=True,
+    )
     user_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("users.user_id"),
@@ -54,7 +59,12 @@ class InterestItem(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    interest_item_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    interest_item_id: Mapped[str | None] = mapped_column(
+        String(64),
+        unique=True,
+        index=True,
+        nullable=True,
+    )
     user_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("users.user_id"),

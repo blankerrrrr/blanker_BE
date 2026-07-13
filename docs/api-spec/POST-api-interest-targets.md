@@ -23,7 +23,7 @@
 {
   "success": true,
   "data": {
-    "interestTargetId": "target_01HZX...",
+    "interestTargetId": "interest_target_1",
     "type": "WORK",
     "name": "작품명",
     "aliases": ["별칭"],

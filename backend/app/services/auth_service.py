@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.cache.refresh_token_store import RefreshTokenStore
 from app.core.error_codes import ErrorCode
 from app.core.exceptions import AppException
-from app.core.id_generator import generate_public_id
 from app.core.security import (
     create_access_token,
     create_refresh_token,
@@ -42,7 +41,6 @@ class AuthService:
             raise AppException(ErrorCode.AUTH_EMAIL_ALREADY_EXISTS)
 
         user = User(
-            user_id=generate_public_id("user_"),
             email=request.email,
             password_hash=hash_password(request.password),
         )

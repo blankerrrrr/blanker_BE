@@ -19,10 +19,11 @@ class AnalysisRequest(Base):
     __tablename__ = "analysis_requests"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    analysis_request_id: Mapped[str] = mapped_column(
+    analysis_request_id: Mapped[str | None] = mapped_column(
         String(64),
         unique=True,
         index=True,
+        nullable=True,
     )
     user_id: Mapped[str] = mapped_column(
         String(64),
@@ -48,7 +49,11 @@ class AnalysisContent(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    analysis_content_id: Mapped[str] = mapped_column(String(64), unique=True)
+    analysis_content_id: Mapped[str | None] = mapped_column(
+        String(64),
+        unique=True,
+        nullable=True,
+    )
     analysis_request_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("analysis_requests.analysis_request_id"),
@@ -71,7 +76,12 @@ class AnalysisResult(Base):
     __tablename__ = "analysis_results"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    analysis_result_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    analysis_result_id: Mapped[str | None] = mapped_column(
+        String(64),
+        unique=True,
+        index=True,
+        nullable=True,
+    )
     analysis_content_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("analysis_contents.analysis_content_id"),

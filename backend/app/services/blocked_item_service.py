@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.error_codes import ErrorCode
 from app.core.exceptions import AppException
-from app.core.id_generator import generate_public_id
 from app.db.models.blocked_item import BlockedItem
 from app.db.repositories.blocked_item_repository import BlockedItemRepository
 from app.schemas.analysis import BlockCategory
@@ -58,7 +57,6 @@ class BlockedItemService:
             raise AppException(ErrorCode.BLOCKED_ITEM_ALREADY_EXISTS)
 
         item = BlockedItem(
-            blocked_item_id=generate_public_id("blocked_"),
             user_id=user_id,
             analysis_request_id=request.analysis_request_id,
             client_content_id=request.client_content_id,

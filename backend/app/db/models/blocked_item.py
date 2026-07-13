@@ -19,7 +19,12 @@ class BlockedItem(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    blocked_item_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    blocked_item_id: Mapped[str | None] = mapped_column(
+        String(64),
+        unique=True,
+        index=True,
+        nullable=True,
+    )
     user_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("users.user_id"),

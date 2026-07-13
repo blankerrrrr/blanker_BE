@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.analysis import AnalysisContent, AnalysisRequest, AnalysisResult
+from app.db.repositories.public_id import save_with_public_id
 
 
 class AnalysisRepository:
@@ -8,19 +9,25 @@ class AnalysisRepository:
         self.session = session
 
     async def save_request(self, request: AnalysisRequest) -> AnalysisRequest:
-        self.session.add(request)
-        await self.session.flush()
-        await self.session.refresh(request)
-        return request
+        return await save_with_public_id(
+            self.session,
+            request,
+            "analysis_request_id",
+            "analysis_request",
+        )
 
     async def save_content(self, content: AnalysisContent) -> AnalysisContent:
-        self.session.add(content)
-        await self.session.flush()
-        await self.session.refresh(content)
-        return content
+        return await save_with_public_id(
+            self.session,
+            content,
+            "analysis_content_id",
+            "analysis_content",
+        )
 
     async def save_result(self, result: AnalysisResult) -> AnalysisResult:
-        self.session.add(result)
-        await self.session.flush()
-        await self.session.refresh(result)
-        return result
+        return await save_with_public_id(
+            self.session,
+            result,
+            "analysis_result_id",
+            "analysis_result",
+        )

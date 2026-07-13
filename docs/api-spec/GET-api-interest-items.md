@@ -1,6 +1,6 @@
 # 관심 정보 목록 조회 API
 
-`GET /api/interest-items?page=1&size=20&targetId=target_01HZX...`
+`GET /api/interest-items?page=1&size=20&targetId=interest_target_1`
 
 ## 설명
 
@@ -20,8 +20,8 @@
   "data": {
     "items": [
       {
-        "interestItemId": "interest_item_01HZX...",
-        "groupId": "interest_group_01HZX...",
+        "interestItemId": "interest_item_1",
+        "groupId": "interest_item_group_1",
         "title": "관심 정보 제목",
         "summary": "관심 정보 요약",
         "relatedTopics": ["작품명"],

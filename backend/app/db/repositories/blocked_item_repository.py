@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.blocked_item import BlockedItem
+from app.db.repositories.public_id import save_with_public_id
 
 
 class BlockedItemRepository:
@@ -62,10 +63,12 @@ class BlockedItemRepository:
         return result.scalar_one_or_none()
 
     async def save(self, item: BlockedItem) -> BlockedItem:
-        self.session.add(item)
-        await self.session.flush()
-        await self.session.refresh(item)
-        return item
+        return await save_with_public_id(
+            self.session,
+            item,
+            "blocked_item_id",
+            "blocked_item",
+        )
 
     async def delete(self, item: BlockedItem) -> None:
         await self.session.delete(item)

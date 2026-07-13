@@ -79,7 +79,7 @@ project_123
 | Order | order_ |
 | Project | project_ |
 
-외부에 노출되는 ID는 DB Auto Increment ID보다 UUID 또는 Public ID 사용을 권장한다.
+외부에 노출되는 ID는 내부 정수 PK를 그대로 노출하지 않고 `{model}_{id}` 형식의 Public ID를 사용한다.
 
 ---
 

@@ -18,15 +18,15 @@
 {
   "success": true,
   "data": {
-    "interestItemGroupId": "interest_group_01HZX...",
+    "interestItemGroupId": "interest_item_group_1",
     "representative": {
-      "interestItemId": "interest_item_01HZX...",
+      "interestItemId": "interest_item_1",
       "title": "대표 관심 정보 제목",
       "summary": "대표 요약"
     },
     "sources": [
       {
-        "interestItemId": "interest_item_01HZX...",
+        "interestItemId": "interest_item_1",
         "sourceUrl": "https://example.com/article",
         "discoveredAt": "2026-07-13T05:00:00Z"
       }

@@ -18,7 +18,7 @@
 {
   "success": true,
   "data": {
-    "userId": "user_01HZX...",
+    "userId": "user_1",
     "email": "user@example.com",
     "createdAt": "2026-07-13T05:00:00Z"
   }

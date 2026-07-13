@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.interest_target import InterestTarget
+from app.db.repositories.public_id import save_with_public_id
 
 
 class InterestTargetRepository:
@@ -45,10 +46,12 @@ class InterestTargetRepository:
         return result.scalar_one_or_none()
 
     async def save(self, interest_target: InterestTarget) -> InterestTarget:
-        self.session.add(interest_target)
-        await self.session.flush()
-        await self.session.refresh(interest_target)
-        return interest_target
+        return await save_with_public_id(
+            self.session,
+            interest_target,
+            "interest_target_id",
+            "interest_target",
+        )
 
     async def delete(self, interest_target: InterestTarget) -> None:
         await self.session.delete(interest_target)

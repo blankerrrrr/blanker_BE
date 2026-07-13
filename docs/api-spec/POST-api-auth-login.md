@@ -31,7 +31,7 @@ Set-Cookie: refreshToken={refresh-token}; HttpOnly; Secure; SameSite=Lax; Path=/
     "tokenType": "Bearer",
     "expiresIn": 3600,
     "user": {
-      "userId": "user_01HZX...",
+      "userId": "user_1",
       "email": "user@example.com"
     }
   }

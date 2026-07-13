@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.block_setting import BlockSetting
+from app.db.repositories.public_id import save_with_public_id
 
 
 class BlockSettingRepository:
@@ -28,7 +29,9 @@ class BlockSettingRepository:
         return result.scalar_one_or_none()
 
     async def save(self, setting: BlockSetting) -> BlockSetting:
-        self.session.add(setting)
-        await self.session.flush()
-        await self.session.refresh(setting)
-        return setting
+        return await save_with_public_id(
+            self.session,
+            setting,
+            "block_setting_id",
+            "block_setting",
+        )

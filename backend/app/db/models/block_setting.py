@@ -14,7 +14,12 @@ class BlockSetting(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    block_setting_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    block_setting_id: Mapped[str | None] = mapped_column(
+        String(64),
+        unique=True,
+        index=True,
+        nullable=True,
+    )
     user_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("users.user_id"),

@@ -2,7 +2,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.error_codes import ErrorCode
 from app.core.exceptions import AppException
-from app.core.id_generator import generate_public_id
 from app.db.models.interest_target import InterestTarget
 from app.db.repositories.interest_target_repository import InterestTargetRepository
 from app.schemas.interest_target import (
@@ -38,7 +37,6 @@ class InterestTargetService:
             raise AppException(ErrorCode.INTEREST_TARGET_ALREADY_EXISTS)
 
         target = InterestTarget(
-            interest_target_id=generate_public_id("target_"),
             user_id=user_id,
             type=request.type.value,
             name=request.name,

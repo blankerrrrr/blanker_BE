@@ -10,7 +10,7 @@
 
 ```json
 {
-  "interestItemId": "interest_item_01HZX...",
+  "interestItemId": "interest_item_1",
   "duplicateScore": 0.92,
   "duplicateReason": "동일한 이슈로 판단됩니다."
 }
@@ -22,7 +22,7 @@
 {
   "success": true,
   "data": {
-    "interestItemGroupId": "interest_group_01HZX...",
+    "interestItemGroupId": "interest_item_group_1",
     "sourceCount": 4,
     "updatedAt": "2026-07-13T05:00:00Z"
   }

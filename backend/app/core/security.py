@@ -2,7 +2,6 @@ import hashlib
 import hmac
 import secrets
 from datetime import UTC, datetime, timedelta
-from uuid import uuid4
 
 from jose import JWTError, jwt
 
@@ -77,7 +76,7 @@ def decode_access_token(token: str) -> str | None:
 
 
 def create_refresh_token(user_id: str) -> tuple[str, str]:
-    token_id = uuid4().hex
+    token_id = secrets.token_hex(16)
     raw_token = secrets.token_urlsafe(48)
     return f"{user_id}.{token_id}.{raw_token}", token_id
 

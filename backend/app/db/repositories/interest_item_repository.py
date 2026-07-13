@@ -2,6 +2,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.interest_item import InterestItem, InterestItemGroup
+from app.db.repositories.public_id import save_with_public_id
 
 
 class InterestItemRepository:
@@ -108,13 +109,17 @@ class InterestItemRepository:
         return int(result.scalar_one())
 
     async def save_group(self, group: InterestItemGroup) -> InterestItemGroup:
-        self.session.add(group)
-        await self.session.flush()
-        await self.session.refresh(group)
-        return group
+        return await save_with_public_id(
+            self.session,
+            group,
+            "group_id",
+            "interest_item_group",
+        )
 
     async def save_item(self, item: InterestItem) -> InterestItem:
-        self.session.add(item)
-        await self.session.flush()
-        await self.session.refresh(item)
-        return item
+        return await save_with_public_id(
+            self.session,
+            item,
+            "interest_item_id",
+            "interest_item",
+        )

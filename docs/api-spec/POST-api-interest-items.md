@@ -25,8 +25,8 @@
 {
   "success": true,
   "data": {
-    "interestItemId": "interest_item_01HZX...",
-    "groupId": "interest_group_01HZX...",
+    "interestItemId": "interest_item_1",
+    "groupId": "interest_item_group_1",
     "duplicate": false,
     "savedAt": "2026-07-13T05:00:00Z"
   }

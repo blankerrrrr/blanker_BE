@@ -40,7 +40,7 @@
 {
   "success": true,
   "data": {
-    "analysisRequestId": "analysis_01HZX...",
+    "analysisRequestId": "analysis_request_1",
     "results": [
       {
         "clientContentId": "node_001",

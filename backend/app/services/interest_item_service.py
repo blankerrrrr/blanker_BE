@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.error_codes import ErrorCode
 from app.core.exceptions import AppException
-from app.core.id_generator import generate_public_id
 from app.core.time import utc_now
 from app.db.models.interest_item import InterestItem, InterestItemGroup
 from app.db.repositories.interest_item_repository import InterestItemRepository
@@ -79,7 +78,6 @@ class InterestItemService:
             group = await self._create_group(user_id, request)
 
         item = InterestItem(
-            interest_item_id=generate_public_id("interest_item_"),
             user_id=user_id,
             group_id=group.group_id,
             title=request.title,
@@ -112,7 +110,6 @@ class InterestItemService:
         request: InterestItemCreateRequest,
     ) -> InterestItemGroup:
         group = InterestItemGroup(
-            group_id=generate_public_id("interest_group_"),
             user_id=user_id,
             title=request.title,
             summary=request.summary,

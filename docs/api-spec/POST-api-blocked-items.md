@@ -10,7 +10,7 @@
 
 ```json
 {
-  "analysisRequestId": "analysis_01HZX...",
+  "analysisRequestId": "analysis_request_1",
   "clientContentId": "node_001",
   "summary": "차단된 콘텐츠 요약",
   "categories": ["SPOILER"],
@@ -27,7 +27,7 @@
 {
   "success": true,
   "data": {
-    "blockedItemId": "blocked_01HZX...",
+    "blockedItemId": "blocked_item_1",
     "savedAt": "2026-07-13T05:00:00Z"
   }
 }

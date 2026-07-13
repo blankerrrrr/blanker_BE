@@ -1,6 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.id_generator import generate_public_id
 from app.core.time import utc_now
 from app.db.models.block_setting import BlockSetting
 from app.db.repositories.block_setting_repository import BlockSettingRepository
@@ -60,7 +59,6 @@ class BlockSettingService:
             setting = await self.block_settings.get_by_category(user_id, category.value)
             if setting is None:
                 setting = BlockSetting(
-                    block_setting_id=generate_public_id("block_setting_"),
                     user_id=user_id,
                     category=category.value,
                     enabled=item.enabled,

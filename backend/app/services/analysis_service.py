@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.ai.content_classifier import RuleBasedContentClassifier
 from app.core.error_codes import ErrorCode
 from app.core.exceptions import AppException
-from app.core.id_generator import generate_public_id
 from app.db.models.analysis import AnalysisContent, AnalysisRequest, AnalysisResult
 from app.db.repositories.analysis_repository import AnalysisRepository
 from app.db.repositories.interest_target_repository import InterestTargetRepository
@@ -38,7 +37,6 @@ class AnalysisService:
 
         analysis_request = await self.analysis.save_request(
             AnalysisRequest(
-                analysis_request_id=generate_public_id("analysis_"),
                 user_id=user_id,
                 page_url=request.page.url,
                 page_title=request.page.title,
@@ -90,7 +88,6 @@ class AnalysisService:
     ) -> AnalysisContent:
         return await self.analysis.save_content(
             AnalysisContent(
-                analysis_content_id=generate_public_id("analysis_content_"),
                 analysis_request_id=analysis_request_id,
                 client_content_id=request.client_content_id,
                 unit_type=request.unit_type.value,
@@ -118,7 +115,6 @@ class AnalysisService:
 
         await self.analysis.save_result(
             AnalysisResult(
-                analysis_result_id=generate_public_id("analysis_result_"),
                 analysis_content_id=content.analysis_content_id,
                 categories=[category.value for category in categories],
                 risk_level=risk_level.value,

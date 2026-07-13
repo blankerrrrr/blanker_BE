@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.user import User
+from app.db.repositories.public_id import save_with_public_id
 
 
 class UserRepository:
@@ -17,7 +18,4 @@ class UserRepository:
         return result.scalar_one_or_none()
 
     async def save(self, user: User) -> User:
-        self.session.add(user)
-        await self.session.flush()
-        await self.session.refresh(user)
-        return user
+        return await save_with_public_id(self.session, user, "user_id", "user")

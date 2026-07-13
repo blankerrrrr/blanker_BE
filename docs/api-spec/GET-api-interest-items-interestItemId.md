@@ -18,8 +18,8 @@
 {
   "success": true,
   "data": {
-    "interestItemId": "interest_item_01HZX...",
-    "groupId": "interest_group_01HZX...",
+    "interestItemId": "interest_item_1",
+    "groupId": "interest_item_group_1",
     "title": "관심 정보 제목",
     "summary": "관심 정보 요약",
     "relatedTopics": ["작품명"],
