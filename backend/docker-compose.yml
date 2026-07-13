@@ -1,13 +1,10 @@
 services:
   api:
-    image: ${API_IMAGE:-blanker-api:local}
-    build: .
+    image: ${DOCKERHUB_USERNAME}/${DOCKERHUB_IMAGE}:latest
     expose:
       - "8000"
-    environment:
-      DATABASE_URL: postgresql+asyncpg://blanker:blanker@postgres:5432/blanker
-      REDIS_URL: redis://redis:6379/0
-      JWT_SECRET_KEY: local-development-secret
+    env_file:
+      - .env
     depends_on:
       - postgres
       - redis
