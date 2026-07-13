@@ -10,6 +10,8 @@
 
 [test_template.md](result/test_template.md)를 보고 테스트 결과를 작성한다.
 
+테스트가 실패할 경우 실패로 기록 후, 수정한 뒤 다시 테스트한다. 다시 테스트한 후 기존 파일을 수정하지 않고 새 파일을 작성한다.
+
 ## http 파일 작성
 
 `[http](docs/api-test/http)` 폴더에 자원(resource) 별로 파일을 작성한다.
