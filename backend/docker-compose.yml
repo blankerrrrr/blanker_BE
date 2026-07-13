@@ -2,8 +2,8 @@ services:
   api:
     image: ${API_IMAGE:-blanker-api:local}
     build: .
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     environment:
       DATABASE_URL: postgresql+asyncpg://blanker:blanker@postgres:5432/blanker
       REDIS_URL: redis://redis:6379/0
@@ -11,6 +11,17 @@ services:
     depends_on:
       - postgres
       - redis
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "80:80"
+    environment:
+      SERVER_NAME: ${SERVER_NAME:-localhost}
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates:ro
+    depends_on:
+      - api
 
   postgres:
     image: postgres:16-alpine
