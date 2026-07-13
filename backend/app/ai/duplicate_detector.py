@@ -22,11 +22,11 @@ class DuplicateDetector:
                 best_score = score
 
         if best_candidate is None or best_score < DUPLICATE_SCORE_THRESHOLD:
-            return DuplicateResult(isDuplicate=False, score=best_score)
+            return DuplicateResult(is_duplicate=False, score=best_score)
 
         return DuplicateResult(
-            isDuplicate=True,
-            representativeId=best_candidate.source_id,
+            is_duplicate=True,
+            representative_id=best_candidate.source_id,
             score=best_score,
             reason="유사한 제목, URL 또는 본문 요약이 이미 등록되어 있습니다.",
         )

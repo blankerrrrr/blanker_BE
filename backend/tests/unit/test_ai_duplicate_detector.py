@@ -6,8 +6,8 @@ def test_duplicate_detector_matches_same_url() -> None:
     detector = DuplicateDetector()
 
     result = detector.detect(
-        DuplicateCandidate(sourceId="target", url="https://example.com/a"),
-        [DuplicateCandidate(sourceId="candidate", url="https://example.com/a")],
+        DuplicateCandidate(source_id="target", url="https://example.com/a"),
+        [DuplicateCandidate(source_id="candidate", url="https://example.com/a")],
     )
 
     assert result.is_duplicate is True
@@ -19,10 +19,10 @@ def test_duplicate_detector_matches_similar_text() -> None:
     detector = DuplicateDetector()
 
     result = detector.detect(
-        DuplicateCandidate(sourceId="target", title="작품A 엔딩 해석", summary="요약"),
+        DuplicateCandidate(source_id="target", title="작품A 엔딩 해석", summary="요약"),
         [
             DuplicateCandidate(
-                sourceId="candidate",
+                source_id="candidate",
                 title="작품A 엔딩 해석",
                 summary="요약",
             ),
@@ -37,8 +37,8 @@ def test_duplicate_detector_ignores_low_similarity_text() -> None:
     detector = DuplicateDetector()
 
     result = detector.detect(
-        DuplicateCandidate(sourceId="target", title="작품A 엔딩"),
-        [DuplicateCandidate(sourceId="candidate", title="전혀 다른 글")],
+        DuplicateCandidate(source_id="target", title="작품A 엔딩"),
+        [DuplicateCandidate(source_id="candidate", title="전혀 다른 글")],
     )
 
     assert result.is_duplicate is False

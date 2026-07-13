@@ -24,8 +24,8 @@ async def test_classify_content_fails_when_api_key_is_missing() -> None:
     with pytest.raises(AIClientUnavailableError, match="OPENAI_API_KEY"):
         await client.classify_content(
             AnalysisInput(
-                clientContentId="content_1",
-                unitType=ContentUnitType.TEXT,
+                client_content_id="content_1",
+                unit_type=ContentUnitType.TEXT,
                 text="본문",
             ),
         )
@@ -37,6 +37,6 @@ async def test_detect_duplicate_fails_when_sdk_is_not_implemented() -> None:
 
     with pytest.raises(AIClientUnavailableError, match="SDK integration"):
         await client.detect_duplicate(
-            DuplicateCandidate(sourceId="target", title="작품"),
-            [DuplicateCandidate(sourceId="candidate", title="작품")],
+            DuplicateCandidate(source_id="target", title="작품"),
+            [DuplicateCandidate(source_id="candidate", title="작품")],
         )

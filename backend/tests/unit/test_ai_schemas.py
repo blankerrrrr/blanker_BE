@@ -9,12 +9,12 @@ from app.schemas.analysis import (
 
 def test_analysis_input_builds_content_text_from_available_fields() -> None:
     analysis_input = AnalysisInput(
-        clientContentId="content_1",
-        unitType=ContentUnitType.TEXT,
+        client_content_id="content_1",
+        unit_type=ContentUnitType.TEXT,
         text="본문",
-        altText="대체 텍스트",
-        contextText="주변 문맥",
-        imageUrl="https://example.com/image.png",
+        alt_text="대체 텍스트",
+        context_text="주변 문맥",
+        image_url="https://example.com/image.png",
     )
 
     assert analysis_input.content_text == (
@@ -25,8 +25,8 @@ def test_analysis_input_builds_content_text_from_available_fields() -> None:
 def test_classification_result_blocks_high_risk_content() -> None:
     result = ClassificationResult(
         categories=[BlockCategory.HARMFUL],
-        riskLevel=RiskLevel.HIGH,
-        relevanceLevel=RelevanceLevel.LOW,
+        risk_level=RiskLevel.HIGH,
+        relevance_level=RelevanceLevel.LOW,
     )
 
     assert result.should_block is True
@@ -35,8 +35,8 @@ def test_classification_result_blocks_high_risk_content() -> None:
 def test_classification_result_blocks_medium_risk_related_content() -> None:
     result = ClassificationResult(
         categories=[BlockCategory.SPOILER],
-        riskLevel=RiskLevel.MEDIUM,
-        relevanceLevel=RelevanceLevel.MEDIUM,
+        risk_level=RiskLevel.MEDIUM,
+        relevance_level=RelevanceLevel.MEDIUM,
     )
 
     assert result.should_block is True
@@ -45,8 +45,8 @@ def test_classification_result_blocks_medium_risk_related_content() -> None:
 def test_classification_result_does_not_block_medium_risk_unrelated_content() -> None:
     result = ClassificationResult(
         categories=[BlockCategory.SPOILER],
-        riskLevel=RiskLevel.MEDIUM,
-        relevanceLevel=RelevanceLevel.LOW,
+        risk_level=RiskLevel.MEDIUM,
+        relevance_level=RelevanceLevel.LOW,
     )
 
     assert result.should_block is False
@@ -54,10 +54,10 @@ def test_classification_result_does_not_block_medium_risk_unrelated_content() ->
 
 def test_duplicate_candidate_builds_searchable_text() -> None:
     candidate = DuplicateCandidate(
-        sourceId="source_1",
+        source_id="source_1",
         title="작품 제목",
         summary="요약",
-        relatedTopics=["주인공", "엔딩"],
+        related_topics=["주인공", "엔딩"],
     )
 
     assert candidate.searchable_text == "작품 제목 요약 주인공 엔딩"

@@ -71,7 +71,7 @@ class BlockSettingService:
             await self.block_settings.save(setting)
 
         await self.session.commit()
-        return BlockSettingsUpdateResponse(updatedAt=updated_at)
+        return BlockSettingsUpdateResponse(updated_at=updated_at)
 
     def _to_response(
         self,

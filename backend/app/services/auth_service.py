@@ -51,8 +51,8 @@ class AuthService:
         refresh_token = await self.tokens.issue_refresh_token(user.user_id)
         return (
             LoginResponse(
-                accessToken=access_token,
-                expiresIn=expires_in,
+                access_token=access_token,
+                expires_in=expires_in,
                 user=LoginUserResponse.model_validate(user),
             ),
             refresh_token,
@@ -65,7 +65,7 @@ class AuthService:
         )
         access_token, expires_in = self.tokens.issue_access_token(user_id)
         return (
-            TokenResponse(accessToken=access_token, expiresIn=expires_in),
+            TokenResponse(access_token=access_token, expires_in=expires_in),
             new_refresh_token,
         )
 

@@ -39,8 +39,8 @@ class InterestItemService:
             items=[self._group_to_list_item(group) for group in groups],
             page=page,
             size=size,
-            totalElements=total_elements,
-            totalPages=ceil(total_elements / size) if total_elements else 0,
+            total_elements=total_elements,
+            total_pages=ceil(total_elements / size) if total_elements else 0,
         )
 
     async def get_detail(
@@ -66,10 +66,10 @@ class InterestItemService:
         )
         if existing_item is not None:
             return InterestItemCreateResponse(
-                interestItemId=existing_item.interest_item_id,
-                groupId=existing_item.group_id,
+                interest_item_id=existing_item.interest_item_id,
+                group_id=existing_item.group_id,
                 duplicate=True,
-                savedAt=existing_item.created_at,
+                saved_at=existing_item.created_at,
             )
 
         group = await self.interest_items.get_group_by_title(user_id, request.title)
@@ -98,10 +98,10 @@ class InterestItemService:
         await self.session.commit()
 
         return InterestItemCreateResponse(
-            interestItemId=item.interest_item_id,
-            groupId=group.group_id,
+            interest_item_id=item.interest_item_id,
+            group_id=group.group_id,
             duplicate=duplicate,
-            savedAt=item.created_at,
+            saved_at=item.created_at,
         )
 
     async def _create_group(
@@ -142,23 +142,23 @@ class InterestItemService:
         group: InterestItemGroup,
     ) -> InterestItemListItemResponse:
         return InterestItemListItemResponse(
-            interestItemId=group.representative_item_id or "",
-            groupId=group.group_id,
+            interest_item_id=group.representative_item_id or "",
+            group_id=group.group_id,
             title=group.title,
             summary=group.summary,
-            relatedTopics=group.related_topics,
-            sourceCount=group.source_count,
-            discoveredAt=group.created_at,
+            related_topics=group.related_topics,
+            source_count=group.source_count,
+            discovered_at=group.created_at,
         )
 
     def _item_to_detail(self, item: InterestItem) -> InterestItemDetailResponse:
         return InterestItemDetailResponse(
-            interestItemId=item.interest_item_id,
-            groupId=item.group_id,
+            interest_item_id=item.interest_item_id,
+            group_id=item.group_id,
             title=item.title,
             summary=item.summary,
-            relatedTopics=item.related_topics,
-            sourceUrl=item.source_url,
+            related_topics=item.related_topics,
+            source_url=item.source_url,
             selector=item.selector,
-            discoveredAt=item.discovered_at,
+            discovered_at=item.discovered_at,
         )

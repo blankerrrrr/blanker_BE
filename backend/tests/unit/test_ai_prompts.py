@@ -17,10 +17,10 @@ def test_classification_system_prompt_requires_json_enum_response() -> None:
 def test_build_classification_user_prompt_sorts_interest_terms() -> None:
     prompt = build_classification_user_prompt(
         AnalysisInput(
-            clientContentId="content_1",
-            unitType=ContentUnitType.TEXT,
+            client_content_id="content_1",
+            unit_type=ContentUnitType.TEXT,
             text="엔딩 스포일러",
-            interestTerms={"작품B", "작품A"},
+            interest_terms={"작품B", "작품A"},
         ),
     )
 
@@ -37,10 +37,14 @@ def test_duplicate_system_prompt_requires_score_range() -> None:
 
 def test_build_duplicate_detection_user_prompt_lists_candidates() -> None:
     prompt = build_duplicate_detection_user_prompt(
-        DuplicateCandidate(sourceId="target", title="작품"),
+        DuplicateCandidate(source_id="target", title="작품"),
         [
-            DuplicateCandidate(sourceId="candidate_1", title="작품", summary="같은 글"),
-            DuplicateCandidate(sourceId="candidate_2", title="다른 작품"),
+            DuplicateCandidate(
+                source_id="candidate_1",
+                title="작품",
+                summary="같은 글",
+            ),
+            DuplicateCandidate(source_id="candidate_2", title="다른 작품"),
         ],
     )
 

@@ -39,8 +39,8 @@ class BlockedItemService:
             items=[self._to_list_item(item) for item in items],
             page=page,
             size=size,
-            totalElements=total_elements,
-            totalPages=ceil(total_elements / size) if total_elements else 0,
+            total_elements=total_elements,
+            total_pages=ceil(total_elements / size) if total_elements else 0,
         )
 
     async def create(
@@ -70,8 +70,8 @@ class BlockedItemService:
         await self.blocked_items.save(item)
         await self.session.commit()
         return BlockedItemCreateResponse(
-            blockedItemId=item.blocked_item_id,
-            savedAt=item.saved_at,
+            blocked_item_id=item.blocked_item_id,
+            saved_at=item.saved_at,
         )
 
     async def delete(self, user_id: str, blocked_item_id: str) -> None:
@@ -83,10 +83,10 @@ class BlockedItemService:
 
     def _to_list_item(self, item: BlockedItem) -> BlockedItemListItemResponse:
         return BlockedItemListItemResponse(
-            blockedItemId=item.blocked_item_id,
+            blocked_item_id=item.blocked_item_id,
             summary=item.summary,
             categories=[BlockCategory(category) for category in item.categories],
-            relatedTopics=item.related_topics,
-            sourceUrl=item.source_url,
-            foundAt=item.found_at,
+            related_topics=item.related_topics,
+            source_url=item.source_url,
+            found_at=item.found_at,
         )

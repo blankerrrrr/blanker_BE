@@ -26,9 +26,9 @@ class AnalysisPipeline:
         )
         return ClassificationResult(
             categories=categories,
-            riskLevel=risk_level,
-            relevanceLevel=relevance_level,
-            relatedTopics=related_topics,
+            risk_level=risk_level,
+            relevance_level=relevance_level,
+            related_topics=related_topics,
             reason=reason,
         )
 

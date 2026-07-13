@@ -83,11 +83,11 @@ class InterestTargetService:
 
     def _to_response(self, target: InterestTarget) -> InterestTargetResponse:
         return InterestTargetResponse(
-            interestTargetId=target.interest_target_id,
+            interest_target_id=target.interest_target_id,
             type=target.type,
             name=target.name,
             aliases=target.aliases,
             keywords=target.keywords,
-            createdAt=target.created_at,
-            updatedAt=target.updated_at,
+            created_at=target.created_at,
+            updated_at=target.updated_at,
         )

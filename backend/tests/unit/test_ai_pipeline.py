@@ -13,10 +13,10 @@ def test_analysis_pipeline_classifies_content() -> None:
 
     result = pipeline.classify(
         AnalysisInput(
-            clientContentId="content_1",
-            unitType=ContentUnitType.TEXT,
+            client_content_id="content_1",
+            unit_type=ContentUnitType.TEXT,
             text="작품A 결말",
-            interestTerms={"작품A"},
+            interest_terms={"작품A"},
         ),
     )
 
@@ -31,8 +31,8 @@ def test_analysis_pipeline_detects_duplicate() -> None:
     pipeline = AnalysisPipeline()
 
     result = pipeline.detect_duplicate(
-        DuplicateCandidate(sourceId="target", url="https://example.com/a"),
-        [DuplicateCandidate(sourceId="candidate", url="https://example.com/a")],
+        DuplicateCandidate(source_id="target", url="https://example.com/a"),
+        [DuplicateCandidate(source_id="candidate", url="https://example.com/a")],
     )
 
     assert result.is_duplicate is True

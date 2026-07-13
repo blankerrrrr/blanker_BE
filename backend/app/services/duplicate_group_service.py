@@ -30,12 +30,12 @@ class DuplicateGroupService:
         items = await self.interest_items.find_items_by_group_id(user_id, group_id)
         representative = self._find_representative(group, items)
         return InterestItemGroupDetailResponse(
-            interestItemGroupId=group.group_id,
+            interest_item_group_id=group.group_id,
             representative=self._to_representative(representative)
             if representative is not None
             else None,
             sources=[self._to_source(item) for item in items],
-            duplicateReason=group.duplicate_reason,
+            duplicate_reason=group.duplicate_reason,
         )
 
     async def add_source(
@@ -81,9 +81,9 @@ class DuplicateGroupService:
 
         await self.session.commit()
         return InterestItemGroupSourceAddResponse(
-            interestItemGroupId=group.group_id,
-            sourceCount=group.source_count,
-            updatedAt=group.updated_at,
+            interest_item_group_id=group.group_id,
+            source_count=group.source_count,
+            updated_at=group.updated_at,
         )
 
     async def _get_group(self, user_id: str, group_id: str) -> InterestItemGroup:
@@ -107,14 +107,14 @@ class DuplicateGroupService:
         item: InterestItem,
     ) -> InterestItemGroupRepresentativeResponse:
         return InterestItemGroupRepresentativeResponse(
-            interestItemId=item.interest_item_id,
+            interest_item_id=item.interest_item_id,
             title=item.title,
             summary=item.summary,
         )
 
     def _to_source(self, item: InterestItem) -> InterestItemGroupSourceResponse:
         return InterestItemGroupSourceResponse(
-            interestItemId=item.interest_item_id,
-            sourceUrl=item.source_url,
-            discoveredAt=item.discovered_at,
+            interest_item_id=item.interest_item_id,
+            source_url=item.source_url,
+            discovered_at=item.discovered_at,
         )
