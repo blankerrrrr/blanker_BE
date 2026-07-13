@@ -16,8 +16,7 @@
 ```json
 {
   "success": true,
-  "data": null,
-  "error": null
+  "data": null
 }
 ```
 

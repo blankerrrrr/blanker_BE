@@ -291,13 +291,8 @@ INVALID_REQUEST_BODY
 
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "USER_NOT_FOUND",
-    "message": "사용자를 찾을 수 없습니다.",
-    "status": 404
-  },
-  "timestamp": "2026-06-11T10:00:00Z"
+  "error_code": "USER_NOT_FOUND",
+  "message": "사용자를 찾을 수 없습니다."
 }
 ```
 
@@ -310,6 +305,7 @@ INVALID_REQUEST_BODY
 - URL에 동사 사용
 - 서비스마다 다른 응답 형식 사용
 - 에러 메시지만 반환하고 에러 코드 생략
+- 실패 응답에 정의되지 않은 중첩 error 객체 사용
 - 클라이언트가 보낸 사용자 ID를 그대로 신뢰
 - API 버전 없이 운영 API 제공
 - 내부 구현 Entity를 그대로 응답 DTO로 반환
