@@ -58,7 +58,7 @@ class AnalysisService:
 
         await self.session.commit()
         return AnalysisRequestResponse(
-            analysisRequestId=analysis_request.analysis_request_id,
+            analysis_request_id=analysis_request.analysis_request_id,
             results=responses,
         )
 
@@ -126,21 +126,22 @@ class AnalysisService:
         )
 
         return AnalysisResultResponse(
-            clientContentId=request.client_content_id,
+            client_content_id=request.client_content_id,
             categories=categories,
-            riskLevel=risk_level,
-            relevanceLevel=relevance_level,
-            shouldBlock=should_block,
-            blockAction=BlockActionResponse(
-                unitType=request.unit_type,
+            risk_level=risk_level,
+            relevance_level=relevance_level,
+            should_block=should_block,
+            block_action=BlockActionResponse(
+                unit_type=request.unit_type,
                 reason=reason or "차단이 필요한 콘텐츠로 판단되었습니다.",
-                relatedTopics=related_topics,
+                related_topics=related_topics,
             )
             if should_block
             else None,
         )
 
-    def _content_text(self, content: AnalysisContentRequest) -> str:
+    @staticmethod
+    def _content_text(content: AnalysisContentRequest) -> str:
         return " ".join(
             value
             for value in (
