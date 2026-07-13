@@ -1,5 +1,9 @@
+from datetime import UTC, datetime
+from types import SimpleNamespace
+
 from app.schemas.auth import SignupRequest, TokenResponse
 from app.schemas.interest_item import InterestItemCreateRequest
+from app.schemas.user import UserResponse
 
 
 def test_camel_model_accepts_camel_case_request_fields() -> None:
@@ -34,3 +38,16 @@ def test_request_model_keeps_default_factory_without_alias_field() -> None:
 
     assert request.related_topics == []
     assert request.source_url == "https://example.com"
+
+
+def test_camel_model_can_validate_attributes() -> None:
+    user = SimpleNamespace(
+        user_id="user_1",
+        email="user@example.com",
+        created_at=datetime.now(UTC),
+    )
+
+    response = UserResponse.model_validate(user)
+
+    assert response.user_id == "user_1"
+    assert response.model_dump(by_alias=True)["userId"] == "user_1"

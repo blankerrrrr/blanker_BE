@@ -9,6 +9,7 @@ class CamelModel(BaseModel):
             word.capitalize() if index else word
             for index, word in enumerate(value.split("_"))
         ),
+        from_attributes=True,
         populate_by_name=True,
     )
 

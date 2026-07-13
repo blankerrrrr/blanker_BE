@@ -36,10 +36,7 @@ class AuthService:
         )
         await self.users.save(user)
         await self.session.commit()
-        return SignupResponse.model_validate(
-            self._user_response(user),
-            from_attributes=True,
-        )
+        return SignupResponse.model_validate(user)
 
     # 로그인
     async def login(self, email: str, password: str) -> tuple[LoginResponse, str]:
@@ -56,7 +53,7 @@ class AuthService:
             LoginResponse(
                 accessToken=access_token,
                 expiresIn=expires_in,
-                user=LoginUserResponse(userId=user.user_id, email=user.email),
+                user=LoginUserResponse.model_validate(user),
             ),
             refresh_token,
         )
@@ -81,14 +78,4 @@ class AuthService:
         user = await self.users.get_by_user_id(user_id)
         if user is None:
             raise AppException(ErrorCode.USER_NOT_FOUND)
-        return UserResponse.model_validate(
-            self._user_response(user),
-            from_attributes=True,
-        )
-
-    def _user_response(self, user: User) -> dict[str, object]:
-        return {
-            "userId": user.user_id,
-            "email": user.email,
-            "createdAt": user.created_at,
-        }
+        return UserResponse.model_validate(user)
