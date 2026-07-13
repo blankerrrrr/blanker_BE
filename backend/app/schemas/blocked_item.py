@@ -1,46 +1,39 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import Field
 
 from app.schemas.analysis import BlockCategory
+from app.schemas.common import CamelModel
 
 
-class BlockedItemCreateRequest(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    analysis_request_id: str | None = Field(default=None, alias="analysisRequestId")
-    client_content_id: str | None = Field(default=None, alias="clientContentId")
+class BlockedItemCreateRequest(CamelModel):
+    analysis_request_id: str | None = None
+    client_content_id: str | None = None
     summary: str
     categories: list[BlockCategory]
-    related_topics: list[str] = Field(default_factory=list, alias="relatedTopics")
-    source_url: str = Field(alias="sourceUrl")
+    related_topics: list[str] = Field(default_factory=list)
+    source_url: str
     selector: str | None = None
-    position_text: str | None = Field(default=None, alias="positionText")
+    position_text: str | None = None
 
 
-class BlockedItemListItemResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    blocked_item_id: str = Field(alias="blockedItemId")
+class BlockedItemListItemResponse(CamelModel):
+    blocked_item_id: str
     summary: str
     categories: list[BlockCategory]
-    related_topics: list[str] = Field(alias="relatedTopics")
-    source_url: str = Field(alias="sourceUrl")
-    found_at: datetime = Field(alias="foundAt")
+    related_topics: list[str]
+    source_url: str
+    found_at: datetime
 
 
-class BlockedItemListResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
+class BlockedItemListResponse(CamelModel):
     items: list[BlockedItemListItemResponse]
     page: int
     size: int
-    total_elements: int = Field(alias="totalElements")
-    total_pages: int = Field(alias="totalPages")
+    total_elements: int
+    total_pages: int
 
 
-class BlockedItemCreateResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    blocked_item_id: str = Field(alias="blockedItemId")
-    saved_at: datetime = Field(alias="savedAt")
+class BlockedItemCreateResponse(CamelModel):
+    blocked_item_id: str
+    saved_at: datetime

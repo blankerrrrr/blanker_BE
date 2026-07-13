@@ -1,7 +1,9 @@
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import Field
+
+from app.schemas.common import CamelModel
 
 
 class InterestTargetType(StrEnum):
@@ -10,30 +12,28 @@ class InterestTargetType(StrEnum):
     TOPIC = "TOPIC"
 
 
-class InterestTargetCreateRequest(BaseModel):
+class InterestTargetCreateRequest(CamelModel):
     type: InterestTargetType
     name: str
     aliases: list[str] = Field(default_factory=list)
     keywords: list[str] = Field(default_factory=list)
 
 
-class InterestTargetUpdateRequest(BaseModel):
+class InterestTargetUpdateRequest(CamelModel):
     name: str | None = None
     aliases: list[str] | None = None
     keywords: list[str] | None = None
 
 
-class InterestTargetResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    interest_target_id: str = Field(alias="interestTargetId")
+class InterestTargetResponse(CamelModel):
+    interest_target_id: str
     type: InterestTargetType
     name: str
     aliases: list[str]
     keywords: list[str]
-    created_at: datetime | None = Field(default=None, alias="createdAt")
-    updated_at: datetime | None = Field(default=None, alias="updatedAt")
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
-class InterestTargetListResponse(BaseModel):
+class InterestTargetListResponse(CamelModel):
     items: list[InterestTargetResponse]

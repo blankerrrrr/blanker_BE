@@ -1,18 +1,14 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from app.schemas.common import CamelModel
 
 
-class UserResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    user_id: str = Field(alias="userId")
+class UserResponse(CamelModel):
+    user_id: str
     email: str
-    created_at: datetime = Field(alias="createdAt")
+    created_at: datetime
 
 
-class LoginUserResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    user_id: str = Field(alias="userId")
+class LoginUserResponse(CamelModel):
+    user_id: str
     email: str

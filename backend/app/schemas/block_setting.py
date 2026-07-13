@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import BaseModel, ConfigDict, Field
+from app.schemas.common import CamelModel
 
 
 class BlockSettingCategory(StrEnum):
@@ -16,12 +16,12 @@ class Sensitivity(StrEnum):
     HIGH = "HIGH"
 
 
-class BlockSettingItem(BaseModel):
+class BlockSettingItem(CamelModel):
     enabled: bool
     sensitivity: Sensitivity
 
 
-class BlockSettingsResponse(BaseModel):
+class BlockSettingsResponse(CamelModel):
     spoiler: BlockSettingItem
     harmful: BlockSettingItem
     interest: BlockSettingItem
@@ -31,7 +31,5 @@ class BlockSettingsUpdateRequest(BlockSettingsResponse):
     pass
 
 
-class BlockSettingsUpdateResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    updated_at: datetime = Field(alias="updatedAt")
+class BlockSettingsUpdateResponse(CamelModel):
+    updated_at: datetime

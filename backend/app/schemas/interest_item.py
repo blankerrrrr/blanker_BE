@@ -1,99 +1,81 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import Field
+
+from app.schemas.common import CamelModel
 
 
-class InterestItemCreateRequest(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
+class InterestItemCreateRequest(CamelModel):
     title: str
     summary: str
-    content_text: str | None = Field(default=None, alias="contentText")
-    related_topics: list[str] = Field(default_factory=list, alias="relatedTopics")
-    source_url: str = Field(alias="sourceUrl")
+    content_text: str | None = None
+    related_topics: list[str] = Field(default_factory=list)
+    source_url: str
     selector: str | None = None
 
 
-class InterestItemListItemResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    interest_item_id: str = Field(alias="interestItemId")
-    group_id: str = Field(alias="groupId")
+class InterestItemListItemResponse(CamelModel):
+    interest_item_id: str
+    group_id: str
     title: str
     summary: str
-    related_topics: list[str] = Field(alias="relatedTopics")
-    source_count: int = Field(alias="sourceCount")
-    discovered_at: datetime = Field(alias="discoveredAt")
+    related_topics: list[str]
+    source_count: int
+    discovered_at: datetime
 
 
-class InterestItemListResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
+class InterestItemListResponse(CamelModel):
     items: list[InterestItemListItemResponse]
     page: int
     size: int
-    total_elements: int = Field(alias="totalElements")
-    total_pages: int = Field(alias="totalPages")
+    total_elements: int
+    total_pages: int
 
 
-class InterestItemDetailResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    interest_item_id: str = Field(alias="interestItemId")
-    group_id: str = Field(alias="groupId")
+class InterestItemDetailResponse(CamelModel):
+    interest_item_id: str
+    group_id: str
     title: str
     summary: str
-    related_topics: list[str] = Field(alias="relatedTopics")
-    source_url: str = Field(alias="sourceUrl")
+    related_topics: list[str]
+    source_url: str
     selector: str | None = None
-    discovered_at: datetime = Field(alias="discoveredAt")
+    discovered_at: datetime
 
 
-class InterestItemCreateResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    interest_item_id: str = Field(alias="interestItemId")
-    group_id: str = Field(alias="groupId")
+class InterestItemCreateResponse(CamelModel):
+    interest_item_id: str
+    group_id: str
     duplicate: bool
-    saved_at: datetime = Field(alias="savedAt")
+    saved_at: datetime
 
 
-class InterestItemGroupRepresentativeResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    interest_item_id: str = Field(alias="interestItemId")
+class InterestItemGroupRepresentativeResponse(CamelModel):
+    interest_item_id: str
     title: str
     summary: str
 
 
-class InterestItemGroupSourceResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    interest_item_id: str = Field(alias="interestItemId")
-    source_url: str = Field(alias="sourceUrl")
-    discovered_at: datetime = Field(alias="discoveredAt")
+class InterestItemGroupSourceResponse(CamelModel):
+    interest_item_id: str
+    source_url: str
+    discovered_at: datetime
 
 
-class InterestItemGroupDetailResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    interest_item_group_id: str = Field(alias="interestItemGroupId")
+class InterestItemGroupDetailResponse(CamelModel):
+    interest_item_group_id: str
     representative: InterestItemGroupRepresentativeResponse | None
     sources: list[InterestItemGroupSourceResponse]
-    duplicate_reason: str | None = Field(default=None, alias="duplicateReason")
+    duplicate_reason: str | None = None
 
 
-class InterestItemGroupSourceAddRequest(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    interest_item_id: str = Field(alias="interestItemId")
-    duplicate_score: float | None = Field(default=None, alias="duplicateScore")
-    duplicate_reason: str | None = Field(default=None, alias="duplicateReason")
+class InterestItemGroupSourceAddRequest(CamelModel):
+    interest_item_id: str
+    duplicate_score: float | None = None
+    duplicate_reason: str | None = None
 
 
-class InterestItemGroupSourceAddResponse(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    interest_item_group_id: str = Field(alias="interestItemGroupId")
-    source_count: int = Field(alias="sourceCount")
-    updated_at: datetime = Field(alias="updatedAt")
+class InterestItemGroupSourceAddResponse(CamelModel):
+    interest_item_group_id: str
+    source_count: int
+    updated_at: datetime
