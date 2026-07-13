@@ -1,0 +1,23 @@
+@host = http://127.0.0.1:8000
+@accessToken =
+
+### 웹 콘텐츠 분석 요청
+POST {{host}}/api/analysis-requests
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "page": {
+    "url": "https://example.com/article",
+    "title": "테스트 페이지"
+  },
+  "contents": [
+    {
+      "clientContentId": "node_001",
+      "unitType": "TEXT",
+      "text": "테스트 작품의 결말과 반전에 대한 내용입니다.",
+      "contextText": "테스트 문맥",
+      "selector": "article > p:nth-child(1)"
+    }
+  ]
+}

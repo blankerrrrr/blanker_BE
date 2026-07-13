@@ -1,0 +1,26 @@
+@host = http://127.0.0.1:8000
+@accessToken =
+
+### 차단 설정 조회
+GET {{host}}/api/block-settings
+Authorization: Bearer {{accessToken}}
+
+### 차단 설정 수정
+PUT {{host}}/api/block-settings
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "spoiler": {
+    "enabled": true,
+    "sensitivity": "HIGH"
+  },
+  "harmful": {
+    "enabled": true,
+    "sensitivity": "MEDIUM"
+  },
+  "interest": {
+    "enabled": true,
+    "sensitivity": "LOW"
+  }
+}

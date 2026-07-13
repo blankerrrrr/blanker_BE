@@ -1,0 +1,34 @@
+@host = http://127.0.0.1:8000
+@accessToken =
+@interestTargetId =
+
+### 관심 대상 목록 조회
+GET {{host}}/api/interest-targets
+Authorization: Bearer {{accessToken}}
+
+### 관심 대상 생성
+POST {{host}}/api/interest-targets
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "type": "WORK",
+  "name": "테스트 작품",
+  "aliases": ["테스트 별칭"],
+  "keywords": ["테스트 키워드"]
+}
+
+### 관심 대상 수정
+PATCH {{host}}/api/interest-targets/{{interestTargetId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "수정된 테스트 작품",
+  "aliases": ["수정 별칭"],
+  "keywords": ["수정 키워드"]
+}
+
+### 관심 대상 삭제
+DELETE {{host}}/api/interest-targets/{{interestTargetId}}
+Authorization: Bearer {{accessToken}}

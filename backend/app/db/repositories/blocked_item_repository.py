@@ -1,4 +1,5 @@
-from sqlalchemy import func, select
+from sqlalchemy import cast, func, select
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.blocked_item import BlockedItem
@@ -13,7 +14,9 @@ class BlockedItemRepository:
             BlockedItem.user_id == user_id,
         )
         if category is not None:
-            statement = statement.where(BlockedItem.categories.contains([category]))
+            statement = statement.where(
+                cast(BlockedItem.categories, JSONB).contains([category]),
+            )
         result = await self.session.execute(statement)
         return int(result.scalar_one())
 
@@ -26,7 +29,9 @@ class BlockedItemRepository:
     ) -> list[BlockedItem]:
         statement = select(BlockedItem).where(BlockedItem.user_id == user_id)
         if category is not None:
-            statement = statement.where(BlockedItem.categories.contains([category]))
+            statement = statement.where(
+                cast(BlockedItem.categories, JSONB).contains([category]),
+            )
         result = await self.session.execute(
             statement.order_by(BlockedItem.saved_at.desc()).offset(offset).limit(limit),
         )

@@ -60,6 +60,7 @@ def upgrade() -> None:
             ["analysis_requests.analysis_request_id"],
         ),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("analysis_content_id"),
         sa.UniqueConstraint(
             "analysis_request_id",
             "client_content_id",

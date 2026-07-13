@@ -1,0 +1,19 @@
+@host = http://127.0.0.1:8000
+@accessToken =
+@interestItemGroupId =
+@interestItemId =
+
+### 중복 그룹 상세 조회
+GET {{host}}/api/interest-item-groups/{{interestItemGroupId}}
+Authorization: Bearer {{accessToken}}
+
+### 중복 그룹 출처 추가
+POST {{host}}/api/interest-item-groups/{{interestItemGroupId}}/sources
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "interestItemId": "{{interestItemId}}",
+  "duplicateScore": 0.92,
+  "duplicateReason": "동일한 이슈로 판단됩니다."
+}

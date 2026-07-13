@@ -1,0 +1,25 @@
+@host = http://127.0.0.1:8000
+@accessToken =
+@interestItemId =
+
+### 관심 정보 목록 조회
+GET {{host}}/api/interest-items?page=1&size=20
+Authorization: Bearer {{accessToken}}
+
+### 관심 정보 저장
+POST {{host}}/api/interest-items
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "title": "테스트 관심 정보",
+  "summary": "테스트 관심 정보 요약",
+  "contentText": "테스트 작품 관련 원문",
+  "relatedTopics": ["테스트 작품"],
+  "sourceUrl": "https://example.com/interest-item",
+  "selector": "article"
+}
+
+### 관심 정보 상세 조회
+GET {{host}}/api/interest-items/{{interestItemId}}
+Authorization: Bearer {{accessToken}}

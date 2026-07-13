@@ -1,0 +1,35 @@
+@host = http://127.0.0.1:8000
+@email = api-test-user@example.com
+@password = qwer1234
+@accessToken =
+
+### 회원가입
+POST {{host}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}",
+  "termsAgreed": true,
+  "privacyAgreed": true
+}
+
+### 로그인
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### 내 계정 조회
+GET {{host}}/api/auth/me
+Authorization: Bearer {{accessToken}}
+
+### 토큰 재발급
+POST {{host}}/api/auth/refresh
+
+### 로그아웃
+POST {{host}}/api/auth/logout
+Authorization: Bearer {{accessToken}}
