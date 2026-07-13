@@ -8,6 +8,7 @@
 | --- | --- | --- |
 | Backend API | FastAPI | 인증, 사용자 설정, 보관함, 관심 정보 API |
 | Language | Python 3.12+ | 백엔드 및 AI 분석 로직 구현 |
+| Python Package Manager | uv | 백엔드 의존성 설치, 가상환경, 실행 관리 |
 | Database | PostgreSQL | 사용자, 관심 대상, 분석 결과, 보관함, 관심 정보 저장 |
 | Cache / Session | Redis | refresh token hash 저장, 세션 관리 |
 | Authentication | JWT | access token 기반 인증 |
@@ -27,6 +28,7 @@
 | --- | --- |
 | Framework | FastAPI |
 | Runtime | Python 3.12 이상 |
+| Package / Env Manager | uv |
 | ASGI Server | Uvicorn |
 | DTO / Schema | Pydantic v2 |
 | ORM | SQLAlchemy 2.0 |
@@ -35,6 +37,8 @@
 | API 문서 | FastAPI OpenAPI, Swagger UI |
 
 FastAPI는 API 서버와 AI 분석 로직을 Python 기반으로 통합하기 좋다. 콘텐츠 분석, 유사도 계산, 중복 판단, OpenAI API 연동이 모두 Python 생태계와 잘 맞기 때문에 MVP에서는 백엔드와 분석 서버를 하나의 FastAPI 애플리케이션으로 시작한다.
+
+백엔드 의존성 설치와 실행은 `uv`를 기준으로 한다. 로컬 개발 환경은 `backend` 디렉터리에서 `uv sync`로 구성하고, 서버 실행은 `uv run uvicorn app.main:app --reload`를 사용한다.
 
 ## 3. 인증
 
