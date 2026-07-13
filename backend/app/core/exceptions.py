@@ -1,21 +1,15 @@
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.core.error_codes import ErrorCode
-from app.core.response import error_response
 
 
 class AppException(Exception):
-    def __init__(
-        self,
-        code: ErrorCode | str,
-        message: str,
-        status_code: int = status.HTTP_400_BAD_REQUEST,
-    ) -> None:
-        self.code = code
-        self.message = message
-        self.status_code = status_code
+    def __init__(self, error_code: ErrorCode) -> None:
+        self.error_code = error_code
+        self.message = error_code.message
+        self.status_code = error_code.status_code
 
 
 def register_exception_handlers(app: FastAPI) -> None:
@@ -26,7 +20,10 @@ def register_exception_handlers(app: FastAPI) -> None:
     ) -> JSONResponse:
         return JSONResponse(
             status_code=exc.status_code,
-            content=error_response(exc.code, exc.message, exc.status_code),
+            content={
+                "error_code": exc.error_code.code,
+                "message": exc.message,
+            },
         )
 
     @app.exception_handler(RequestValidationError)
@@ -35,12 +32,11 @@ def register_exception_handlers(app: FastAPI) -> None:
         exc: RequestValidationError,
     ) -> JSONResponse:
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            content=error_response(
-                ErrorCode.INVALID_REQUEST_BODY,
-                "요청 형식이 올바르지 않습니다.",
-                status.HTTP_422_UNPROCESSABLE_ENTITY,
-            ),
+            status_code=ErrorCode.INVALID_REQUEST_BODY.status_code,
+            content={
+                "error_code": ErrorCode.INVALID_REQUEST_BODY.code,
+                "message": ErrorCode.INVALID_REQUEST_BODY.message,
+            },
         )
 
     @app.exception_handler(Exception)
@@ -49,10 +45,9 @@ def register_exception_handlers(app: FastAPI) -> None:
         exc: Exception,
     ) -> JSONResponse:
         return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content=error_response(
-                ErrorCode.INTERNAL_SERVER_ERROR,
-                "서버 오류가 발생했습니다.",
-                status.HTTP_500_INTERNAL_SERVER_ERROR,
-            ),
+            status_code=ErrorCode.INTERNAL_SERVER_ERROR.status_code,
+            content={
+                "error_code": ErrorCode.INTERNAL_SERVER_ERROR.code,
+                "message": ErrorCode.INTERNAL_SERVER_ERROR.message,
+            },
         )

@@ -1,4 +1,3 @@
-from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.error_codes import ErrorCode
@@ -36,11 +35,7 @@ class InterestTargetService:
             request.name,
         )
         if existing_target is not None:
-            raise AppException(
-                ErrorCode.INTEREST_TARGET_ALREADY_EXISTS,
-                "이미 등록된 관심 대상입니다.",
-                status.HTTP_409_CONFLICT,
-            )
+            raise AppException(ErrorCode.INTEREST_TARGET_ALREADY_EXISTS)
 
         target = InterestTarget(
             interest_target_id=generate_public_id("target_"),
@@ -85,11 +80,7 @@ class InterestTargetService:
     ) -> InterestTarget:
         target = await self.interest_targets.get_by_id(user_id, interest_target_id)
         if target is None:
-            raise AppException(
-                ErrorCode.INTEREST_TARGET_NOT_FOUND,
-                "관심 대상을 찾을 수 없습니다.",
-                status.HTTP_404_NOT_FOUND,
-            )
+            raise AppException(ErrorCode.INTEREST_TARGET_NOT_FOUND)
         return target
 
     def _to_response(self, target: InterestTarget) -> InterestTargetResponse:

@@ -1,6 +1,5 @@
 from decimal import Decimal
 
-from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.error_codes import ErrorCode
@@ -51,17 +50,9 @@ class DuplicateGroupService:
             request.interest_item_id,
         )
         if item is None:
-            raise AppException(
-                ErrorCode.INTEREST_ITEM_NOT_FOUND,
-                "관심 정보를 찾을 수 없습니다.",
-                status.HTTP_404_NOT_FOUND,
-            )
+            raise AppException(ErrorCode.INTEREST_ITEM_NOT_FOUND)
         if item.group_id == group.group_id:
-            raise AppException(
-                ErrorCode.INTEREST_ITEM_ALREADY_GROUPED,
-                "이미 해당 그룹에 포함된 관심 정보입니다.",
-                status.HTTP_409_CONFLICT,
-            )
+            raise AppException(ErrorCode.INTEREST_ITEM_ALREADY_GROUPED)
 
         old_group = await self.interest_items.get_group_by_id(user_id, item.group_id)
         item.group_id = group.group_id
@@ -98,11 +89,7 @@ class DuplicateGroupService:
     async def _get_group(self, user_id: str, group_id: str) -> InterestItemGroup:
         group = await self.interest_items.get_group_by_id(user_id, group_id)
         if group is None:
-            raise AppException(
-                ErrorCode.INTEREST_ITEM_GROUP_NOT_FOUND,
-                "중복 그룹을 찾을 수 없습니다.",
-                status.HTTP_404_NOT_FOUND,
-            )
+            raise AppException(ErrorCode.INTEREST_ITEM_GROUP_NOT_FOUND)
         return group
 
     def _find_representative(

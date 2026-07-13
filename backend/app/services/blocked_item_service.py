@@ -1,6 +1,5 @@
 from math import ceil
 
-from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.error_codes import ErrorCode
@@ -56,11 +55,7 @@ class BlockedItemService:
             request.selector,
         )
         if existing_item is not None:
-            raise AppException(
-                ErrorCode.BLOCKED_ITEM_ALREADY_EXISTS,
-                "이미 저장된 보관함 항목입니다.",
-                status.HTTP_409_CONFLICT,
-            )
+            raise AppException(ErrorCode.BLOCKED_ITEM_ALREADY_EXISTS)
 
         item = BlockedItem(
             blocked_item_id=generate_public_id("blocked_"),
@@ -84,11 +79,7 @@ class BlockedItemService:
     async def delete(self, user_id: str, blocked_item_id: str) -> None:
         item = await self.blocked_items.get_by_id(user_id, blocked_item_id)
         if item is None:
-            raise AppException(
-                ErrorCode.BLOCKED_ITEM_NOT_FOUND,
-                "보관함 항목을 찾을 수 없습니다.",
-                status.HTTP_404_NOT_FOUND,
-            )
+            raise AppException(ErrorCode.BLOCKED_ITEM_NOT_FOUND)
         await self.blocked_items.delete(item)
         await self.session.commit()
 

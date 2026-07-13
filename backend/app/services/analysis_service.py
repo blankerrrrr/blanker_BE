@@ -1,4 +1,3 @@
-from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.content_classifier import RuleBasedContentClassifier
@@ -67,21 +66,13 @@ class AnalysisService:
 
     def _validate_request_size(self, request: AnalysisRequestCreate) -> None:
         if len(request.contents) > MAX_CONTENTS:
-            raise AppException(
-                ErrorCode.ANALYSIS_CONTENT_TOO_LARGE,
-                "분석 요청 콘텐츠 개수가 허용 범위를 초과했습니다.",
-                status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            )
+            raise AppException(ErrorCode.ANALYSIS_CONTENT_TOO_LARGE)
 
         total_length = sum(
             len(self._content_text(content)) for content in request.contents
         )
         if total_length > MAX_TEXT_LENGTH:
-            raise AppException(
-                ErrorCode.ANALYSIS_CONTENT_TOO_LARGE,
-                "분석 요청 본문이 허용 크기를 초과했습니다.",
-                status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            )
+            raise AppException(ErrorCode.ANALYSIS_CONTENT_TOO_LARGE)
 
     async def _load_interest_terms(self, user_id: str) -> set[str]:
         targets = await self.interest_targets.find_all_by_user_id(user_id)

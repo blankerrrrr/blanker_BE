@@ -1,6 +1,6 @@
 from collections.abc import AsyncGenerator
 
-from fastapi import Header, status
+from fastapi import Header
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.cache.redis import create_redis_client
@@ -28,18 +28,10 @@ async def get_current_user_id(
     authorization: str | None = Header(default=None, alias="Authorization"),
 ) -> str:
     if authorization is None or not authorization.startswith("Bearer "):
-        raise AppException(
-            ErrorCode.AUTH_UNAUTHORIZED,
-            "인증 토큰이 필요합니다.",
-            status.HTTP_401_UNAUTHORIZED,
-        )
+        raise AppException(ErrorCode.AUTH_UNAUTHORIZED)
 
     user_id = decode_access_token(authorization.removeprefix("Bearer ").strip())
     if user_id is None:
-        raise AppException(
-            ErrorCode.AUTH_UNAUTHORIZED,
-            "유효하지 않은 인증 토큰입니다.",
-            status.HTTP_401_UNAUTHORIZED,
-        )
+        raise AppException(ErrorCode.AUTH_UNAUTHORIZED)
 
     return user_id

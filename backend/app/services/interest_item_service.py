@@ -1,6 +1,5 @@
 from math import ceil
 
-from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.error_codes import ErrorCode
@@ -52,11 +51,7 @@ class InterestItemService:
     ) -> InterestItemDetailResponse:
         item = await self.interest_items.get_item_by_id(user_id, interest_item_id)
         if item is None:
-            raise AppException(
-                ErrorCode.INTEREST_ITEM_NOT_FOUND,
-                "관심 정보를 찾을 수 없습니다.",
-                status.HTTP_404_NOT_FOUND,
-            )
+            raise AppException(ErrorCode.INTEREST_ITEM_NOT_FOUND)
         return self._item_to_detail(item)
 
     async def create(
@@ -133,11 +128,7 @@ class InterestItemService:
     ) -> None:
         targets = await self.interest_targets.find_all_by_user_id(user_id)
         if not targets:
-            raise AppException(
-                ErrorCode.INTEREST_ITEM_NOT_RELEVANT,
-                "등록된 관심 대상과 관련성이 낮습니다.",
-                status.HTTP_400_BAD_REQUEST,
-            )
+            raise AppException(ErrorCode.INTEREST_ITEM_NOT_RELEVANT)
 
         normalized_topics = {topic.casefold() for topic in related_topics}
         target_terms: set[str] = set()
@@ -147,11 +138,7 @@ class InterestItemService:
             target_terms.update(keyword.casefold() for keyword in target.keywords)
 
         if normalized_topics.isdisjoint(target_terms):
-            raise AppException(
-                ErrorCode.INTEREST_ITEM_NOT_RELEVANT,
-                "등록된 관심 대상과 관련성이 낮습니다.",
-                status.HTTP_400_BAD_REQUEST,
-            )
+            raise AppException(ErrorCode.INTEREST_ITEM_NOT_RELEVANT)
 
     def _group_to_list_item(
         self,

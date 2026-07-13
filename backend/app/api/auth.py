@@ -59,11 +59,7 @@ async def refresh(
     refresh_token: RefreshTokenCookie = None,
 ) -> dict[str, object]:
     if refresh_token is None:
-        raise AppException(
-            ErrorCode.AUTH_REFRESH_TOKEN_COOKIE_MISSING,
-            "refresh token Cookie가 필요합니다.",
-            status.HTTP_401_UNAUTHORIZED,
-        )
+        raise AppException(ErrorCode.AUTH_REFRESH_TOKEN_COOKIE_MISSING)
 
     service = AuthService(session, refresh_token_store)
     result, new_refresh_token = await service.refresh(refresh_token)

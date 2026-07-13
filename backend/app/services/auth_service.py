@@ -1,6 +1,5 @@
 import hmac
 
-from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.cache.refresh_token_store import RefreshTokenStore
@@ -33,26 +32,14 @@ class AuthService:
 
     async def signup(self, request: SignupRequest) -> SignupResponse:
         if not request.terms_agreed or not request.privacy_agreed:
-            raise AppException(
-                ErrorCode.AUTH_REQUIRED_AGREEMENT_MISSING,
-                "필수 약관에 동의해야 합니다.",
-                status.HTTP_400_BAD_REQUEST,
-            )
+            raise AppException(ErrorCode.AUTH_REQUIRED_AGREEMENT_MISSING)
 
         if len(request.password) < 8:
-            raise AppException(
-                ErrorCode.AUTH_WEAK_PASSWORD,
-                "비밀번호는 8자 이상이어야 합니다.",
-                status.HTTP_400_BAD_REQUEST,
-            )
+            raise AppException(ErrorCode.AUTH_WEAK_PASSWORD)
 
         existing_user = await self.users.get_by_email(request.email)
         if existing_user is not None:
-            raise AppException(
-                ErrorCode.AUTH_EMAIL_ALREADY_EXISTS,
-                "이미 가입된 이메일입니다.",
-                status.HTTP_409_CONFLICT,
-            )
+            raise AppException(ErrorCode.AUTH_EMAIL_ALREADY_EXISTS)
 
         user = User(
             user_id=generate_public_id("user_"),
@@ -69,18 +56,10 @@ class AuthService:
     async def login(self, email: str, password: str) -> tuple[LoginResponse, str]:
         user = await self.users.get_by_email(email)
         if user is None or not verify_password(password, user.password_hash):
-            raise AppException(
-                ErrorCode.AUTH_INVALID_CREDENTIALS,
-                "이메일 또는 비밀번호가 올바르지 않습니다.",
-                status.HTTP_401_UNAUTHORIZED,
-            )
+            raise AppException(ErrorCode.AUTH_INVALID_CREDENTIALS)
 
         if not user.is_active:
-            raise AppException(
-                ErrorCode.AUTH_ACCOUNT_DISABLED,
-                "비활성화된 계정입니다.",
-                status.HTTP_403_FORBIDDEN,
-            )
+            raise AppException(ErrorCode.AUTH_ACCOUNT_DISABLED)
 
         access_token, expires_in = create_access_token(user.user_id)
         refresh_token = await self._issue_refresh_token(user.user_id)
@@ -117,11 +96,7 @@ class AuthService:
     async def get_current_user(self, user_id: str) -> UserResponse:
         user = await self.users.get_by_user_id(user_id)
         if user is None:
-            raise AppException(
-                ErrorCode.USER_NOT_FOUND,
-                "사용자를 찾을 수 없습니다.",
-                status.HTTP_404_NOT_FOUND,
-            )
+            raise AppException(ErrorCode.USER_NOT_FOUND)
         return UserResponse.model_validate(
             self._user_response(user),
             from_attributes=True,
@@ -139,27 +114,15 @@ class AuthService:
     async def _validate_refresh_token(self, refresh_token: str) -> str:
         parsed_token = parse_refresh_token(refresh_token)
         if parsed_token is None:
-            raise AppException(
-                ErrorCode.AUTH_INVALID_REFRESH_TOKEN,
-                "유효하지 않은 refresh token입니다.",
-                status.HTTP_401_UNAUTHORIZED,
-            )
+            raise AppException(ErrorCode.AUTH_INVALID_REFRESH_TOKEN)
 
         user_id, token_id = parsed_token
         saved_hash = await self.refresh_token_store.get(user_id, token_id)
         if saved_hash is None:
-            raise AppException(
-                ErrorCode.AUTH_INVALID_REFRESH_TOKEN,
-                "유효하지 않은 refresh token입니다.",
-                status.HTTP_401_UNAUTHORIZED,
-            )
+            raise AppException(ErrorCode.AUTH_INVALID_REFRESH_TOKEN)
 
         if not hmac.compare_digest(saved_hash, hash_token(refresh_token)):
-            raise AppException(
-                ErrorCode.AUTH_INVALID_REFRESH_TOKEN,
-                "유효하지 않은 refresh token입니다.",
-                status.HTTP_401_UNAUTHORIZED,
-            )
+            raise AppException(ErrorCode.AUTH_INVALID_REFRESH_TOKEN)
 
         return user_id
 
