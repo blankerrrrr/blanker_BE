@@ -21,7 +21,6 @@ class Settings(BaseSettings):
     access_token_expires_minutes: int = 30
     refresh_token_expires_days: int = 14
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
-    openai_model: str = Field(default="gpt-4.1-mini", alias="OPENAI_MODEL")
     openai_request_timeout_seconds: int = Field(
         default=30,
         alias="OPENAI_REQUEST_TIMEOUT_SECONDS",
