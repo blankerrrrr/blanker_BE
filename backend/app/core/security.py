@@ -3,23 +3,34 @@ import hmac
 import secrets
 from datetime import UTC, datetime, timedelta
 
+from argon2 import PasswordHasher
+from argon2 import exceptions as argon2_exceptions
 from jose import JWTError, jwt
 
 from app.core.config import settings
 
+password_hasher = PasswordHasher()
+
 
 def hash_password(password: str) -> str:
-    salt = secrets.token_hex(16)
-    digest = hashlib.pbkdf2_hmac(
-        "sha256",
-        password.encode("utf-8"),
-        salt.encode("utf-8"),
-        120_000,
-    ).hex()
-    return f"pbkdf2_sha256${salt}${digest}"
+    return password_hasher.hash(password)
 
 
 def verify_password(password: str, password_hash: str) -> bool:
+    if password_hash.startswith("pbkdf2_sha256$"):
+        return _verify_pbkdf2_password(password, password_hash)
+
+    try:
+        return password_hasher.verify(password_hash, password)
+    except (
+        argon2_exceptions.InvalidHashError,
+        argon2_exceptions.VerificationError,
+        argon2_exceptions.VerifyMismatchError,
+    ):
+        return False
+
+
+def _verify_pbkdf2_password(password: str, password_hash: str) -> bool:
     try:
         algorithm, salt, expected_digest = password_hash.split("$", 2)
     except ValueError:
