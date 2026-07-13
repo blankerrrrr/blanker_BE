@@ -7,6 +7,8 @@ __pycache__/
 .venv/
 *.pyc
 *.egg-info/
+.uv-cache
 .idea
+.agents
 TASK.md
 INSTRUCTION.md
