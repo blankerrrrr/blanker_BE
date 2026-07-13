@@ -83,6 +83,30 @@ class InterestItemRepository:
         )
         return result.scalar_one_or_none()
 
+    async def find_items_by_group_id(
+        self,
+        user_id: str,
+        group_id: str,
+    ) -> list[InterestItem]:
+        result = await self.session.execute(
+            select(InterestItem)
+            .where(
+                InterestItem.user_id == user_id,
+                InterestItem.group_id == group_id,
+            )
+            .order_by(InterestItem.discovered_at.asc()),
+        )
+        return list(result.scalars().all())
+
+    async def count_items_by_group_id(self, user_id: str, group_id: str) -> int:
+        result = await self.session.execute(
+            select(func.count()).select_from(InterestItem).where(
+                InterestItem.user_id == user_id,
+                InterestItem.group_id == group_id,
+            ),
+        )
+        return int(result.scalar_one())
+
     async def save_group(self, group: InterestItemGroup) -> InterestItemGroup:
         self.session.add(group)
         await self.session.flush()
