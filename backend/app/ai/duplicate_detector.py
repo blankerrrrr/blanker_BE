@@ -46,5 +46,6 @@ class DuplicateDetector:
 
         return SequenceMatcher(None, target_text, candidate_text).ratio()
 
-    def _normalize(self, value: str) -> str:
+    @staticmethod
+    def _normalize(value: str) -> str:
         return re.sub(r"\s+", " ", value.casefold()).strip()
