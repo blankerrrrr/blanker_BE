@@ -1,5 +1,6 @@
 services:
   api:
+    image: ${API_IMAGE:-blanker-api:local}
     build: .
     ports:
       - "8000:8000"
