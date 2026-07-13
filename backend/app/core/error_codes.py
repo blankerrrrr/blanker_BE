@@ -34,11 +34,6 @@ class ErrorCode(StrEnum):
         status.HTTP_400_BAD_REQUEST,
         "비밀번호는 8자 이상이어야 합니다.",
     )
-    AUTH_REQUIRED_AGREEMENT_MISSING = (
-        "AUTH_REQUIRED_AGREEMENT_MISSING",
-        status.HTTP_400_BAD_REQUEST,
-        "필수 약관에 동의해야 합니다.",
-    )
     AUTH_INVALID_CREDENTIALS = (
         "AUTH_INVALID_CREDENTIALS",
         status.HTTP_401_UNAUTHORIZED,

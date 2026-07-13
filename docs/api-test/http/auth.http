@@ -9,9 +9,7 @@ Content-Type: application/json
 
 {
   "email": "{{email}}",
-  "password": "{{password}}",
-  "termsAgreed": true,
-  "privacyAgreed": true
+  "password": "{{password}}"
 }
 
 ### 로그인

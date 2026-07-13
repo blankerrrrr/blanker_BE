@@ -5,8 +5,6 @@ from app.schemas.user import LoginUserResponse, UserResponse
 class SignupRequest(CamelModel):
     email: str
     password: str
-    terms_agreed: bool
-    privacy_agreed: bool
 
 
 class LoginRequest(CamelModel):

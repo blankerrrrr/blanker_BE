@@ -6,8 +6,6 @@ erDiagram
         varchar id PK
         varchar email UK
         varchar passwordHash
-        boolean termsAgreed
-        boolean privacyAgreed
         timestamptz createdAt
         timestamptz updatedAt
     }

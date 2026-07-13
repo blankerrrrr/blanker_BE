@@ -7,13 +7,10 @@ def test_camel_model_accepts_camel_case_request_fields() -> None:
         {
             "email": "user@example.com",
             "password": "password123",
-            "termsAgreed": True,
-            "privacyAgreed": True,
         },
     )
 
-    assert request.terms_agreed
-    assert request.privacy_agreed
+    assert request.email == "user@example.com"
 
 
 def test_camel_model_serializes_response_fields_as_camel_case() -> None:

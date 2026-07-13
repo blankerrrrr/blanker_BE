@@ -29,10 +29,8 @@ class AuthService:
         self.users = UserRepository(session)
         self.refresh_token_store = refresh_token_store
 
+    # 회원가입
     async def signup(self, request: SignupRequest) -> SignupResponse:
-        if not request.terms_agreed or not request.privacy_agreed:
-            raise AppException(ErrorCode.AUTH_REQUIRED_AGREEMENT_MISSING)
-
         if len(request.password) < 8:
             raise AppException(ErrorCode.AUTH_WEAK_PASSWORD)
 
@@ -51,6 +49,7 @@ class AuthService:
             from_attributes=True,
         )
 
+    # 로그인
     async def login(self, email: str, password: str) -> tuple[LoginResponse, str]:
         user = await self.users.get_by_email(email)
         if user is None or not verify_password(password, user.password_hash):
@@ -70,6 +69,7 @@ class AuthService:
             refresh_token,
         )
 
+    # 토큰 재발급
     async def refresh(self, refresh_token: str) -> tuple[TokenResponse, str]:
         user_id = await self._validate_refresh_token(refresh_token)
         access_token, expires_in = create_access_token(user_id)
@@ -84,6 +84,7 @@ class AuthService:
             new_refresh_token,
         )
 
+    # 로그아웃
     async def logout(self, refresh_token: str | None) -> None:
         if refresh_token is None:
             return
@@ -91,6 +92,7 @@ class AuthService:
         if parsed_token is not None:
             await self.refresh_token_store.delete(*parsed_token)
 
+    # 유저 정보 가져오기
     async def get_current_user(self, user_id: str) -> UserResponse:
         user = await self.users.get_by_user_id(user_id)
         if user is None:
@@ -100,6 +102,7 @@ class AuthService:
             from_attributes=True,
         )
 
+    # 토큰 발급을 위한 헬퍼 메서드
     async def _issue_refresh_token(self, user_id: str) -> str:
         refresh_token, token_id = create_refresh_token(user_id)
         await self.refresh_token_store.save(
@@ -109,6 +112,7 @@ class AuthService:
         )
         return refresh_token
 
+    # 리프레시 토큰 유효성 검증
     async def _validate_refresh_token(self, refresh_token: str) -> str:
         parsed_token = parse_refresh_token(refresh_token)
         if parsed_token is None:
