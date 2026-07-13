@@ -23,6 +23,7 @@ class InterestItemService:
         self.interest_items = InterestItemRepository(session)
         self.interest_targets = InterestTargetRepository(session)
 
+    # 사용자의 관심 정보 그룹 목록을 페이지 단위로 조회한다.
     async def list_items(
         self,
         user_id: str,
@@ -43,6 +44,7 @@ class InterestItemService:
             total_pages=ceil(total_elements / size) if total_elements else 0,
         )
 
+    # 사용자가 소유한 관심 정보 상세를 조회한다.
     async def get_detail(
         self,
         user_id: str,
@@ -53,6 +55,7 @@ class InterestItemService:
             raise AppException(ErrorCode.INTEREST_ITEM_NOT_FOUND)
         return self._item_to_detail(item)
 
+    # 새 관심 정보를 저장하고 같은 출처는 중복 저장으로 처리한다.
     async def create(
         self,
         user_id: str,
@@ -104,6 +107,7 @@ class InterestItemService:
             saved_at=item.created_at,
         )
 
+    # 새 관심 정보 그룹을 생성한다.
     async def _create_group(
         self,
         user_id: str,
@@ -118,6 +122,7 @@ class InterestItemService:
         )
         return await self.interest_items.save_group(group)
 
+    # 관심 정보가 사용자의 등록 관심 대상과 관련 있는지 검증한다.
     async def _validate_relevance(
         self,
         user_id: str,
@@ -137,9 +142,10 @@ class InterestItemService:
         if normalized_topics.isdisjoint(target_terms):
             raise AppException(ErrorCode.INTEREST_ITEM_NOT_RELEVANT)
 
+    # 관심 정보 그룹 모델을 목록 응답 항목으로 변환한다.
+    @staticmethod
     def _group_to_list_item(
-        self,
-        group: InterestItemGroup,
+            group: InterestItemGroup,
     ) -> InterestItemListItemResponse:
         return InterestItemListItemResponse(
             interest_item_id=group.representative_item_id or "",
@@ -151,7 +157,9 @@ class InterestItemService:
             discovered_at=group.created_at,
         )
 
-    def _item_to_detail(self, item: InterestItem) -> InterestItemDetailResponse:
+    # 관심 정보 모델을 상세 응답으로 변환한다.
+    @staticmethod
+    def _item_to_detail(item: InterestItem) -> InterestItemDetailResponse:
         return InterestItemDetailResponse(
             interest_item_id=item.interest_item_id,
             group_id=item.group_id,

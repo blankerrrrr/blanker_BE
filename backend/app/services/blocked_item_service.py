@@ -20,6 +20,7 @@ class BlockedItemService:
         self.session = session
         self.blocked_items = BlockedItemRepository(session)
 
+    # 사용자의 보관함 항목을 페이지와 카테고리 조건으로 조회한다.
     async def list(
         self,
         user_id: str,
@@ -43,6 +44,7 @@ class BlockedItemService:
             total_pages=ceil(total_elements / size) if total_elements else 0,
         )
 
+    # 새 보관함 항목을 저장하고 중복 원본은 거부한다.
     async def create(
         self,
         user_id: str,
@@ -74,6 +76,7 @@ class BlockedItemService:
             saved_at=item.saved_at,
         )
 
+    # 사용자가 소유한 보관함 항목을 삭제한다.
     async def delete(self, user_id: str, blocked_item_id: str) -> None:
         item = await self.blocked_items.get_by_id(user_id, blocked_item_id)
         if item is None:
@@ -81,7 +84,9 @@ class BlockedItemService:
         await self.blocked_items.delete(item)
         await self.session.commit()
 
-    def _to_list_item(self, item: BlockedItem) -> BlockedItemListItemResponse:
+    # 보관함 DB 모델을 목록 응답 항목으로 변환한다.
+    @staticmethod
+    def _to_list_item(item: BlockedItem) -> BlockedItemListItemResponse:
         return BlockedItemListItemResponse(
             blocked_item_id=item.blocked_item_id,
             summary=item.summary,

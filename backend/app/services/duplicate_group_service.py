@@ -21,6 +21,7 @@ class DuplicateGroupService:
         self.session = session
         self.interest_items = InterestItemRepository(session)
 
+    # 중복 그룹의 대표 항목과 출처 목록을 조회한다.
     async def get_detail(
         self,
         user_id: str,
@@ -38,6 +39,7 @@ class DuplicateGroupService:
             duplicate_reason=group.duplicate_reason,
         )
 
+    # 기존 관심 정보 항목을 다른 중복 그룹의 출처로 이동한다.
     async def add_source(
         self,
         user_id: str,
@@ -86,12 +88,14 @@ class DuplicateGroupService:
             updated_at=group.updated_at,
         )
 
+    # 사용자가 소유한 관심 정보 그룹을 조회한다.
     async def _get_group(self, user_id: str, group_id: str) -> InterestItemGroup:
         group = await self.interest_items.get_group_by_id(user_id, group_id)
         if group is None:
             raise AppException(ErrorCode.INTEREST_ITEM_GROUP_NOT_FOUND)
         return group
 
+    # 그룹의 대표 항목을 찾고 없으면 첫 번째 출처를 대체 대표로 사용한다.
     def _find_representative(
         self,
         group: InterestItemGroup,
@@ -102,6 +106,7 @@ class DuplicateGroupService:
                 return item
         return items[0] if items else None
 
+    # 관심 정보 항목을 그룹 대표 응답으로 변환한다.
     def _to_representative(
         self,
         item: InterestItem,
@@ -112,7 +117,9 @@ class DuplicateGroupService:
             summary=item.summary,
         )
 
-    def _to_source(self, item: InterestItem) -> InterestItemGroupSourceResponse:
+    # 관심 정보 항목을 그룹 출처 응답으로 변환한다.
+    @staticmethod
+    def _to_source(item: InterestItem) -> InterestItemGroupSourceResponse:
         return InterestItemGroupSourceResponse(
             interest_item_id=item.interest_item_id,
             source_url=item.source_url,

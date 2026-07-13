@@ -27,6 +27,7 @@ class AnalysisService:
         self.interest_targets = InterestTargetRepository(session)
         self.classifier = RuleBasedContentClassifier()
 
+    # 분석 요청을 저장하고 각 콘텐츠의 차단 판단 결과를 반환한다.
     async def analyze(
         self,
         user_id: str,
@@ -62,6 +63,7 @@ class AnalysisService:
             results=responses,
         )
 
+    # 요청 콘텐츠 개수와 전체 텍스트 길이가 허용 범위인지 검증한다.
     def _validate_request_size(self, request: AnalysisRequestCreate) -> None:
         if len(request.contents) > MAX_CONTENTS:
             raise AppException(ErrorCode.ANALYSIS_CONTENT_TOO_LARGE)
@@ -72,6 +74,7 @@ class AnalysisService:
         if total_length > MAX_TEXT_LENGTH:
             raise AppException(ErrorCode.ANALYSIS_CONTENT_TOO_LARGE)
 
+    # 사용자의 관심 대상 이름, 별칭, 키워드를 분석용 검색어로 불러온다.
     async def _load_interest_terms(self, user_id: str) -> set[str]:
         targets = await self.interest_targets.find_all_by_user_id(user_id)
         terms: set[str] = set()
@@ -81,6 +84,7 @@ class AnalysisService:
             terms.update(target.keywords)
         return terms
 
+    # 분석 요청에 포함된 개별 콘텐츠 원본을 저장한다.
     async def _save_content(
         self,
         analysis_request_id: str,
@@ -99,6 +103,7 @@ class AnalysisService:
             ),
         )
 
+    # 저장된 콘텐츠를 분류하고 분석 결과와 응답 DTO를 생성한다.
     async def _analyze_content(
         self,
         content: AnalysisContent,
@@ -140,6 +145,7 @@ class AnalysisService:
             else None,
         )
 
+    # 콘텐츠의 텍스트 필드를 분석 가능한 하나의 문자열로 합친다.
     @staticmethod
     def _content_text(content: AnalysisContentRequest) -> str:
         return " ".join(

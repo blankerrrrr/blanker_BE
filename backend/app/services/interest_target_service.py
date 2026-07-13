@@ -17,12 +17,14 @@ class InterestTargetService:
         self.session = session
         self.interest_targets = InterestTargetRepository(session)
 
+    # 사용자의 관심 대상 목록을 조회한다.
     async def list(self, user_id: str) -> InterestTargetListResponse:
         targets = await self.interest_targets.find_all_by_user_id(user_id)
         return InterestTargetListResponse(
             items=[self._to_response(target) for target in targets],
         )
 
+    # 새 관심 대상을 생성하고 사용자 내 중복 등록을 막는다.
     async def create(
         self,
         user_id: str,
@@ -47,6 +49,7 @@ class InterestTargetService:
         await self.session.commit()
         return self._to_response(target)
 
+    # 사용자가 소유한 관심 대상의 수정 가능한 필드를 갱신한다.
     async def update(
         self,
         user_id: str,
@@ -66,11 +69,13 @@ class InterestTargetService:
         await self.session.commit()
         return self._to_response(target)
 
+    # 사용자가 소유한 관심 대상을 삭제한다.
     async def delete(self, user_id: str, interest_target_id: str) -> None:
         target = await self._get_owned_target(user_id, interest_target_id)
         await self.interest_targets.delete(target)
         await self.session.commit()
 
+    # 사용자 소유권을 확인하며 관심 대상을 조회한다.
     async def _get_owned_target(
         self,
         user_id: str,
@@ -81,7 +86,9 @@ class InterestTargetService:
             raise AppException(ErrorCode.INTEREST_TARGET_NOT_FOUND)
         return target
 
-    def _to_response(self, target: InterestTarget) -> InterestTargetResponse:
+    # 관심 대상 DB 모델을 응답 스키마로 변환한다.
+    @staticmethod
+    def _to_response(target: InterestTarget) -> InterestTargetResponse:
         return InterestTargetResponse(
             interest_target_id=target.interest_target_id,
             type=target.type,

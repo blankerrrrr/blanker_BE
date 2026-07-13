@@ -12,6 +12,7 @@ from app.schemas.block_setting import (
     Sensitivity,
 )
 
+# 기본 차단 정책
 DEFAULT_SETTINGS = {
     BlockSettingCategory.SPOILER: BlockSettingItem(
         enabled=True,
@@ -33,6 +34,7 @@ class BlockSettingService:
         self.session = session
         self.block_settings = BlockSettingRepository(session)
 
+    # 사용자 차단 설정을 조회하고 누락된 항목은 기본값으로 채운다.
     async def get(self, user_id: str) -> BlockSettingsResponse:
         settings = await self.block_settings.find_all_by_user_id(user_id)
         setting_map = {
@@ -44,6 +46,7 @@ class BlockSettingService:
         }
         return self._to_response(DEFAULT_SETTINGS | setting_map)
 
+    # 사용자 차단 설정을 카테고리별로 생성하거나 갱신한다.
     async def update(
         self,
         user_id: str,
@@ -73,8 +76,9 @@ class BlockSettingService:
         await self.session.commit()
         return BlockSettingsUpdateResponse(updated_at=updated_at)
 
+    # 카테고리별 설정 맵을 차단 설정 응답으로 변환한다.
+    @staticmethod
     def _to_response(
-        self,
         settings: dict[BlockSettingCategory, BlockSettingItem],
     ) -> BlockSettingsResponse:
         return BlockSettingsResponse(
