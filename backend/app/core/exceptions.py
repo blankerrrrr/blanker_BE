@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from app.core.error_codes import ErrorCode
 
 
+# 비즈니스 Exception
 class AppException(Exception):
     def __init__(self, error_code: ErrorCode) -> None:
         self.error_code = error_code
@@ -12,6 +13,7 @@ class AppException(Exception):
         self.status_code = error_code.status_code
 
 
+# 전역 핸들러
 def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(AppException)
     async def handle_app_exception(
