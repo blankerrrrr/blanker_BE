@@ -1,0 +1,1 @@
+"""AI internal schemas placeholder."""

@@ -1,0 +1,1 @@
+"""Interest item service placeholder."""

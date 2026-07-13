@@ -5,7 +5,7 @@
 > 
 > 위에 있을수록 우선순위 높음
 
-* [] 
+* [x] [backend-architecture.md](docs/backend-architecture.md) 문서를 보고 서버 기초 설정하기
 
 ## 지시사항
 - 모든 문서 작업은 기본적으로 한국어로 수행한다.

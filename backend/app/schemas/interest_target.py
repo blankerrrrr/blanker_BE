@@ -1,0 +1,1 @@
+"""Interest target schemas."""
