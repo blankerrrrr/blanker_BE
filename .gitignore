@@ -13,4 +13,4 @@ __pycache__/
 *.local
 TASK.md
 INSTRUCTION.md
-docs/interesting-item-api/KEY.md
+KEYS.md
