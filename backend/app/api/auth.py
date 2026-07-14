@@ -111,6 +111,6 @@ def _set_refresh_token_cookie(response: Response, refresh_token: str) -> None:
         max_age=settings.refresh_token_expires_days * 24 * 60 * 60,
         httponly=True,
         secure=True,
-        samesite="lax",
+        samesite="none",
         path="/api/auth",
     )
