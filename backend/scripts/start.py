@@ -4,6 +4,7 @@ import time
 
 import uvicorn
 
+from app.db.session import engine
 from scripts.migrate import upgrade
 from scripts.seed_default_interest_types import main as seed_default_interest_types
 
@@ -31,8 +32,15 @@ def run_migrations() -> None:
     upgrade("head")
 
 
+async def seed_and_dispose_engine() -> None:
+    try:
+        await seed_default_interest_types()
+    finally:
+        await engine.dispose()
+
+
 def run_seed() -> None:
-    asyncio.run(seed_default_interest_types())
+    asyncio.run(seed_and_dispose_engine())
 
 
 def main() -> None:
