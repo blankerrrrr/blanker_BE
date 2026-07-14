@@ -11,5 +11,3 @@ RUN apt-get update \
 
 COPY . .
 RUN uv sync --no-dev
-
-CMD ["uv", "run", "--no-dev", "python", "-m", "scripts.start"]
