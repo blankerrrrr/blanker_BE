@@ -30,14 +30,18 @@
 
 ## 3. Enum 정의
 
-| Enum                 | 값                                | 설명              |
-|----------------------|----------------------------------|-----------------|
-| `InterestTargetType` | `WORK`, `PERSON`, `TOPIC`        | 관심 대상 유형        |
-| `BlockCategory`      | `SPOILER`, `HARMFUL`, `INTEREST` | 차단 또는 분석 분류 유형  |
-| `Sensitivity`        | `LOW`, `MEDIUM`, `HIGH`          | 차단 민감도          |
-| `ContentUnitType`    | `TEXT`, `IMAGE`, `AREA`          | 분석 및 차단 단위      |
-| `RiskLevel`          | `LOW`, `MEDIUM`, `HIGH`          | 콘텐츠 위험도         |
-| `RelevanceLevel`     | `LOW`, `MEDIUM`, `HIGH`          | 사용자 관심 대상과의 관련도 |
+| Enum                   | 값                                                           | 설명                          |
+|------------------------|-------------------------------------------------------------|-----------------------------|
+| `InterestType`         | `영화`, `드라마`, `애니메이션`, `소설`, `게임`, `뮤지컬`, `웹툰`, `기타` | 온보딩 관심사 종류                  |
+| `InterestTargetType`   | `WORK`, `PERSON`, `TOPIC`                                   | 사용자 관심 대상 유형                |
+| `BlockSettingCategory` | `SPOILER`, `HARMFUL`, `INTEREST`                            | 차단 설정 카테고리                  |
+| `BlockCategory`        | `SPOILER`, `HARMFUL`, `INTEREST`                            | 분석 결과 및 보관함 차단 분류          |
+| `Sensitivity`          | `LOW`, `MEDIUM`, `HIGH`                                     | 차단 민감도                      |
+| `ContentUnitType`      | `TEXT`, `IMAGE`, `AREA`                                     | 분석 콘텐츠 단위 및 차단 액션 대상 단위    |
+| `RiskLevel`            | `LOW`, `MEDIUM`, `HIGH`                                     | 콘텐츠 위험도                     |
+| `RelevanceLevel`       | `LOW`, `MEDIUM`, `HIGH`                                     | 사용자 관심 대상과의 관련도             |
+
+현재 구현은 DB native enum 타입을 사용하지 않고 문자열 컬럼에 enum 값을 저장한다. API 요청/응답에서는 Pydantic `StrEnum`으로 값을 검증한다.
 
 ## 4. 테이블 상세
 
