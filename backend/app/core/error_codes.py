@@ -99,16 +99,6 @@ class ErrorCode(StrEnum):
         status.HTTP_400_BAD_REQUEST,
         "등록된 관심 대상과 관련성이 낮습니다.",
     )
-    INTEREST_ITEM_GROUP_NOT_FOUND = (
-        "INTEREST_ITEM_GROUP_NOT_FOUND",
-        status.HTTP_404_NOT_FOUND,
-        "중복 그룹을 찾을 수 없습니다.",
-    )
-    INTEREST_ITEM_ALREADY_GROUPED = (
-        "INTEREST_ITEM_ALREADY_GROUPED",
-        status.HTTP_409_CONFLICT,
-        "이미 해당 그룹에 포함된 관심 정보입니다.",
-    )
     ANALYSIS_CONTENT_TOO_LARGE = (
         "ANALYSIS_CONTENT_TOO_LARGE",
         status.HTTP_413_CONTENT_TOO_LARGE,

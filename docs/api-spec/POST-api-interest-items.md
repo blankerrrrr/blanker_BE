@@ -4,7 +4,7 @@
 
 ## 설명
 
-확장 프로그램 또는 분석 서버가 감지한 관심 주제 관련 정보를 저장한다. 저장 시 중복 여부를 판단해 기존 그룹에 묶거나 새 그룹을 생성한다.
+확장 프로그램 또는 분석 서버가 감지한 관심 주제 관련 정보를 저장한다. 같은 출처 URL이 이미 존재하면 중복으로 처리한다.
 
 ## REQUEST
 
@@ -26,7 +26,6 @@
   "success": true,
   "data": {
     "interestItemId": "interest_item_1",
-    "groupId": "interest_item_group_1",
     "duplicate": false,
     "savedAt": "2026-07-13T05:00:00Z"
   }

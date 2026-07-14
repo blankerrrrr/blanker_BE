@@ -5,7 +5,6 @@ from app.api import (
     auth,
     block_settings,
     blocked_items,
-    interest_item_groups,
     interest_items,
     interest_targets,
     interests,
@@ -43,11 +42,6 @@ api_router.include_router(
     interest_items.router,
     prefix="/interest-items",
     tags=["interest-items"],
-)
-api_router.include_router(
-    interest_item_groups.router,
-    prefix="/interest-item-groups",
-    tags=["interest-item-groups"],
 )
 api_router.include_router(
     screenshot_analysis_requests.router,

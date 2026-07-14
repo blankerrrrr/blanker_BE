@@ -1,10 +1,10 @@
 # 관심 정보 목록 조회 API
 
-`GET /api/interest-items?page=1&size=20&targetId=interest_target_1`
+`GET /api/interest-items?page=1&size=20`
 
 ## 설명
 
-자동 수집된 관심 정보 목록을 조회한다. 중복 통합 그룹 기준의 대표 정보와 출처 수를 함께 제공한다.
+자동 수집된 관심 정보 목록을 페이지 단위로 조회한다.
 
 ## REQUEST
 
@@ -21,11 +21,9 @@
     "items": [
       {
         "interestItemId": "interest_item_1",
-        "groupId": "interest_item_group_1",
         "title": "관심 정보 제목",
         "summary": "관심 정보 요약",
         "relatedTopics": ["작품명"],
-        "sourceCount": 3,
         "discoveredAt": "2026-07-13T05:00:00Z"
       }
     ],

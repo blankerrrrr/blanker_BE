@@ -16,11 +16,9 @@ class InterestItemCreateRequest(CamelModel):
 
 class InterestItemListItemResponse(CamelModel):
     interest_item_id: str
-    group_id: str
     title: str
     summary: str
     related_topics: list[str]
-    source_count: int
     discovered_at: datetime
 
 
@@ -34,7 +32,6 @@ class InterestItemListResponse(CamelModel):
 
 class InterestItemDetailResponse(CamelModel):
     interest_item_id: str
-    group_id: str
     title: str
     summary: str
     related_topics: list[str]
@@ -45,25 +42,5 @@ class InterestItemDetailResponse(CamelModel):
 
 class InterestItemCreateResponse(CamelModel):
     interest_item_id: str
-    group_id: str
     duplicate: bool
     saved_at: datetime
-
-
-class InterestItemGroupRepresentativeResponse(CamelModel):
-    interest_item_id: str
-    title: str
-    summary: str
-
-
-class InterestItemGroupSourceResponse(CamelModel):
-    interest_item_id: str
-    source_url: str
-    discovered_at: datetime
-
-
-class InterestItemGroupDetailResponse(CamelModel):
-    interest_item_group_id: str
-    representative: InterestItemGroupRepresentativeResponse | None
-    sources: list[InterestItemGroupSourceResponse]
-    duplicate_reason: str | None = None
