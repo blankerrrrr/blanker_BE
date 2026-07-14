@@ -19,6 +19,15 @@
   "success": true,
   "data": [
     {
+      "2026-07-15": [
+        {
+          "interestItemId": "interest_item_2",
+          "sourceUrl": "https://example.com/newer-article",
+          "discoveredAt": "2026-07-15T01:02:03Z"
+        }
+      ]
+    },
+    {
       "2026-07-14": [
         {
           "interestItemId": "interest_item_1",
@@ -26,9 +35,6 @@
           "discoveredAt": "2026-07-14T01:02:03Z"
         }
       ]
-    },
-    {
-      "2026-07-15": []
     }
   ]
 }

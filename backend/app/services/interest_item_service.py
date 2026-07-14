@@ -55,7 +55,7 @@ class InterestItemService:
     async def list_urls(self, user_id: str) -> InterestItemUrlListResponse:
         items = await self.interest_items.find_urls(user_id)
         items_by_date: dict[str, list[InterestItemUrlResponse]] = {}
-        for item in items:
+        for item in sorted(items, key=lambda item: item.discovered_at, reverse=True):
             date_key = item.discovered_at.date().isoformat()
             items_by_date.setdefault(date_key, []).append(self._to_url_item(item))
         return InterestItemUrlListResponse(
