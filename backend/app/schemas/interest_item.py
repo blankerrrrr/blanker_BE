@@ -67,15 +67,3 @@ class InterestItemGroupDetailResponse(CamelModel):
     representative: InterestItemGroupRepresentativeResponse | None
     sources: list[InterestItemGroupSourceResponse]
     duplicate_reason: str | None = None
-
-
-class InterestItemGroupSourceAddRequest(CamelModel):
-    interest_item_id: str
-    duplicate_score: float | None = None
-    duplicate_reason: str | None = None
-
-
-class InterestItemGroupSourceAddResponse(CamelModel):
-    interest_item_group_id: str
-    source_count: int
-    updated_at: datetime
