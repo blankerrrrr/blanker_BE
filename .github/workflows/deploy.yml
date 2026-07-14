@@ -66,7 +66,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT }}
-          source: "backend/docker-compose.yml,backend/docker-compose.webtoon.yml,backend/nginx,backend/webtoon-api"
+          source: "backend/docker-compose.yml,backend/docker-compose.webtoon.yml,backend/docker-compose.search.yml,backend/nginx,backend/webtoon-api,backend/searxng"
           target: "~/app"
           strip_components: 1
 

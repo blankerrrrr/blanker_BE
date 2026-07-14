@@ -13,6 +13,8 @@
 - `backend/app/core/error_codes.py`
 - `backend/app/schemas/web_search.py`
 - `backend/app/services/web_search_service.py`
+- `backend/docker-compose.search.yml`
+- `backend/searxng/settings.yml`
 - `backend/tests/unit/test_web_search_api.py`
 - `backend/tests/unit/test_web_search_service.py`
 - `backend/.env.example`
@@ -26,9 +28,10 @@
 
 ## 구체적인 구현 내용
 - `GET /api/web-search` 인증 API를 추가했다.
-- Brave Web Search API 호환 설정값을 추가했다.
+- SearXNG 검색 컨테이너 설정을 추가했다.
 - 외부 검색 결과를 `query`, `results[].title/url/description` 형태로 정규화한다.
-- 검색 API 키 누락과 외부 검색 실패를 전용 에러 코드로 구분한다.
+- 검색 API 키 없이 내부 SearXNG `/search?format=json` 응답을 사용한다.
+- 외부 검색 실패를 전용 에러 코드로 구분한다.
 
 ## 검증 내용
 - 실행 명령: `.\.venv\Scripts\pytest.exe tests\unit\test_web_search_api.py tests\unit\test_web_search_service.py -q`

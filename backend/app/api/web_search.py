@@ -16,7 +16,6 @@ async def search_web(
     _user_id: CurrentUserId,
     query: Annotated[str, Query(min_length=1, max_length=200)],
     count: int = Query(default=5, ge=1, le=20),
-    country: str | None = Query(default="KR", min_length=2, max_length=2),
     search_lang: Annotated[
         str | None,
         Query(alias="searchLang", min_length=2, max_length=5),
@@ -27,7 +26,6 @@ async def search_web(
     result = await service.search(
         query=query.strip(),
         count=count,
-        country=country,
         search_lang=search_lang,
         freshness=freshness,
     )

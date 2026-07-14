@@ -1,0 +1,16 @@
+services:
+  searxng:
+    image: ghcr.io/searxng/searxng:latest
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./searxng/settings.yml:/etc/searxng/settings.yml:ro
+    networks:
+      - blanker-network
+
+networks:
+  blanker-network:
+    name: blanker-network
+    external: true

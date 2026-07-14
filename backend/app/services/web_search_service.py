@@ -13,11 +13,9 @@ from app.schemas.web_search import WebSearchResponse, WebSearchResultResponse
 class WebSearchService:
     def __init__(
         self,
-        api_key: str | None = None,
         api_url: str | None = None,
         timeout_seconds: int | None = None,
     ) -> None:
-        self.api_key = api_key if api_key is not None else settings.web_search_api_key
         self.api_url = api_url or settings.web_search_api_url
         self.timeout_seconds = timeout_seconds or settings.web_search_timeout_seconds
 
@@ -26,30 +24,23 @@ class WebSearchService:
         self,
         query: str,
         count: int,
-        country: str | None,
         search_lang: str | None,
         freshness: str | None,
     ) -> WebSearchResponse:
-        if self.api_key is None or not self.api_key.strip():
-            raise AppException(ErrorCode.WEB_SEARCH_NOT_CONFIGURED)
-
         params: dict[str, str | int] = {
             "q": query,
-            "count": count,
-            "safesearch": "moderate",
+            "format": "json",
+            "safesearch": "1",
         }
-        if country:
-            params["country"] = country
         if search_lang:
-            params["search_lang"] = search_lang
-        if freshness:
-            params["freshness"] = freshness
+            params["language"] = search_lang
+
+        time_range = self._to_time_range(freshness)
+        if time_range:
+            params["time_range"] = time_range
 
         url = f"{self.api_url}?{urllib.parse.urlencode(params)}"
-        headers = {
-            "Accept": "application/json",
-            "X-Subscription-Token": self.api_key,
-        }
+        headers = {"Accept": "application/json"}
 
         try:
             payload = await asyncio.to_thread(self._read_json, url, headers)
@@ -58,7 +49,7 @@ class WebSearchService:
 
         return WebSearchResponse(
             query=query,
-            results=self._to_results(payload),
+            results=self._to_results(payload)[:count],
         )
 
     def _read_json(self, url: str, headers: dict[str, str]) -> dict[str, Any]:
@@ -71,7 +62,7 @@ class WebSearchService:
 
     @staticmethod
     def _to_results(payload: dict[str, Any]) -> list[WebSearchResultResponse]:
-        raw_results = payload.get("web", {}).get("results", [])
+        raw_results = payload.get("results", [])
         if not isinstance(raw_results, list):
             return []
 
@@ -83,7 +74,7 @@ class WebSearchService:
             url = item.get("url")
             if not isinstance(title, str) or not isinstance(url, str):
                 continue
-            description = item.get("description")
+            description = item.get("content")
             results.append(
                 WebSearchResultResponse(
                     title=title,
@@ -92,3 +83,14 @@ class WebSearchService:
                 ),
             )
         return results
+
+    @staticmethod
+    def _to_time_range(freshness: str | None) -> str | None:
+        return {
+            "pd": "day",
+            "pm": "month",
+            "py": "year",
+            "day": "day",
+            "month": "month",
+            "year": "year",
+        }.get(freshness or "")

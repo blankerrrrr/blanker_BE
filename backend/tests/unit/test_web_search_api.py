@@ -10,13 +10,11 @@ class FakeWebSearchService:
         self,
         query: str,
         count: int,
-        country: str | None,
         search_lang: str | None,
         freshness: str | None,
     ) -> WebSearchResponse:
         assert query == "테스트"
         assert count == 2
-        assert country == "KR"
         assert search_lang == "ko"
         assert freshness is None
         return WebSearchResponse(
