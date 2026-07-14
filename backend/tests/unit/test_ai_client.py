@@ -1,5 +1,3 @@
-from types import SimpleNamespace
-
 import pytest
 
 from app.ai.client import AIClient, AIClientResponseError, AIClientUnavailableError
@@ -7,24 +5,14 @@ from app.ai.schemas import AnalysisInput, DuplicateCandidate
 from app.schemas.analysis import ContentUnitType, RelevanceLevel, RiskLevel
 
 
-class FakeCompletions:
+class FakeAnthropicClient:
     def __init__(self, content: str | None) -> None:
         self.content = content
         self.last_request: dict[str, object] | None = None
 
-    async def create(self, **kwargs: object) -> object:
+    async def create_message(self, **kwargs: object) -> str | None:
         self.last_request = kwargs
-        return SimpleNamespace(
-            choices=[
-                SimpleNamespace(message=SimpleNamespace(content=self.content)),
-            ],
-        )
-
-
-class FakeOpenAIClient:
-    def __init__(self, content: str | None) -> None:
-        self.completions = FakeCompletions(content)
-        self.chat = SimpleNamespace(completions=self.completions)
+        return self.content
 
 
 def test_ai_client_is_disabled_without_api_key() -> None:
@@ -43,7 +31,7 @@ def test_ai_client_is_enabled_with_api_key() -> None:
 async def test_classify_content_fails_when_api_key_is_missing() -> None:
     client = AIClient(api_key=None)
 
-    with pytest.raises(AIClientUnavailableError, match="OPENAI_API_KEY"):
+    with pytest.raises(AIClientUnavailableError, match="ANTHROPIC_API_KEY"):
         await client.classify_content(
             AnalysisInput(
                 client_content_id="content_1",
@@ -54,8 +42,8 @@ async def test_classify_content_fails_when_api_key_is_missing() -> None:
 
 
 @pytest.mark.asyncio
-async def test_classify_content_uses_openai_json_response() -> None:
-    openai_client = FakeOpenAIClient(
+async def test_classify_content_uses_anthropic_json_response() -> None:
+    anthropic_client = FakeAnthropicClient(
         """
         {
           "categories": ["SPOILER"],
@@ -66,7 +54,7 @@ async def test_classify_content_uses_openai_json_response() -> None:
         }
         """,
     )
-    client = AIClient(api_key="test-key", openai_client=openai_client)
+    client = AIClient(api_key="test-key", anthropic_client=anthropic_client)
 
     result = await client.classify_content(
         AnalysisInput(
@@ -79,15 +67,14 @@ async def test_classify_content_uses_openai_json_response() -> None:
     assert result.risk_level == RiskLevel.MEDIUM
     assert result.relevance_level == RelevanceLevel.LOW
     assert result.related_topics == []
-    assert openai_client.completions.last_request is not None
-    assert openai_client.completions.last_request["response_format"] == {
-        "type": "json_object",
-    }
+    assert anthropic_client.last_request is not None
+    assert "system_prompt" in anthropic_client.last_request
+    assert "user_prompt" in anthropic_client.last_request
 
 
 @pytest.mark.asyncio
-async def test_detect_duplicate_uses_openai_json_response() -> None:
-    openai_client = FakeOpenAIClient(
+async def test_detect_duplicate_uses_anthropic_json_response() -> None:
+    anthropic_client = FakeAnthropicClient(
         """
         {
           "isDuplicate": true,
@@ -97,7 +84,7 @@ async def test_detect_duplicate_uses_openai_json_response() -> None:
         }
         """,
     )
-    client = AIClient(api_key="test-key", openai_client=openai_client)
+    client = AIClient(api_key="test-key", anthropic_client=anthropic_client)
 
     result = await client.detect_duplicate(
         DuplicateCandidate(source_id="target", title="작품"),
@@ -113,7 +100,7 @@ async def test_detect_duplicate_uses_openai_json_response() -> None:
 async def test_classify_content_fails_when_response_is_invalid() -> None:
     client = AIClient(
         api_key="test-key",
-        openai_client=FakeOpenAIClient("""{"riskLevel": "UNKNOWN"}"""),
+        anthropic_client=FakeAnthropicClient("""{"riskLevel": "UNKNOWN"}"""),
     )
 
     with pytest.raises(AIClientResponseError, match="Invalid classification"):

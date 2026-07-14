@@ -10,6 +10,7 @@ __pycache__/
 .uv-cache
 .idea
 .agents
+.claude
 *.local
 *.local.*
 TASK.md

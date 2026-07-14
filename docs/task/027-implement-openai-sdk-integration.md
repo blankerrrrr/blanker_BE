@@ -28,3 +28,4 @@
 - `uv lock`은 네트워크 승인 후 성공했다.
 - `uv run` 기반 검증은 PyPI wheel 다운로드 DNS 실패로 진행하지 못해 기존 `.venv`의 ruff/pytest로 검증했다.
 - pytest는 테스트 6개 통과 출력까지 확인했으나 프로세스 종료 단계에서 타임아웃됐다.
+- 이후 AI Provider가 Anthropic API로 정정되어 현재 구현과 다를 수 있다.

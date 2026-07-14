@@ -25,11 +25,10 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_expires_minutes: int = 30
     refresh_token_expires_days: int = 14
-    openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
-    openai_model: str = Field(default="gpt-4o-mini", alias="OPENAI_MODEL")
-    openai_request_timeout_seconds: int = Field(
+    anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
+    ai_request_timeout_seconds: int = Field(
         default=30,
-        alias="OPENAI_REQUEST_TIMEOUT_SECONDS",
+        alias="AI_REQUEST_TIMEOUT_SECONDS",
     )
     tmdb_access_token: str | None = Field(default=None, alias="TMDB_ACCESS_TOKEN")
     rawg_api_key: str | None = Field(default=None, alias="RAWG_API_KEY")
