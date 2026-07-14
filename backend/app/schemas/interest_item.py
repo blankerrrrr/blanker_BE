@@ -11,6 +11,7 @@ class InterestItemCreateRequest(CamelModel):
     content_text: str | None = None
     related_topics: list[str] = Field(default_factory=list)
     source_url: str
+    image_url: str | None = None
     selector: str | None = None
 
 
@@ -18,6 +19,7 @@ class InterestItemListItemResponse(CamelModel):
     interest_item_id: str
     title: str
     summary: str
+    image_url: str | None = None
     related_topics: list[str]
     discovered_at: datetime
 
@@ -34,6 +36,7 @@ class InterestItemDetailResponse(CamelModel):
     interest_item_id: str
     title: str
     summary: str
+    image_url: str | None = None
     related_topics: list[str]
     source_url: str
     selector: str | None = None

@@ -235,6 +235,7 @@
 | `contentText`    | text         | NULL                   | 수집된 원문 또는 핵심 본문                              |
 | `relatedTopics`  | text[]       | NOT NULL, DEFAULT `[]` | 관련 주제                                        |
 | `sourceUrl`      | text         | NOT NULL               | 원본 링크                                        |
+| `imageUrl`       | varchar(1000) | NULL                  | S3에 저장된 관심 정보 이미지 URL                       |
 | `selector`       | text         | NULL                   | 페이지 내 위치                                     |
 | `duplicateScore` | numeric(5,4) | NULL                   | 대표 그룹과의 중복 유사도                               |
 | `discoveredAt`   | timestamptz  | NOT NULL               | 발견 시각                                        |

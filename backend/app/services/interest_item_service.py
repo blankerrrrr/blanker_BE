@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.error_codes import ErrorCode
 from app.core.exceptions import AppException
+from app.core.s3 import S3ImageStorage
 from app.db.models.interest_item import InterestItem
 from app.db.repositories.interest_item_repository import InterestItemRepository
 from app.db.repositories.interest_target_repository import InterestTargetRepository
@@ -17,10 +18,15 @@ from app.schemas.interest_item import (
 
 
 class InterestItemService:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(
+        self,
+        session: AsyncSession,
+        image_storage: S3ImageStorage | None = None,
+    ) -> None:
         self.session = session
         self.interest_items = InterestItemRepository(session)
         self.interest_targets = InterestTargetRepository(session)
+        self.image_storage = image_storage or S3ImageStorage()
 
     # 사용자의 관심 정보 목록을 페이지 단위로 조회한다.
     async def list_items(
@@ -83,6 +89,15 @@ class InterestItemService:
             selector=request.selector,
         )
         await self.interest_items.save_item(item)
+
+        if request.image_url is not None:
+            item.image_url = await self.image_storage.upload_from_url(
+                request.image_url,
+                user_id,
+                item.interest_item_id or "",
+            )
+            await self.interest_items.save_item(item)
+
         await self.session.commit()
 
         return InterestItemCreateResponse(
@@ -117,6 +132,7 @@ class InterestItemService:
             interest_item_id=item.interest_item_id or "",
             title=item.title,
             summary=item.summary,
+            image_url=item.image_url,
             related_topics=item.related_topics,
             discovered_at=item.discovered_at,
         )
@@ -127,6 +143,7 @@ class InterestItemService:
             interest_item_id=item.interest_item_id or "",
             title=item.title,
             summary=item.summary,
+            image_url=item.image_url,
             related_topics=item.related_topics,
             source_url=item.source_url,
             selector=item.selector,

@@ -15,9 +15,20 @@
   "contentText": "수집된 원문 또는 핵심 본문",
   "relatedTopics": ["작품명"],
   "sourceUrl": "https://example.com/article",
+  "imageUrl": "https://example.com/image.png",
   "selector": "article"
 }
 ```
+
+| 필드 | 타입 | 필수 | 설명 |
+| --- | --- | --- | --- |
+| `title` | string | Yes | 관심 정보 제목 |
+| `summary` | string | Yes | 관심 정보 요약 |
+| `contentText` | string | No | 수집된 원문 또는 핵심 본문 |
+| `relatedTopics` | string[] | No | 관련 관심 대상 |
+| `sourceUrl` | string | Yes | 원본 링크 |
+| `imageUrl` | string | No | 원본 이미지 URL. 서버가 S3에 업로드한 뒤 조회 응답에서 S3 URL을 반환 |
+| `selector` | string | No | 페이지 내 위치 |
 
 ## RESPONSE `201`
 

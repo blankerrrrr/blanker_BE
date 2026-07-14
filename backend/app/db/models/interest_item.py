@@ -37,6 +37,7 @@ class InterestItem(Base):
     content_text: Mapped[str | None] = mapped_column(Text, nullable=True)
     related_topics: Mapped[list[str]] = mapped_column(JSON, default=list)
     source_url: Mapped[str] = mapped_column(Text)
+    image_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     selector: Mapped[str | None] = mapped_column(Text, nullable=True)
     discovered_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

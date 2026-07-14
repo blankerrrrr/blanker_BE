@@ -23,6 +23,7 @@
         "interestItemId": "interest_item_1",
         "title": "관심 정보 제목",
         "summary": "관심 정보 요약",
+        "imageUrl": "https://blanker-storage.s3.ap-northeast-2.amazonaws.com/interest-items/user_1/interest_item_1/image.png",
         "relatedTopics": ["작품명"],
         "discoveredAt": "2026-07-13T05:00:00Z"
       }

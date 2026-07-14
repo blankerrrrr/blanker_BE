@@ -33,11 +33,13 @@ def test_request_model_keeps_default_factory_without_alias_field() -> None:
             "title": "title",
             "summary": "summary",
             "sourceUrl": "https://example.com",
+            "imageUrl": "https://example.com/image.png",
         },
     )
 
     assert request.related_topics == []
     assert request.source_url == "https://example.com"
+    assert request.image_url == "https://example.com/image.png"
 
 
 def test_camel_model_can_validate_attributes() -> None:

@@ -57,6 +57,13 @@ class Settings(BaseSettings):
     )
     tesseract_cmd: str | None = Field(default=None, alias="TESSERACT_CMD")
     tessdata_prefix: str | None = Field(default=None, alias="TESSDATA_PREFIX")
+    aws_bucket: str | None = Field(default=None, alias="AWS_BUCKET")
+    aws_region: str = Field(default="ap-northeast-2", alias="AWS_REGION")
+    aws_access_key_id: str | None = Field(default=None, alias="AWS_ACCESS_KEY_ID")
+    aws_secret_access_key: str | None = Field(
+        default=None,
+        alias="AWS_SECRET_ACCESS_KEY",
+    )
 
 
 settings = Settings()
