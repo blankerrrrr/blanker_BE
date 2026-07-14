@@ -54,8 +54,15 @@ class InterestItemService:
     # 사용자의 수집 관심 정보 원본 URL 목록을 조회한다.
     async def list_urls(self, user_id: str) -> InterestItemUrlListResponse:
         items = await self.interest_items.find_urls(user_id)
+        items_by_date: dict[str, list[InterestItemUrlResponse]] = {}
+        for item in items:
+            date_key = item.discovered_at.date().isoformat()
+            items_by_date.setdefault(date_key, []).append(self._to_url_item(item))
         return InterestItemUrlListResponse(
-            items=[self._to_url_item(item) for item in items],
+            root=[
+                {date_key: date_items}
+                for date_key, date_items in items_by_date.items()
+            ],
         )
 
     # 사용자가 소유한 관심 정보 상세를 조회한다.

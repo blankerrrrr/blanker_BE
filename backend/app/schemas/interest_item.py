@@ -39,7 +39,7 @@ class InterestItemUrlResponse(CamelModel):
 
 
 class InterestItemUrlListResponse(CamelModel):
-    items: list[InterestItemUrlResponse]
+    root: list[dict[str, list[InterestItemUrlResponse]]]
 
 
 class InterestItemDetailResponse(CamelModel):

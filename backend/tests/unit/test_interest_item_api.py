@@ -18,12 +18,16 @@ class FakeInterestItemService:
     async def list_urls(self, user_id: str) -> InterestItemUrlListResponse:
         assert user_id == "user_1"
         return InterestItemUrlListResponse(
-            items=[
-                InterestItemUrlResponse(
-                    interest_item_id="interest_item_1",
-                    source_url="https://example.com/article",
-                    discovered_at=datetime(2026, 7, 14, 1, 2, 3, tzinfo=UTC),
-                ),
+            root=[
+                {
+                    "2026-07-14": [
+                        InterestItemUrlResponse(
+                            interest_item_id="interest_item_1",
+                            source_url="https://example.com/article",
+                            discovered_at=datetime(2026, 7, 14, 1, 2, 3, tzinfo=UTC),
+                        ),
+                    ],
+                },
             ],
         )
 
@@ -53,11 +57,15 @@ def test_list_interest_item_urls(monkeypatch) -> None:
     app.dependency_overrides.clear()
     assert response.status_code == 200
     data = response.json()["data"]
-    assert data["items"] == [
+    assert data == [
         {
-            "interestItemId": "interest_item_1",
-            "sourceUrl": "https://example.com/article",
-            "discoveredAt": "2026-07-14T01:02:03Z",
+            "2026-07-14": [
+                {
+                    "interestItemId": "interest_item_1",
+                    "sourceUrl": "https://example.com/article",
+                    "discoveredAt": "2026-07-14T01:02:03Z",
+                },
+            ],
         },
     ]
 

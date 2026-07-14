@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, status
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user_id, get_db_session
@@ -33,7 +34,7 @@ async def list_interest_item_urls(
 ) -> dict[str, object]:
     service = InterestItemService(session)
     result = await service.list_urls(user_id)
-    return success_response(result.model_dump(mode="json", by_alias=True))
+    return success_response(jsonable_encoder(result.root, by_alias=True))
 
 
 @router.get("/{interest_item_id}")
