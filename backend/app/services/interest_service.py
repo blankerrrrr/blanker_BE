@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+from typing import TypeVar
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.cache.query_cache import QueryCache
 from app.core.error_codes import ErrorCode
 from app.core.exceptions import AppException
 from app.db.models.interest import Interest
 from app.db.models.interest_target import InterestTarget
 from app.db.repositories.interest_repository import InterestRepository
 from app.db.repositories.interest_target_repository import InterestTargetRepository
+from app.schemas.common import CamelModel
 from app.schemas.interest import (
     InterestGenreListResponse,
     InterestGenreResponse,
@@ -25,12 +29,21 @@ from app.schemas.interest_target import (
     InterestTargetSyncRequest,
 )
 
+T = TypeVar("T", bound=CamelModel)
+
 
 class InterestService:
-    def __init__(self, session: AsyncSession) -> None:
+    CATALOG_CACHE_TTL_SECONDS = 60 * 10
+
+    def __init__(
+        self,
+        session: AsyncSession,
+        query_cache: QueryCache | None = None,
+    ) -> None:
         self.session = session
         self.interests = InterestRepository(session)
         self.interest_targets = InterestTargetRepository(session)
+        self.query_cache = query_cache
 
     # DB에 저장된 온보딩용 관심사 목록을 조회한다.
     async def list(
@@ -39,27 +52,58 @@ class InterestService:
         genre: str,
         keyword: str | None,
     ) -> InterestListResponse:
+        cache_key = QueryCache.key(
+            "interests:list",
+            {
+                "interestType": interest_type,
+                "genre": genre,
+                "keyword": keyword,
+            },
+        )
+        cached = await self._get_cached(cache_key, InterestListResponse)
+        if cached is not None:
+            return cached
+
         interests = await self.interests.find_all(interest_type, genre, keyword)
-        return InterestListResponse(
+        result = InterestListResponse(
             items=[self._to_response(interest) for interest in interests],
         )
+        await self._set_cached(cache_key, result)
+        return result
 
     # DB에 저장된 관심사 종류 목록을 중복 없이 조회한다.
     async def list_types(self) -> InterestTypeListResponse:
+        cache_key = QueryCache.key("interests:types", {})
+        cached = await self._get_cached(cache_key, InterestTypeListResponse)
+        if cached is not None:
+            return cached
+
         interest_types = await self.interests.find_types()
-        return InterestTypeListResponse(
+        result = InterestTypeListResponse(
             items=[
                 InterestTypeResponse(name=name, image_url=image_url)
                 for name, image_url in interest_types
             ],
         )
+        await self._set_cached(cache_key, result)
+        return result
 
     # 관심사 종류별 장르 목록을 조회한다.
     async def list_genres(self, interest_type: str) -> InterestGenreListResponse:
+        cache_key = QueryCache.key(
+            "interests:genres",
+            {"interestType": interest_type},
+        )
+        cached = await self._get_cached(cache_key, InterestGenreListResponse)
+        if cached is not None:
+            return cached
+
         genre_names = await self.interests.find_genres_by_type(interest_type)
-        return InterestGenreListResponse(
+        result = InterestGenreListResponse(
             items=[InterestGenreResponse(name=name) for name in genre_names],
         )
+        await self._set_cached(cache_key, result)
+        return result
 
     # 선택한 관심사를 현재 사용자의 개인 관심사로 저장한다.
     async def select(
@@ -240,3 +284,17 @@ class InterestService:
     def _genres_text(interest: Interest) -> str:
         names = InterestService._genre_names(interest)
         return ", ".join(names) if names else "전체"
+
+    async def _get_cached(self, key: str, model_type: type[T]) -> T | None:
+        if self.query_cache is None:
+            return None
+        return await self.query_cache.get_model(key, model_type)
+
+    async def _set_cached(self, key: str, value: CamelModel) -> None:
+        if self.query_cache is None:
+            return
+        await self.query_cache.set_model(
+            key,
+            value,
+            ttl_seconds=self.CATALOG_CACHE_TTL_SECONDS,
+        )

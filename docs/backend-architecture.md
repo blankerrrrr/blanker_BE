@@ -103,6 +103,7 @@ backend/
       __init__.py
       redis.py
       refresh_token_store.py
+      query_cache.py
     workers/
       __init__.py
       tasks.py
@@ -126,7 +127,7 @@ backend/
 | `app.schemas` | Pydantic 요청/응답 DTO | request body, response data, pagination |
 | `app.services` | 유스케이스와 비즈니스 로직 | 회원가입, 분석 요청 처리, 보관함 저장 |
 | `app.ai` | AI 분석 파이프라인 | Anthropic API 호출, 분류, 위험도 판단, 중복 판단 |
-| `app.cache` | Redis 접근 | refresh token hash 저장, 세션 set 관리 |
+| `app.cache` | Redis 접근 | refresh token hash 저장, 조회 API cache-aside 처리 |
 | `app.workers` | 비동기 작업 확장 지점 | 추후 큐 기반 분석, 배치 작업 |
 
 ## 4. API 라우터 설계
@@ -152,6 +153,7 @@ backend/
 | `services/token_service.py` | access token 발급, refresh token 생성/검증 |
 | `core/security.py` | 비밀번호 해시, JWT encode/decode |
 | `cache/refresh_token_store.py` | Redis refresh token hash 저장/조회/삭제 |
+| `cache/query_cache.py` | 조회 API 응답 DTO cache-aside 저장/조회 |
 | `schemas/auth.py` | 회원가입, 로그인, 토큰 응답 DTO |
 | `api/deps.py` | 현재 사용자 인증 dependency |
 

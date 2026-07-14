@@ -19,8 +19,9 @@ from app.schemas.interest_target import InterestTargetResponse
 class FakeInterestService:
     list_args: tuple[str, str, str | None] | None = None
 
-    def __init__(self, session: object) -> None:
+    def __init__(self, session: object, query_cache: object | None = None) -> None:
         self.session = session
+        self.query_cache = query_cache
 
     async def list(
         self,

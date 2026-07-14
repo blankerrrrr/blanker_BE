@@ -3,6 +3,7 @@ from collections.abc import AsyncGenerator
 from fastapi import Header
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.cache.query_cache import QueryCache
 from app.cache.redis import create_redis_client
 from app.cache.refresh_token_store import RefreshTokenStore
 from app.core.error_codes import ErrorCode
@@ -20,6 +21,14 @@ async def get_refresh_token_store() -> AsyncGenerator[RefreshTokenStore, None]:
     redis = create_redis_client()
     try:
         yield RefreshTokenStore(redis)
+    finally:
+        await redis.aclose()
+
+
+async def get_query_cache() -> AsyncGenerator[QueryCache, None]:
+    redis = create_redis_client()
+    try:
+        yield QueryCache(redis)
     finally:
         await redis.aclose()
 
