@@ -81,6 +81,7 @@ def test_list_interests_uses_required_type_and_default_genre(monkeypatch) -> Non
 
     monkeypatch.setattr(interests, "InterestService", FakeInterestService)
     app.dependency_overrides[get_db_session] = fake_db_session
+    app.dependency_overrides[get_current_user_id] = fake_current_user_id
     client = TestClient(app)
 
     response = client.get("/api/interests?interestType=애니메이션")
@@ -92,10 +93,12 @@ def test_list_interests_uses_required_type_and_default_genre(monkeypatch) -> Non
 
 
 def test_list_interests_requires_interest_type() -> None:
+    app.dependency_overrides[get_current_user_id] = fake_current_user_id
     client = TestClient(app)
 
     response = client.get("/api/interests")
 
+    app.dependency_overrides.clear()
     assert response.status_code == 422
 
 
@@ -104,6 +107,7 @@ def test_list_interest_types(monkeypatch) -> None:
 
     monkeypatch.setattr(interests, "InterestService", FakeInterestService)
     app.dependency_overrides[get_db_session] = fake_db_session
+    app.dependency_overrides[get_current_user_id] = fake_current_user_id
     client = TestClient(app)
 
     response = client.get("/api/interests/types")

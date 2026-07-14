@@ -31,3 +31,7 @@ POST {{host}}/api/auth/refresh
 ### 로그아웃
 POST {{host}}/api/auth/logout
 Authorization: Bearer {{accessToken}}
+
+### 회원탈퇴
+DELETE {{host}}/api/auth/me
+Authorization: Bearer {{accessToken}}

@@ -1,0 +1,31 @@
+@host = http://127.0.0.1:8000
+@accessToken =
+
+### 관심사 종류 목록 조회
+GET {{host}}/api/interests/types
+Authorization: Bearer {{accessToken}}
+
+### 관심사 목록 조회
+GET {{host}}/api/interests?interestType=영화
+Authorization: Bearer {{accessToken}}
+
+### 관심사 선택
+POST {{host}}/api/interests/select
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "interestIds": ["interest_1"]
+}
+
+### 관심사 직접 등록
+POST {{host}}/api/interests/targets
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "type": "WORK",
+  "name": "테스트 작품",
+  "aliases": ["테스트 별칭"],
+  "keywords": ["테스트 키워드"]
+}

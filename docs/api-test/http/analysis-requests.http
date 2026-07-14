@@ -2,7 +2,7 @@
 @accessToken =
 
 ### 웹 콘텐츠 분석 요청
-POST {{host}}/api/analysis-requests
+POST {{host}}/api/analyses
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 

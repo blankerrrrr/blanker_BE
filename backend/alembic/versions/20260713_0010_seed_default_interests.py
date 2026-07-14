@@ -6,6 +6,7 @@ Create Date: 2026-07-14
 """
 
 from collections.abc import Sequence
+from datetime import datetime
 
 import sqlalchemy as sa
 
@@ -49,8 +50,8 @@ def upgrade() -> None:
                 "title": title,
                 "genre": genre,
                 "image_url": None,
-                "created_at": sa.func.now(),
-                "updated_at": sa.func.now(),
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow(),
             }
             for item_id, public_id, interest_type, title, genre in INTERESTS
         ],
