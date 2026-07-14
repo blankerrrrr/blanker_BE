@@ -1,4 +1,7 @@
-# 관심 대상 삭제 API
+> **이 엔드포인트는 제거되었습니다.**
+> 관심사 제거는 [PUT-api-interest-targets.md](./PUT-api-interest-targets.md)의 동기화 요청으로 처리하세요.
+
+# 관심 대상 삭제 API (Deprecated)
 
 `DELETE /api/interest-targets/{interestTargetId}`
 

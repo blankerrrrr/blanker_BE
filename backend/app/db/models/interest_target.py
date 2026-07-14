@@ -30,6 +30,11 @@ class InterestTarget(Base):
         ForeignKey("users.user_id"),
         index=True,
     )
+    interest_id: Mapped[str | None] = mapped_column(
+        String(64),
+        index=True,
+        nullable=True,
+    )
     type: Mapped[str] = mapped_column(String(20))
     name: Mapped[str] = mapped_column(String(200))
     aliases: Mapped[list[str]] = mapped_column(JSON, default=list)

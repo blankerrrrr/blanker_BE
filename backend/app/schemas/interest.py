@@ -36,3 +36,18 @@ class InterestSelectRequest(CamelModel):
 
 class InterestSelectResponse(CamelModel):
     items: list[InterestTargetResponse]
+
+
+class SelectedInterestResponse(CamelModel):
+    interest_target_id: str
+    interest_id: str
+    interest_type: str
+    interest_type_image_url: str | None = None
+    title: str
+    genre: str
+    image_url: str | None = None
+    created_at: datetime | None = None
+
+
+class SelectedInterestListResponse(CamelModel):
+    items: list[SelectedInterestResponse]

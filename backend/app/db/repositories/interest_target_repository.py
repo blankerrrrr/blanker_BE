@@ -53,5 +53,32 @@ class InterestTargetRepository:
             "interest_target",
         )
 
+    async def find_catalog_targets_by_user_id(
+        self,
+        user_id: str,
+    ) -> list[InterestTarget]:
+        result = await self.session.execute(
+            select(InterestTarget)
+            .where(
+                InterestTarget.user_id == user_id,
+                InterestTarget.interest_id.is_not(None),
+            )
+            .order_by(InterestTarget.created_at.desc()),
+        )
+        return list(result.scalars().all())
+
+    async def find_catalog_target_by_interest_id(
+        self,
+        user_id: str,
+        interest_id: str,
+    ) -> InterestTarget | None:
+        result = await self.session.execute(
+            select(InterestTarget).where(
+                InterestTarget.user_id == user_id,
+                InterestTarget.interest_id == interest_id,
+            ),
+        )
+        return result.scalar_one_or_none()
+
     async def delete(self, interest_target: InterestTarget) -> None:
         await self.session.delete(interest_target)

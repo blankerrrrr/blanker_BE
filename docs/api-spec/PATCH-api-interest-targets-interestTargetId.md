@@ -1,4 +1,7 @@
-# 관심 대상 수정 API
+> **이 엔드포인트는 제거되었습니다.**
+> 관심사 선택 변경은 [PUT-api-interest-targets.md](./PUT-api-interest-targets.md)를 사용하세요.
+
+# 관심 대상 수정 API (Deprecated)
 
 `PATCH /api/interest-targets/{interestTargetId}`
 
