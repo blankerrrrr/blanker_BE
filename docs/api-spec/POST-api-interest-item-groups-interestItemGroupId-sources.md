@@ -1,4 +1,7 @@
-# 중복 그룹 출처 추가 API
+> **이 엔드포인트는 제거되었습니다.**
+> 사용자 주도 병합 흐름이 기획에서 제외되어 API를 제거했습니다.
+
+# 중복 그룹 출처 추가 API (Deprecated)
 
 `POST /api/interest-item-groups/{interestItemGroupId}/sources`
 
