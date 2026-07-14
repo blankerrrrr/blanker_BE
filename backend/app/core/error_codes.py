@@ -119,6 +119,16 @@ class ErrorCode(StrEnum):
         status.HTTP_500_INTERNAL_SERVER_ERROR,
         "분석 처리에 실패했습니다.",
     )
+    SCREENSHOT_FAILED = (
+        "SCREENSHOT_FAILED",
+        status.HTTP_502_BAD_GATEWAY,
+        "스크린샷 캡처에 실패했습니다.",
+    )
+    OCR_FAILED = (
+        "OCR_FAILED",
+        status.HTTP_500_INTERNAL_SERVER_ERROR,
+        "텍스트 추출에 실패했습니다.",
+    )
     BLOCK_SETTING_INVALID_SENSITIVITY = (
         "BLOCK_SETTING_INVALID_SENSITIVITY",
         status.HTTP_400_BAD_REQUEST,

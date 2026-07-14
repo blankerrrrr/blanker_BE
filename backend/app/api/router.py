@@ -9,6 +9,7 @@ from app.api import (
     interest_items,
     interest_targets,
     interests,
+    screenshot_analysis_requests,
 )
 
 api_router = APIRouter()
@@ -47,4 +48,9 @@ api_router.include_router(
     interest_item_groups.router,
     prefix="/interest-item-groups",
     tags=["interest-item-groups"],
+)
+api_router.include_router(
+    screenshot_analysis_requests.router,
+    prefix="/screenshot-analysis-requests",
+    tags=["screenshot-analysis-requests"],
 )
