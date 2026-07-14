@@ -10,16 +10,8 @@ services:
     depends_on:
       - postgres
       - redis
-      - webtoon-api
-
-  webtoon-api:
-    build:
-      context: ./webtoon-api
-    expose:
-      - "3000"
-    environment:
-      NODE_ENV: development
-      PORT: 3000
+    networks:
+      - blanker-network
 
   nginx:
     image: nginx:1.27-alpine
@@ -34,6 +26,8 @@ services:
       - /var/www/certbot:/var/www/certbot:ro
     depends_on:
       - api
+    networks:
+      - blanker-network
 
   postgres:
     image: postgres:16-alpine
@@ -45,11 +39,19 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - blanker-network
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    networks:
+      - blanker-network
 
 volumes:
   postgres-data:
+
+networks:
+  blanker-network:
+    name: blanker-network
