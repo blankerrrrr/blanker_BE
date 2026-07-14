@@ -55,6 +55,8 @@ class Settings(BaseSettings):
         default=None,
         alias="KOREA_WEBTOON_API_URL",
     )
+    tesseract_cmd: str | None = Field(default=None, alias="TESSERACT_CMD")
+    tessdata_prefix: str | None = Field(default=None, alias="TESSDATA_PREFIX")
 
 
 settings = Settings()
