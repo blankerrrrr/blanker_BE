@@ -10,7 +10,12 @@ from app.db.base import Base
 class Interest(Base):
     __tablename__ = "interests"
     __table_args__ = (
-        UniqueConstraint("title", "genre", name="uk_interests_title_genre"),
+        UniqueConstraint(
+            "interest_type",
+            "title",
+            "genre",
+            name="uk_interests_type_title_genre",
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -18,6 +23,11 @@ class Interest(Base):
         String(64),
         unique=True,
         index=True,
+        nullable=True,
+    )
+    interest_type: Mapped[str] = mapped_column(String(50))
+    interest_type_image_url: Mapped[str | None] = mapped_column(
+        String(1000),
         nullable=True,
     )
     title: Mapped[str] = mapped_column(String(200))

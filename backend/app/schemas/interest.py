@@ -8,6 +8,8 @@ from app.schemas.interest_target import InterestTargetResponse
 
 class InterestResponse(CamelModel):
     interest_id: str
+    interest_type: str
+    interest_type_image_url: str | None = None
     title: str
     genre: str
     image_url: str | None = None
@@ -17,6 +19,15 @@ class InterestResponse(CamelModel):
 
 class InterestListResponse(CamelModel):
     items: list[InterestResponse]
+
+
+class InterestTypeResponse(CamelModel):
+    name: str
+    image_url: str | None = None
+
+
+class InterestTypeListResponse(CamelModel):
+    items: list[InterestTypeResponse]
 
 
 class InterestSelectRequest(CamelModel):

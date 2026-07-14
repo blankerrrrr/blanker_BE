@@ -11,6 +11,8 @@ from app.schemas.interest import (
     InterestResponse,
     InterestSelectRequest,
     InterestSelectResponse,
+    InterestTypeListResponse,
+    InterestTypeResponse,
 )
 from app.schemas.interest_target import InterestTargetResponse
 
@@ -22,10 +24,25 @@ class InterestService:
         self.interest_targets = InterestTargetRepository(session)
 
     # DB에 저장된 온보딩용 관심사 목록을 조회한다.
-    async def list(self) -> InterestListResponse:
-        interests = await self.interests.find_all()
+    async def list(
+        self,
+        interest_type: str,
+        genre: str,
+        keyword: str | None,
+    ) -> InterestListResponse:
+        interests = await self.interests.find_all(interest_type, genre, keyword)
         return InterestListResponse(
             items=[self._to_response(interest) for interest in interests],
+        )
+
+    # DB에 저장된 관심사 종류 목록을 중복 없이 조회한다.
+    async def list_types(self) -> InterestTypeListResponse:
+        interest_types = await self.interests.find_types()
+        return InterestTypeListResponse(
+            items=[
+                InterestTypeResponse(name=name, image_url=image_url)
+                for name, image_url in interest_types
+            ],
         )
 
     # 선택한 관심사를 현재 사용자의 개인 관심사로 저장한다.
@@ -68,7 +85,7 @@ class InterestService:
             type="WORK",
             name=interest.title,
             aliases=[],
-            keywords=[interest.genre],
+            keywords=[interest.interest_type, interest.genre],
         )
         await self.interest_targets.save(target)
         return target
@@ -78,6 +95,8 @@ class InterestService:
     def _to_response(interest: Interest) -> InterestResponse:
         return InterestResponse(
             interest_id=interest.interest_id,
+            interest_type=interest.interest_type,
+            interest_type_image_url=interest.interest_type_image_url,
             title=interest.title,
             genre=interest.genre,
             image_url=interest.image_url,

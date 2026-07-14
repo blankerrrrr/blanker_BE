@@ -7,7 +7,7 @@
 | 테이블                    | 설명                         | 주요 기능                 |
 |------------------------|----------------------------|-----------------------|
 | `users`                | 사용자 계정 정보                  | 회원가입, 로그인, 계정별 데이터 소유 |
-| `interests`            | 온보딩에서 선택 가능한 관심사 카탈로그      | 관심사 조회, 개인 관심사 저장 기준    |
+| `interests`            | 온보딩에서 선택 가능한 관심사 카탈로그      | 종류/장르별 관심사 조회, 개인 관심사 저장 기준 |
 | `interest_targets`     | 사용자가 등록한 관심 작품, 인물, 주제     | 관심 대상 설정, 관련도 판단      |
 | `block_settings`       | 정보 유형별 차단 여부와 민감도          | 차단 유형 및 민감도 설정        |
 | `analysis_requests`    | 웹페이지 분석 요청 단위              | 콘텐츠 분석 요청 이력          |
@@ -58,8 +58,10 @@
 |-------------|--------------|------------------|---------------------------------|
 | `id`        | integer      | PK               | 내부 식별자                          |
 | `interestId` | varchar(64)  | UNIQUE          | 관심사 Public ID. 예: `interest_1` |
+| `interestType` | varchar(50) | NOT NULL       | 관심사 종류. 예: 영화, 드라마, 애니메이션, 소설 |
+| `interestTypeImageUrl` | varchar(1000) | NULL | 관심사 종류 대표 이미지 URL |
 | `title`     | varchar(200) | NOT NULL         | 관심사 제목                          |
-| `genre`     | varchar(100) | NOT NULL         | 관심사 장르                          |
+| `genre`     | varchar(100) | NOT NULL         | 관심사 장르. 관심사 종류와 별도 분류 값        |
 | `imageUrl`  | varchar(1000) | NULL            | 관심사 이미지 URL                     |
 | `createdAt` | timestamptz  | NOT NULL         | 생성 시각                           |
 | `updatedAt` | timestamptz  | NOT NULL         | 수정 시각                           |
@@ -67,7 +69,7 @@
 | 인덱스 | 컬럼 | 설명 |
 | --- | --- | --- |
 | `ix_interests_interest_id` | `interestId` | Public ID 단건 조회 |
-| `uk_interests_title_genre` | `title`, `genre` | 동일 장르 내 관심사 중복 방지 |
+| `uk_interests_type_title_genre` | `interestType`, `title`, `genre` | 동일 종류/장르 내 관심사 중복 방지 |
 
 ### 4.3 `interest_targets`
 
