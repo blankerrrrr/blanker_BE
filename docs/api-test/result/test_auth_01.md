@@ -67,7 +67,6 @@
   - `/api/block-settings` 조회/수정
   - `/api/analysis-requests`
   - `/api/interest-items` 생성/목록/상세
-  - `/api/interest-item-groups/{interestItemGroupId}`
   - `/api/blocked-items` 저장/삭제
 - 실패 및 수정이 필요한 API:
   - `GET /api/blocked-items?page=1&size=20&type=SPOILER`

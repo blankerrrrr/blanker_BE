@@ -3,26 +3,50 @@
 ```mermaid
 erDiagram
     users {
-        varchar id PK
+        integer id PK
+        varchar userId UK
         varchar email UK
         varchar passwordHash
+        boolean isActive
+        timestamptz createdAt
+        timestamptz updatedAt
+    }
+
+    interest_catalog {
+        integer id PK
+        varchar name UK
+        varchar imageUrl
+        timestamptz createdAt
+        timestamptz updatedAt
+    }
+
+    interests {
+        integer id PK
+        varchar interestId UK
+        integer interestCatalogId FK
+        varchar title
+        varchar genre
+        varchar imageUrl
         timestamptz createdAt
         timestamptz updatedAt
     }
 
     interest_targets {
-        varchar id PK
+        integer id PK
+        varchar interestTargetId UK
         varchar userId FK
+        varchar interestId
         varchar type
         varchar name
-        text_array aliases
-        text_array keywords
+        json aliases
+        json keywords
         timestamptz createdAt
         timestamptz updatedAt
     }
 
     block_settings {
-        varchar id PK
+        integer id PK
+        varchar blockSettingId UK
         varchar userId FK
         varchar category
         boolean enabled
@@ -32,7 +56,8 @@ erDiagram
     }
 
     analysis_requests {
-        varchar id PK
+        integer id PK
+        varchar analysisRequestId UK
         varchar userId FK
         text pageUrl
         varchar pageTitle
@@ -40,7 +65,8 @@ erDiagram
     }
 
     analysis_contents {
-        varchar id PK
+        integer id PK
+        varchar analysisContentId UK
         varchar analysisRequestId FK
         varchar clientContentId
         varchar unitType
@@ -53,24 +79,28 @@ erDiagram
     }
 
     analysis_results {
-        varchar id PK
+        integer id PK
+        varchar analysisResultId UK
         varchar analysisContentId FK
-        text_array categories
+        json categories
         varchar riskLevel
         varchar relevanceLevel
         boolean shouldBlock
         text blockReason
-        text_array relatedTopics
+        json relatedTopics
         timestamptz createdAt
     }
 
     blocked_items {
-        varchar id PK
+        integer id PK
+        varchar blockedItemId UK
         varchar userId FK
-        varchar analysisResultId FK
+        varchar analysisRequestId
+        varchar clientContentId
+        varchar interestTargetId FK
         text summary
-        text_array categories
-        text_array relatedTopics
+        json categories
+        json relatedTopics
         text sourceUrl
         text selector
         text positionText
@@ -78,30 +108,17 @@ erDiagram
         timestamptz savedAt
     }
 
-    interest_item_groups {
-        varchar id PK
-        varchar userId FK
-        varchar representativeItemId FK
-        varchar title
-        text summary
-        text_array relatedTopics
-        text duplicateReason
-        int sourceCount
-        timestamptz createdAt
-        timestamptz updatedAt
-    }
-
     interest_items {
-        varchar id PK
+        integer id PK
+        varchar interestItemId UK
         varchar userId FK
-        varchar groupId FK
         varchar title
         text summary
         text contentText
-        text_array relatedTopics
+        json relatedTopics
         text sourceUrl
+        varchar imageUrl
         text selector
-        numeric duplicateScore
         timestamptz discoveredAt
         timestamptz createdAt
     }
@@ -110,13 +127,13 @@ erDiagram
     users ||--o{ block_settings : configures
     users ||--o{ analysis_requests : requests
     users ||--o{ blocked_items : saves
-    users ||--o{ interest_item_groups : owns
     users ||--o{ interest_items : collects
+
+    interest_catalog ||--o{ interests : classifies
+    interests ||--o{ interest_targets : selected_as
 
     analysis_requests ||--o{ analysis_contents : contains
     analysis_contents ||--|| analysis_results : produces
-    analysis_results ||--o{ blocked_items : saved_as
-
-    interest_item_groups ||--o{ interest_items : groups
-    interest_items ||--o| interest_item_groups : representative_of
+    analysis_requests ||--o{ blocked_items : source_of
+    interest_targets ||--o{ blocked_items : groups
 ```
