@@ -1,20 +1,42 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, String, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import DateTime, ForeignKey, String, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.time import utc_now
 from app.db.base import Base
+
+
+class InterestCatalog(Base):
+    __tablename__ = "interest_catalog"
+    __table_args__ = (
+        UniqueConstraint("name", name="uk_interest_catalog_name"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(50))
+    image_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        onupdate=utc_now,
+    )
+
+    interests: Mapped[list["Interest"]] = relationship(back_populates="catalog")
 
 
 class Interest(Base):
     __tablename__ = "interests"
     __table_args__ = (
         UniqueConstraint(
-            "interest_type",
+            "interest_catalog_id",
             "title",
             "genre",
-            name="uk_interests_type_title_genre",
+            name="uk_interests_catalog_title_genre",
         ),
     )
 
@@ -25,10 +47,9 @@ class Interest(Base):
         index=True,
         nullable=True,
     )
-    interest_type: Mapped[str] = mapped_column(String(50))
-    interest_type_image_url: Mapped[str | None] = mapped_column(
-        String(1000),
-        nullable=True,
+    interest_catalog_id: Mapped[int] = mapped_column(
+        ForeignKey("interest_catalog.id"),
+        index=True,
     )
     title: Mapped[str] = mapped_column(String(200))
     genre: Mapped[str] = mapped_column(String(100))
@@ -42,3 +63,5 @@ class Interest(Base):
         default=utc_now,
         onupdate=utc_now,
     )
+
+    catalog: Mapped[InterestCatalog] = relationship(back_populates="interests")

@@ -121,7 +121,7 @@ class InterestService:
                 name=interest.title,
                 interest_id=interest.interest_id,
                 aliases=[],
-                keywords=[interest.interest_type, interest.genre],
+                keywords=[interest.catalog.name, interest.genre],
             )
             await self.interest_targets.save(target)
             new_targets.append(target)
@@ -169,7 +169,7 @@ class InterestService:
             name=interest.title,
             interest_id=interest.interest_id,
             aliases=[],
-            keywords=[interest.interest_type, interest.genre],
+            keywords=[interest.catalog.name, interest.genre],
         )
         await self.interest_targets.save(target)
         return target
@@ -182,8 +182,8 @@ class InterestService:
         return SelectedInterestResponse(
             interest_target_id=target.interest_target_id,
             interest_id=interest.interest_id,
-            interest_type=interest.interest_type,
-            interest_type_image_url=interest.interest_type_image_url,
+            interest_type=interest.catalog.name,
+            interest_type_image_url=interest.catalog.image_url,
             title=interest.title,
             genre=interest.genre,
             image_url=interest.image_url,
@@ -195,8 +195,8 @@ class InterestService:
     def _to_response(interest: Interest) -> InterestResponse:
         return InterestResponse(
             interest_id=interest.interest_id,
-            interest_type=interest.interest_type,
-            interest_type_image_url=interest.interest_type_image_url,
+            interest_type=interest.catalog.name,
+            interest_type_image_url=interest.catalog.image_url,
             title=interest.title,
             genre=interest.genre,
             image_url=interest.image_url,
