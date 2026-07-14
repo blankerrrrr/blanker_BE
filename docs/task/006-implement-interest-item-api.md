@@ -20,13 +20,12 @@
 - 관심 정보 목록 조회, 상세 조회, 수집 저장 API를 추가했다.
 - 관심 대상과 relatedTopics를 비교해 관련성이 낮은 수집 요청을 거부한다.
 - 동일 sourceUrl은 중복 저장하지 않고 기존 항목을 duplicate 응답으로 반환한다.
-- 동일 title은 기존 그룹에 묶고 sourceCount를 증가시키는 MVP 중복 그룹핑을 추가했다.
-- 관심 정보 그룹과 원본 항목 ORM 모델, repository, migration을 추가했다.
+- 현재 구현에서는 `20260714_0012` 이후 관심 정보 그룹 테이블을 사용하지 않고 `interest_items` 원본 항목만 저장한다.
 
 ## 변경된 플로우
 - 요청: 인증된 사용자가 확장 프로그램 또는 분석 서버에서 수집한 관심 정보를 저장한다.
-- 처리: service가 관심 대상 관련성, sourceUrl 중복, title 기반 그룹을 확인한다.
-- 응답: 저장된 관심 정보 ID, 그룹 ID, 중복 여부를 공통 응답 포맷으로 반환한다.
+- 처리: service가 관심 대상 관련성과 sourceUrl 중복을 확인한다.
+- 응답: 저장된 관심 정보 ID와 중복 여부를 공통 응답 포맷으로 반환한다.
 
 ## 검증 내용
 - 실행 명령: `.\\.venv\\Scripts\\python.exe -m ruff check app alembic tests --no-cache`

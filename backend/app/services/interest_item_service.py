@@ -14,6 +14,8 @@ from app.schemas.interest_item import (
     InterestItemDetailResponse,
     InterestItemListItemResponse,
     InterestItemListResponse,
+    InterestItemUrlListResponse,
+    InterestItemUrlResponse,
 )
 
 
@@ -47,6 +49,13 @@ class InterestItemService:
             size=size,
             total_elements=total_elements,
             total_pages=ceil(total_elements / size) if total_elements else 0,
+        )
+
+    # 사용자의 수집 관심 정보 원본 URL 목록을 조회한다.
+    async def list_urls(self, user_id: str) -> InterestItemUrlListResponse:
+        items = await self.interest_items.find_urls(user_id)
+        return InterestItemUrlListResponse(
+            items=[self._to_url_item(item) for item in items],
         )
 
     # 사용자가 소유한 관심 정보 상세를 조회한다.
@@ -134,6 +143,14 @@ class InterestItemService:
             summary=item.summary,
             image_url=item.image_url,
             related_topics=item.related_topics,
+            discovered_at=item.discovered_at,
+        )
+
+    @staticmethod
+    def _to_url_item(item: InterestItem) -> InterestItemUrlResponse:
+        return InterestItemUrlResponse(
+            interest_item_id=item.interest_item_id or "",
+            source_url=item.source_url,
             discovered_at=item.discovered_at,
         )
 

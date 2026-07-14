@@ -32,6 +32,14 @@ class InterestItemRepository:
         )
         return list(result.scalars().all())
 
+    async def find_urls(self, user_id: str) -> list[InterestItem]:
+        result = await self.session.execute(
+            select(InterestItem)
+            .where(InterestItem.user_id == user_id)
+            .order_by(InterestItem.discovered_at.desc()),
+        )
+        return list(result.scalars().all())
+
     async def get_item_by_id(
         self,
         user_id: str,

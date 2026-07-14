@@ -26,6 +26,16 @@ async def list_interest_items(
     return success_response(result.model_dump(mode="json", by_alias=True))
 
 
+@router.get("/urls")
+async def list_interest_item_urls(
+    user_id: CurrentUserId,
+    session: DbSession,
+) -> dict[str, object]:
+    service = InterestItemService(session)
+    result = await service.list_urls(user_id)
+    return success_response(result.model_dump(mode="json", by_alias=True))
+
+
 @router.get("/{interest_item_id}")
 async def get_interest_item(
     interest_item_id: str,

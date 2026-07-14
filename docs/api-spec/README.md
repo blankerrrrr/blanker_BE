@@ -25,6 +25,7 @@ Base URL: `/api`
 | API-018 | 관심 정보 자동 수집 | 관심 정보 목록 조회 | GET | `/api/interest-items` | Yes | [GET-api-interest-items.md](./GET-api-interest-items.md) |
 | API-019 | 관심 정보 자동 수집 | 관심 정보 상세 조회 | GET | `/api/interest-items/{interestItemId}` | Yes | [GET-api-interest-items-interestItemId.md](./GET-api-interest-items-interestItemId.md) |
 | API-020 | 관심 정보 자동 수집 | 관심 정보 수집 저장 | POST | `/api/interest-items` | Yes | [POST-api-interest-items.md](./POST-api-interest-items.md) |
+| API-021 | 관심 정보 자동 수집 | 관심 정보 URL 목록 조회 | GET | `/api/interest-items/urls` | Yes | [GET-api-interest-items-urls.md](./GET-api-interest-items-urls.md) |
 | API-023 | 온보딩 관심사 | 관심사 목록 조회 | GET | `/api/interests` | Yes | [GET-api-interests.md](./GET-api-interests.md) |
 | API-024 | 온보딩 관심사 | 관심사 종류 목록 조회 | GET | `/api/interests/types` | Yes | [GET-api-interests-types.md](./GET-api-interests-types.md) |
 | API-025 | 온보딩 관심사 | 관심사 선택 | POST | `/api/interests/select` | Yes | [POST-api-interests-select.md](./POST-api-interests-select.md) |

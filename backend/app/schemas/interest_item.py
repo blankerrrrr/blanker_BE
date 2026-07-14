@@ -32,6 +32,16 @@ class InterestItemListResponse(CamelModel):
     total_pages: int
 
 
+class InterestItemUrlResponse(CamelModel):
+    interest_item_id: str
+    source_url: str
+    discovered_at: datetime
+
+
+class InterestItemUrlListResponse(CamelModel):
+    items: list[InterestItemUrlResponse]
+
+
 class InterestItemDetailResponse(CamelModel):
     interest_item_id: str
     title: str
