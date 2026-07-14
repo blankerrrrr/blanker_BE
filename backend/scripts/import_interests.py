@@ -50,6 +50,14 @@ def _split_genres(value: str | None) -> list[str]:
     return list(dict.fromkeys(genres)) or ["전체"]
 
 
+def _first_string(value: Any) -> str | None:
+    if isinstance(value, str):
+        return value
+    if isinstance(value, list):
+        return next((item for item in value if isinstance(item, str)), None)
+    return None
+
+
 def _tmdb_genres(media_type: str) -> dict[int, str]:
     if settings.tmdb_access_token is None:
         return {}
@@ -215,7 +223,7 @@ def fetch_webtoons(limit: int) -> list[InterestCatalogItem]:
             interest_type=InterestType.WEBTOON,
             title=item["title"],
             genres=_split_genres(item.get("genre") or item.get("genreNm")),
-            image_url=item.get("thumbnail"),
+            image_url=_first_string(item.get("thumbnail")),
         )
         for item in payload.get("webtoons", [])
         if item.get("title")

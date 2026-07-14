@@ -17,17 +17,19 @@ GET https://www.kmas.or.kr/openapi/search/bookAndWebtoonList?prvKey={KEY}&title=
 예시: https://www.kmas.or.kr/openapi/search/dcmtDtaList?prvKey=발급키&listSeCd=1&pageNo=0
 ---
 
-## ~~웹툰 — korea-webtoon-api (오픈소스)~~ 
+## 웹툰 — korea-webtoon-api 내부 컨테이너
 
-> 안정성이 낮아 사용하지 않음
+> 외부 Heroku 호스팅 API에 직접 의존하지 않고 Docker Compose 내부 서비스로 실행한다.
 
 공식 호스팅 API가 아니라 오픈소스 프로젝트를 사용합니다.
 
 Base: `https://github.com/HyeokjaeLee/korea-webtoon-api`
+
+Compose 내부 Base URL: `http://webtoon-api:3000`
 
 ```
 # 웹툰 목록/검색
 GET /webtoons?keyword={검색어}&page={n}&perPage={n}&provider={플랫폼}
 ```
 
-정확한 스펙과 현재 사용 가능한 엔드포인트는 프로젝트의 Swagger 문서에서 확인해야 합니다. 공식 상용 API가 아니라 안정성·지속성은 보장되지 않으니, 실서비스라면 자체 수집도 고려하세요.
+정확한 스펙과 현재 사용 가능한 엔드포인트는 프로젝트의 Swagger 문서에서 확인해야 합니다. 공식 상용 API가 아니므로 컨테이너 빌드와 런타임 상태를 배포 환경에서 함께 관리해야 합니다.

@@ -5,9 +5,21 @@ services:
       - "8000"
     env_file:
       - .env
+    environment:
+      KOREA_WEBTOON_API_URL: http://webtoon-api:3000
     depends_on:
       - postgres
       - redis
+      - webtoon-api
+
+  webtoon-api:
+    build:
+      context: ./webtoon-api
+    expose:
+      - "3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
 
   nginx:
     image: nginx:1.27-alpine
