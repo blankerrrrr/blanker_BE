@@ -114,6 +114,16 @@ class ErrorCode(StrEnum):
         status.HTTP_502_BAD_GATEWAY,
         "스크린샷 캡처에 실패했습니다.",
     )
+    WEB_SEARCH_NOT_CONFIGURED = (
+        "WEB_SEARCH_NOT_CONFIGURED",
+        status.HTTP_503_SERVICE_UNAVAILABLE,
+        "웹 검색 API 설정이 필요합니다.",
+    )
+    WEB_SEARCH_FAILED = (
+        "WEB_SEARCH_FAILED",
+        status.HTTP_502_BAD_GATEWAY,
+        "웹 검색 요청에 실패했습니다.",
+    )
     OCR_FAILED = (
         "OCR_FAILED",
         status.HTTP_500_INTERNAL_SERVER_ERROR,

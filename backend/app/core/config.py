@@ -34,6 +34,15 @@ class Settings(BaseSettings):
         default=30,
         alias="AI_REQUEST_TIMEOUT_SECONDS",
     )
+    web_search_api_key: str | None = Field(default=None, alias="WEB_SEARCH_API_KEY")
+    web_search_api_url: str = Field(
+        default="https://api.search.brave.com/res/v1/web/search",
+        alias="WEB_SEARCH_API_URL",
+    )
+    web_search_timeout_seconds: int = Field(
+        default=10,
+        alias="WEB_SEARCH_TIMEOUT_SECONDS",
+    )
     tmdb_access_token: str | None = Field(default=None, alias="TMDB_ACCESS_TOKEN")
     tmdb_api_url: str = Field(
         default="https://api.themoviedb.org/3",

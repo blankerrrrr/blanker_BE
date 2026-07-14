@@ -1,0 +1,6 @@
+@host = http://127.0.0.1:8000
+@accessToken =
+
+### 웹 검색
+GET {{host}}/api/web-search?query=테스트&count=5
+Authorization: Bearer {{accessToken}}
