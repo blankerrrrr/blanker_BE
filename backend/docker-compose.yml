@@ -26,9 +26,9 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: blanker
-      POSTGRES_USER: blanker
-      POSTGRES_PASSWORD: blanker
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
