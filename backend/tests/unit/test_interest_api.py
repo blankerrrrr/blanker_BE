@@ -68,6 +68,24 @@ class FakeInterestService:
         )
 
 
+class FakeInterestTargetService:
+    def __init__(self, session: object) -> None:
+        self.session = session
+
+    async def create(
+        self,
+        user_id: str,
+        request: object,
+    ) -> InterestTargetResponse:
+        return InterestTargetResponse(
+            interest_target_id="interest_target_1",
+            type="WORK",
+            name=f"{user_id}:{request.name}",
+            aliases=["별칭"],
+            keywords=[request.name],
+        )
+
+
 async def fake_db_session() -> AsyncGenerator[object, None]:
     yield object()
 
@@ -133,3 +151,29 @@ def test_select_interests(monkeypatch) -> None:
     app.dependency_overrides.clear()
     assert response.status_code == 200
     assert response.json()["data"]["items"][0]["name"] == "user_1:interest_1"
+
+
+def test_create_interest_target_accepts_name_only(monkeypatch) -> None:
+    from app.api import interests
+
+    monkeypatch.setattr(
+        interests,
+        "InterestTargetService",
+        FakeInterestTargetService,
+    )
+    app.dependency_overrides[get_db_session] = fake_db_session
+    app.dependency_overrides[get_current_user_id] = fake_current_user_id
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/interests/targets",
+        json={"name": "작품명"},
+    )
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 201
+    data = response.json()["data"]
+    assert data["type"] == "WORK"
+    assert data["name"] == "user_1:작품명"
+    assert data["aliases"] == ["별칭"]
+    assert data["keywords"] == ["작품명"]

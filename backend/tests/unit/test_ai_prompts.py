@@ -1,8 +1,10 @@
 from app.ai.prompts import (
     CLASSIFICATION_SYSTEM_PROMPT,
     DUPLICATE_DETECTION_SYSTEM_PROMPT,
+    INTEREST_TARGET_ENRICHMENT_SYSTEM_PROMPT,
     build_classification_user_prompt,
     build_duplicate_detection_user_prompt,
+    build_interest_target_enrichment_user_prompt,
 )
 from app.ai.schemas import AnalysisInput, DuplicateCandidate
 from app.schemas.analysis import ContentUnitType
@@ -51,3 +53,16 @@ def test_build_duplicate_detection_user_prompt_lists_candidates() -> None:
     assert "targetSourceId: target" in prompt
     assert "- sourceId: candidate_1, text: 작품 같은 글" in prompt
     assert "- sourceId: candidate_2, text: 다른 작품" in prompt
+
+
+def test_interest_target_enrichment_prompt_requires_supported_type() -> None:
+    assert "Return only JSON" in INTEREST_TARGET_ENRICHMENT_SYSTEM_PROMPT
+    assert "WORK, PERSON, TOPIC" in INTEREST_TARGET_ENRICHMENT_SYSTEM_PROMPT
+
+
+def test_build_interest_target_enrichment_user_prompt_includes_name() -> None:
+    prompt = build_interest_target_enrichment_user_prompt("작품명")
+
+    assert "name: 작품명" in prompt
+    assert "aliases" in prompt
+    assert "keywords" in prompt

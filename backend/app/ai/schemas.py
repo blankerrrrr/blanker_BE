@@ -74,3 +74,9 @@ class DuplicateResult(CamelModel):
     representative_id: str | None = None
     score: float = 0.0
     reason: str | None = None
+
+
+class InterestTargetEnrichmentResult(CamelModel):
+    type: str = "WORK"
+    aliases: list[str] = Field(default_factory=list)
+    keywords: list[str] = Field(default_factory=list)

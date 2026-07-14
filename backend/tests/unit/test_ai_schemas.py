@@ -1,4 +1,9 @@
-from app.ai.schemas import AnalysisInput, ClassificationResult, DuplicateCandidate
+from app.ai.schemas import (
+    AnalysisInput,
+    ClassificationResult,
+    DuplicateCandidate,
+    InterestTargetEnrichmentResult,
+)
 from app.schemas.analysis import (
     BlockCategory,
     ContentUnitType,
@@ -61,3 +66,11 @@ def test_duplicate_candidate_builds_searchable_text() -> None:
     )
 
     assert candidate.searchable_text == "작품 제목 요약 주인공 엔딩"
+
+
+def test_interest_target_enrichment_result_defaults_to_work() -> None:
+    result = InterestTargetEnrichmentResult()
+
+    assert result.type == "WORK"
+    assert result.aliases == []
+    assert result.keywords == []

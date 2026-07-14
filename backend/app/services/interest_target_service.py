@@ -1,5 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.ai.client import AIClient, AIClientError, AIClientUnavailableError
+from app.ai.schemas import InterestTargetEnrichmentResult
 from app.core.error_codes import ErrorCode
 from app.core.exceptions import AppException
 from app.db.models.interest_target import InterestTarget
@@ -13,9 +15,14 @@ from app.schemas.interest_target import (
 
 
 class InterestTargetService:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(
+        self,
+        session: AsyncSession,
+        ai_client: AIClient | None = None,
+    ) -> None:
         self.session = session
         self.interest_targets = InterestTargetRepository(session)
+        self.ai_client = ai_client or AIClient()
 
     # 사용자의 관심 대상 목록을 조회한다.
     async def list(self, user_id: str) -> InterestTargetListResponse:
@@ -30,9 +37,10 @@ class InterestTargetService:
         user_id: str,
         request: InterestTargetCreateRequest,
     ) -> InterestTargetResponse:
+        enrichment = await self._enrich(request.name)
         existing_target = await self.interest_targets.get_by_type_and_name(
             user_id,
-            request.type.value,
+            enrichment.type,
             request.name,
         )
         if existing_target is not None:
@@ -40,14 +48,34 @@ class InterestTargetService:
 
         target = InterestTarget(
             user_id=user_id,
-            type=request.type.value,
+            type=enrichment.type,
             name=request.name,
-            aliases=request.aliases,
-            keywords=request.keywords,
+            aliases=enrichment.aliases,
+            keywords=enrichment.keywords,
         )
         await self.interest_targets.save(target)
         await self.session.commit()
         return self._to_response(target)
+
+    async def _enrich(self, name: str) -> InterestTargetEnrichmentResult:
+        fallback = InterestTargetEnrichmentResult(
+            type="WORK",
+            aliases=[],
+            keywords=[name],
+        )
+        try:
+            result = await self.ai_client.enrich_interest_target(name)
+        except (AIClientError, AIClientUnavailableError):
+            return fallback
+
+        if result.type not in {"WORK", "PERSON", "TOPIC"}:
+            return fallback
+
+        return InterestTargetEnrichmentResult(
+            type=result.type,
+            aliases=list(dict.fromkeys(result.aliases)),
+            keywords=list(dict.fromkeys(result.keywords or [name])),
+        )
 
     # 사용자가 소유한 관심 대상의 수정 가능한 필드를 갱신한다.
     async def update(

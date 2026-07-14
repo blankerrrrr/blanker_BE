@@ -13,10 +13,7 @@ class InterestTargetType(StrEnum):
 
 
 class InterestTargetCreateRequest(CamelModel):
-    type: InterestTargetType
     name: str
-    aliases: list[str] = Field(default_factory=list)
-    keywords: list[str] = Field(default_factory=list)
 
 
 class InterestTargetUpdateRequest(CamelModel):

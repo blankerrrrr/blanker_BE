@@ -97,6 +97,26 @@ async def test_detect_duplicate_uses_anthropic_json_response() -> None:
 
 
 @pytest.mark.asyncio
+async def test_enrich_interest_target_uses_anthropic_json_response() -> None:
+    anthropic_client = FakeAnthropicClient(
+        """
+        {
+          "type": "WORK",
+          "aliases": ["원제"],
+          "keywords": ["작품명", "주인공"]
+        }
+        """,
+    )
+    client = AIClient(api_key="test-key", anthropic_client=anthropic_client)
+
+    result = await client.enrich_interest_target("작품명")
+
+    assert result.type == "WORK"
+    assert result.aliases == ["원제"]
+    assert result.keywords == ["작품명", "주인공"]
+
+
+@pytest.mark.asyncio
 async def test_classify_content_fails_when_response_is_invalid() -> None:
     client = AIClient(
         api_key="test-key",

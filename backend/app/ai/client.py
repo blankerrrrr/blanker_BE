@@ -6,14 +6,17 @@ from typing import Any
 from app.ai.prompts import (
     CLASSIFICATION_SYSTEM_PROMPT,
     DUPLICATE_DETECTION_SYSTEM_PROMPT,
+    INTEREST_TARGET_ENRICHMENT_SYSTEM_PROMPT,
     build_classification_user_prompt,
     build_duplicate_detection_user_prompt,
+    build_interest_target_enrichment_user_prompt,
 )
 from app.ai.schemas import (
     AnalysisInput,
     ClassificationResult,
     DuplicateCandidate,
     DuplicateResult,
+    InterestTargetEnrichmentResult,
 )
 from app.core.config import settings
 
@@ -78,6 +81,24 @@ class AIClient:
         except ValueError as exc:
             raise AIClientResponseError(
                 "Invalid duplicate detection response.",
+            ) from exc
+
+    async def enrich_interest_target(
+        self,
+        name: str,
+    ) -> InterestTargetEnrichmentResult:
+        self._ensure_enabled()
+        response_content = await self._create_json_response(
+            system_prompt=INTEREST_TARGET_ENRICHMENT_SYSTEM_PROMPT,
+            user_prompt=build_interest_target_enrichment_user_prompt(name),
+        )
+        try:
+            return InterestTargetEnrichmentResult.model_validate_json(
+                response_content,
+            )
+        except ValueError as exc:
+            raise AIClientResponseError(
+                "Invalid interest target enrichment response.",
             ) from exc
 
     def _ensure_enabled(self) -> None:

@@ -24,8 +24,5 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "type": "WORK",
-  "name": "테스트 작품",
-  "aliases": ["테스트 별칭"],
-  "keywords": ["테스트 키워드"]
+  "name": "테스트 작품"
 }
