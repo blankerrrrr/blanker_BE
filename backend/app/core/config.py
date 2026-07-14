@@ -16,6 +16,10 @@ class Settings(BaseSettings):
 
     app_name: str = "blanker API"
     debug: bool = False
+    cors_allow_origins: tuple[str, ...] = Field(
+        default=(),
+        alias="CORS_ALLOW_ORIGINS",
+    )
     database_url: str = Field(
         default="postgresql+asyncpg://blanker:blanker@localhost:5432/blanker",
         alias="DATABASE_URL",
