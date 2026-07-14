@@ -86,5 +86,6 @@ class AuthService:
         if user is None:
             raise AppException(ErrorCode.USER_NOT_FOUND)
         await self.tokens.delete_all_refresh_tokens(user_id)
+        await self.users.delete_owned_data(user_id)
         await self.users.delete(user)
         await self.session.commit()
