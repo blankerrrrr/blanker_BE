@@ -1,6 +1,6 @@
 services:
   api:
-    image: ${DOCKERHUB_USERNAME}/${DOCKERHUB_IMAGE}:latest
+    image: ${API_IMAGE:-blanker-api:local}
     expose:
       - "8000"
     env_file:

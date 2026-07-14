@@ -77,8 +77,12 @@ jobs:
           script: |
             cd ~/app
             export API_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE }}:${{ github.sha }}
+            export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            export DOCKERHUB_IMAGE=${{ secrets.DOCKERHUB_IMAGE }}
             export SERVER_NAME=${{ secrets.SERVER_NAME }}
             echo "Deploying image: $API_IMAGE"
             docker compose pull api
+            docker compose up -d postgres redis
+            docker compose run --rm api uv run --no-dev python scripts/migrate.py upgrade
             docker compose up -d --no-build --force-recreate api nginx
             docker image prune -f
