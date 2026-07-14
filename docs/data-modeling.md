@@ -94,6 +94,7 @@
 | `interest_id` | varchar(64)  | UNIQUE          | 관심사 Public ID. 예: `interest_1` |
 | `interest_catalog_id` | integer | FK, NOT NULL | `interest_catalog.id` |
 | `title`     | varchar(200) | NOT NULL         | 관심사 제목                          |
+| `summary`   | varchar(250) | NULL             | 외부 API에서 가져온 관심사 설명. 없으면 NULL |
 | `image_url`  | varchar(1000) | NULL            | 관심사 이미지 URL                     |
 | `created_at` | timestamptz  | NOT NULL         | 생성 시각                           |
 | `updated_at` | timestamptz  | NOT NULL         | 수정 시각                           |

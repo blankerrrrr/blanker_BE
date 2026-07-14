@@ -51,6 +51,7 @@ class Interest(Base):
         index=True,
     )
     title: Mapped[str] = mapped_column(String(200))
+    summary: Mapped[str | None] = mapped_column(String(250), nullable=True)
     image_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

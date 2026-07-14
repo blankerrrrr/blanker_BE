@@ -1,6 +1,8 @@
 import argparse
 import asyncio
+import html
 import json
+import re
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -55,6 +57,25 @@ def _first_string(value: Any) -> str | None:
         return value
     if isinstance(value, list):
         return next((item for item in value if isinstance(item, str)), None)
+    return None
+
+
+def _summary(value: Any) -> str | None:
+    raw_value = _first_string(value)
+    if raw_value is None:
+        return None
+    text = re.sub(r"<[^>]+>", " ", html.unescape(raw_value))
+    text = " ".join(text.split())
+    if not text:
+        return None
+    return text[:250]
+
+
+def _summary_from_fields(raw_item: dict[str, Any], *keys: str) -> str | None:
+    for key in keys:
+        summary = _summary(raw_item.get(key))
+        if summary is not None:
+            return summary
     return None
 
 
@@ -173,6 +194,7 @@ def _fetch_tmdb_pages(
                         raw_item.get("genre_ids", []),
                         genres,
                     ),
+                    summary=_summary(raw_item.get("overview")),
                     image_url=_tmdb_image(raw_item.get("poster_path")),
                 ),
             )
@@ -222,6 +244,7 @@ def fetch_books(
                     interest_type=InterestType.NOVEL,
                     title=title,
                     genres=_split_genres(raw_item.get("categoryName")),
+                    summary=_summary(raw_item.get("description")),
                     image_url=raw_item.get("cover"),
                 ),
             )
@@ -273,6 +296,11 @@ def fetch_games(
                         if genre.get("name")
                     ]
                     or ["전체"],
+                    summary=_summary_from_fields(
+                        raw_item,
+                        "description_raw",
+                        "description",
+                    ),
                     image_url=raw_item.get("background_image"),
                 ),
             )
@@ -283,6 +311,23 @@ def fetch_games(
             break
         page += 1
     return items
+
+
+def _fetch_kopis_summary(performance_id: str | None) -> str | None:
+    if not performance_id:
+        return None
+    try:
+        node = ET.fromstring(
+            _read_text(
+                f"{settings.kopis_api_url}/pblprfr/{performance_id}"
+                f"?service={settings.kopis_service_key}",
+            ),
+        ).find("db")
+    except Exception:
+        return None
+    if node is None:
+        return None
+    return _summary(node.findtext("sty"))
 
 
 def fetch_musicals(
@@ -316,6 +361,7 @@ def fetch_musicals(
                     interest_type=InterestType.MUSICAL,
                     title=title,
                     genres=_split_genres(node.findtext("genrenm") or "뮤지컬"),
+                    summary=_fetch_kopis_summary(node.findtext("mt20id")),
                     image_url=node.findtext("poster"),
                 ),
             )
@@ -359,6 +405,14 @@ def fetch_webtoons(
                     title=title,
                     genres=_split_genres(
                         raw_item.get("genre") or raw_item.get("genreNm"),
+                    ),
+                    summary=_summary_from_fields(
+                        raw_item,
+                        "summary",
+                        "description",
+                        "synopsis",
+                        "story",
+                        "contents",
                     ),
                     image_url=_first_string(raw_item.get("thumbnail")),
                 ),

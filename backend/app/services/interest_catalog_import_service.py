@@ -17,6 +17,7 @@ class InterestCatalogItem:
     interest_type: InterestType
     title: str
     genres: list[str]
+    summary: str | None = None
     image_url: str | None = None
     interest_type_image_url: str | None = None
 
@@ -43,11 +44,13 @@ class InterestCatalogImportService:
                     Interest(
                         interest_catalog_id=catalog.id,
                         title=item.title,
+                        summary=self._normalize_summary(item.summary),
                         image_url=item.image_url,
                     ),
                 )
                 imported_count += 1
             else:
+                existing_interest.summary = self._normalize_summary(item.summary)
                 existing_interest.image_url = item.image_url
                 await self.interests.save(existing_interest)
 
@@ -114,3 +117,12 @@ class InterestCatalogImportService:
             await self.interests.save_genre_mapping(
                 InterestGenreMapping(interest_id=interest.id, genre_id=genre.id),
             )
+
+    @staticmethod
+    def _normalize_summary(value: str | None) -> str | None:
+        if value is None:
+            return None
+        summary = " ".join(value.split())
+        if not summary:
+            return None
+        return summary[:250]

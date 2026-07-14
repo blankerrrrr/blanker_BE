@@ -32,6 +32,7 @@ erDiagram
         varchar interestId UK
         integer interestCatalogId FK
         varchar title
+        varchar summary
         varchar imageUrl
         timestamptz createdAt
         timestamptz updatedAt

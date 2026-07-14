@@ -24,6 +24,7 @@ class InterestResponse(CamelModel):
     interest_type_image_url: str | None = None
     title: str
     genre: str
+    summary: str | None = None
     image_url: str | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
@@ -73,6 +74,7 @@ class SelectedInterestResponse(CamelModel):
     interest_type_image_url: str | None = None
     title: str
     genre: str
+    summary: str | None = None
     image_url: str | None = None
     created_at: datetime | None = None
 

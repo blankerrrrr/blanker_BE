@@ -28,6 +28,7 @@
         "interestTypeImageUrl": "https://example.com/type.jpg",
         "title": "작품명",
         "genre": "액션",
+        "summary": "작품 설명",
         "imageUrl": "https://example.com/image.jpg",
         "createdAt": "2026-07-14T05:00:00Z"
       }

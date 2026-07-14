@@ -38,6 +38,7 @@ class FakeInterestService:
                     interest_type_image_url="https://example.com/type.jpg",
                     title="작품명",
                     genre=genre,
+                    summary="작품 설명",
                     image_url="https://example.com/image.jpg",
                 ),
             ],
@@ -120,6 +121,7 @@ def test_list_interests_uses_required_type_and_default_genre(monkeypatch) -> Non
     assert response.status_code == 200
     assert FakeInterestService.list_args == ("애니메이션", "전체", None)
     assert response.json()["data"]["items"][0]["interestType"] == "애니메이션"
+    assert response.json()["data"]["items"][0]["summary"] == "작품 설명"
 
 
 def test_list_interests_requires_interest_type() -> None:

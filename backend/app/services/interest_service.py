@@ -253,6 +253,7 @@ class InterestService:
             interest_type_image_url=interest.catalog.image_url,
             title=interest.title,
             genre=InterestService._genres_text(interest),
+            summary=interest.summary,
             image_url=interest.image_url,
             created_at=target.created_at,
         )
@@ -266,6 +267,7 @@ class InterestService:
             interest_type_image_url=interest.catalog.image_url,
             title=interest.title,
             genre=InterestService._genres_text(interest),
+            summary=interest.summary,
             image_url=interest.image_url,
             created_at=interest.created_at,
             updated_at=interest.updated_at,
