@@ -167,21 +167,19 @@ def fetch_musicals(limit: int) -> list[InterestCatalogItem]:
 
 
 def fetch_webtoons(limit: int) -> list[InterestCatalogItem]:
-    if settings.kmas_api_key is None:
+    if settings.korea_webtoon_api_url is None:
         return []
-    query = urllib.parse.urlencode(
-        {"prvKey": settings.kmas_api_key, "listSeCd": 1, "pageNo": 0, "viewItemCnt": limit},
-    )
-    payload = _read_json(f"{settings.kmas_base_url}/search/dcmtDtaList?{query}")
+    query = urllib.parse.urlencode({"perPage": limit})
+    payload = _read_json(f"{settings.korea_webtoon_api_url}/webtoons?{query}")
     return [
         InterestCatalogItem(
             interest_type=InterestType.WEBTOON,
-            title=item["titleNm"],
-            genre=item.get("genreNm") or "전체",
-            image_url=item.get("imgPath"),
+            title=item["title"],
+            genre=item.get("genre") or "전체",
+            image_url=item.get("thumbnail"),
         )
-        for item in payload.get("result", {}).get("list", [])
-        if item.get("titleNm")
+        for item in payload.get("webtoons", [])
+        if item.get("title")
     ]
 
 

@@ -39,8 +39,7 @@ class Settings(BaseSettings):
     aladin_api_url: str = Field(default="http://www.aladin.co.kr/ttb/api", alias="ALADIN_API_URL")
     kopis_service_key: str | None = Field(default=None, alias="KOPIS_SERVICE_KEY")
     kopis_api_url: str = Field(default="http://www.kopis.or.kr/openApi/restful", alias="KOPIS_API_URL")
-    kmas_api_key: str | None = Field(default=None, alias="KMAS_API_KEY")
-    kmas_base_url: str = Field(default="https://www.kmas.or.kr/openapi", alias="KMAS_BASE_URL")
+    korea_webtoon_api_url: str | None = Field(default=None, alias="KOREA_WEBTOON_API_URL")
 
 
 settings = Settings()
