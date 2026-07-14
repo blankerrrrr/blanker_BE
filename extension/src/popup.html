@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blanker</title>
+    <link rel="stylesheet" href="./popup.css">
+  </head>
+  <body>
+    <main class="popup">
+      <header class="header">
+        <h1>Blanker</h1>
+        <label class="switch">
+          <input id="enabled" type="checkbox">
+          <span>Enabled</span>
+        </label>
+      </header>
+
+      <section class="field">
+        <label for="accessToken">Access Token</label>
+        <textarea id="accessToken" rows="4" spellcheck="false"></textarea>
+      </section>
+
+      <section class="actions">
+        <button id="saveToken" type="button">Save</button>
+        <button id="analyzePage" type="button">Analyze</button>
+      </section>
+
+      <p id="status" class="status" role="status"></p>
+    </main>
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>
