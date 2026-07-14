@@ -6,6 +6,7 @@ from app.core.error_codes import ErrorCode
 from app.core.exceptions import AppException
 from app.db.models.blocked_item import BlockedItem
 from app.db.repositories.blocked_item_repository import BlockedItemRepository
+from app.db.repositories.interest_target_repository import InterestTargetRepository
 from app.schemas.analysis import BlockCategory
 from app.schemas.blocked_item import (
     BlockedItemCreateRequest,
@@ -19,6 +20,7 @@ class BlockedItemService:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
         self.blocked_items = BlockedItemRepository(session)
+        self.interest_targets = InterestTargetRepository(session)
 
     # 사용자의 보관함 항목을 페이지와 카테고리 조건으로 조회한다.
     async def list(
@@ -26,12 +28,19 @@ class BlockedItemService:
         user_id: str,
         page: int,
         size: int,
+        interest_target_id: str,
         category: BlockCategory | None,
     ) -> BlockedItemListResponse:
+        await self._validate_interest_target(user_id, interest_target_id)
         category_value = category.value if category is not None else None
-        total_elements = await self.blocked_items.count(user_id, category_value)
+        total_elements = await self.blocked_items.count(
+            user_id,
+            interest_target_id,
+            category_value,
+        )
         items = await self.blocked_items.find_all(
             user_id,
+            interest_target_id,
             category_value,
             offset=(page - 1) * size,
             limit=size,
@@ -50,8 +59,10 @@ class BlockedItemService:
         user_id: str,
         request: BlockedItemCreateRequest,
     ) -> BlockedItemCreateResponse:
+        await self._validate_interest_target(user_id, request.interest_target_id)
         existing_item = await self.blocked_items.get_by_source(
             user_id,
+            request.interest_target_id,
             request.source_url,
             request.selector,
         )
@@ -62,6 +73,7 @@ class BlockedItemService:
             user_id=user_id,
             analysis_request_id=request.analysis_request_id,
             client_content_id=request.client_content_id,
+            interest_target_id=request.interest_target_id,
             summary=request.summary,
             categories=[category.value for category in request.categories],
             related_topics=request.related_topics,
@@ -76,6 +88,15 @@ class BlockedItemService:
             saved_at=item.saved_at,
         )
 
+    async def _validate_interest_target(
+        self,
+        user_id: str,
+        interest_target_id: str,
+    ) -> None:
+        target = await self.interest_targets.get_by_id(user_id, interest_target_id)
+        if target is None:
+            raise AppException(ErrorCode.INTEREST_TARGET_NOT_FOUND)
+
     # 사용자가 소유한 보관함 항목을 삭제한다.
     async def delete(self, user_id: str, blocked_item_id: str) -> None:
         item = await self.blocked_items.get_by_id(user_id, blocked_item_id)
@@ -89,6 +110,7 @@ class BlockedItemService:
     def _to_list_item(item: BlockedItem) -> BlockedItemListItemResponse:
         return BlockedItemListItemResponse(
             blocked_item_id=item.blocked_item_id,
+            interest_target_id=item.interest_target_id,
             summary=item.summary,
             categories=[BlockCategory(category) for category in item.categories],
             related_topics=item.related_topics,

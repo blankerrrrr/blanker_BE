@@ -1,9 +1,10 @@
 @host = http://127.0.0.1:8000
 @accessToken =
 @blockedItemId =
+@interestTargetId =
 
 ### 보관함 목록 조회
-GET {{host}}/api/blocked-items?page=1&size=20&type=SPOILER
+GET {{host}}/api/blocked-items?interestTargetId={{interestTargetId}}&page=1&size=20&type=SPOILER
 Authorization: Bearer {{accessToken}}
 
 ### 보관함 저장
@@ -14,6 +15,7 @@ Content-Type: application/json
 {
   "analysisRequestId": "analysis_test",
   "clientContentId": "node_001",
+  "interestTargetId": "{{interestTargetId}}",
   "summary": "차단된 콘텐츠 요약",
   "categories": ["SPOILER"],
   "relatedTopics": ["테스트 작품"],

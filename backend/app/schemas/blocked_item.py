@@ -9,6 +9,7 @@ from app.schemas.common import CamelModel
 class BlockedItemCreateRequest(CamelModel):
     analysis_request_id: str | None = None
     client_content_id: str | None = None
+    interest_target_id: str
     summary: str
     categories: list[BlockCategory]
     related_topics: list[str] = Field(default_factory=list)
@@ -19,6 +20,7 @@ class BlockedItemCreateRequest(CamelModel):
 
 class BlockedItemListItemResponse(CamelModel):
     blocked_item_id: str
+    interest_target_id: str | None = None
     summary: str
     categories: list[BlockCategory]
     related_topics: list[str]

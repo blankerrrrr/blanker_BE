@@ -20,12 +20,13 @@ CategoryFilter = Annotated[BlockCategory | None, Query()]
 async def list_blocked_items(
     user_id: CurrentUserId,
     session: DbSession,
+    interest_target_id: Annotated[str, Query(alias="interestTargetId")],
     page: int = Query(default=1, ge=1),
     size: int = Query(default=20, ge=1, le=100),
     type: CategoryFilter = None,
 ) -> dict[str, object]:
     service = BlockedItemService(session)
-    result = await service.list(user_id, page, size, type)
+    result = await service.list(user_id, page, size, interest_target_id, type)
     return success_response(result.model_dump(mode="json", by_alias=True))
 
 

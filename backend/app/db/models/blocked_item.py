@@ -12,9 +12,10 @@ class BlockedItem(Base):
     __table_args__ = (
         UniqueConstraint(
             "user_id",
+            "interest_target_id",
             "source_url",
             "selector",
-            name="uk_blocked_items_user_source_selector",
+            name="uk_blocked_items_user_target_source_selector",
         ),
     )
 
@@ -32,6 +33,12 @@ class BlockedItem(Base):
     )
     analysis_request_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     client_content_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    interest_target_id: Mapped[str | None] = mapped_column(
+        String(64),
+        ForeignKey("interest_targets.interest_target_id"),
+        index=True,
+        nullable=True,
+    )
     summary: Mapped[str] = mapped_column(Text)
     categories: Mapped[list[str]] = mapped_column(JSON, default=list)
     related_topics: Mapped[list[str]] = mapped_column(JSON, default=list)

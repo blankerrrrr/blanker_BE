@@ -10,9 +10,15 @@ class BlockedItemRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def count(self, user_id: str, category: str | None) -> int:
+    async def count(
+        self,
+        user_id: str,
+        interest_target_id: str,
+        category: str | None,
+    ) -> int:
         statement = select(func.count()).select_from(BlockedItem).where(
             BlockedItem.user_id == user_id,
+            BlockedItem.interest_target_id == interest_target_id,
         )
         if category is not None:
             statement = statement.where(
@@ -24,11 +30,15 @@ class BlockedItemRepository:
     async def find_all(
         self,
         user_id: str,
+        interest_target_id: str,
         category: str | None,
         offset: int,
         limit: int,
     ) -> list[BlockedItem]:
-        statement = select(BlockedItem).where(BlockedItem.user_id == user_id)
+        statement = select(BlockedItem).where(
+            BlockedItem.user_id == user_id,
+            BlockedItem.interest_target_id == interest_target_id,
+        )
         if category is not None:
             statement = statement.where(
                 cast(BlockedItem.categories, JSONB).contains([category]),
@@ -50,12 +60,14 @@ class BlockedItemRepository:
     async def get_by_source(
         self,
         user_id: str,
+        interest_target_id: str,
         source_url: str,
         selector: str | None,
     ) -> BlockedItem | None:
         result = await self.session.execute(
             select(BlockedItem).where(
                 BlockedItem.user_id == user_id,
+                BlockedItem.interest_target_id == interest_target_id,
                 BlockedItem.source_url == source_url,
                 BlockedItem.selector == selector,
             ),
