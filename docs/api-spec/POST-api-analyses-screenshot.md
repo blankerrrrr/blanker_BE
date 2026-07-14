@@ -4,9 +4,9 @@
 
 ## 설명
 
-서버가 지정된 URL의 스크린샷을 직접 캡처하고, Tesseract OCR로 텍스트를 추출하여 스포일러 및 유해 콘텐츠를 분석한다. 기존 DOM 기반 분석 방식의 대안으로, 클라이언트가 DOM을 분석할 필요 없이 URL만 제공하면 된다.
+클라이언트가 캡처한 스크린샷 이미지를 서버로 전송하면, 서버가 Tesseract OCR로 텍스트를 추출하여 스포일러 및 유해 콘텐츠를 분석한다. 확장 프로그램은 `chrome.tabs.captureVisibleTab()` 등으로 현재 탭 이미지를 캡처한 뒤 업로드한다.
 
-> **주의:** 서버에 Tesseract OCR 실행 파일과 Playwright 브라우저 바이너리가 설치되어 있어야 동작한다.
+> **주의:** 서버에 Tesseract OCR 실행 파일이 설치되어 있어야 동작한다.
 
 ## REQUEST
 
@@ -16,19 +16,23 @@
 | --- | --- | --- |
 | `Authorization` | Yes | `Bearer {accessToken}` |
 
-### Body
-
-```json
-{
-  "url": "https://example.com/article",
-  "title": "페이지 제목"
-}
-```
+### Body `multipart/form-data`
 
 | 필드 | 타입 | 필수 | 설명 |
 | --- | --- | --- | --- |
-| `url` | string | Yes | 분석할 페이지 URL |
+| `url` | string | Yes | 이미지가 캡처된 페이지 URL |
 | `title` | string | No | 페이지 제목 |
+| `image` | file | Yes | 캡처된 스크린샷 이미지 파일. 예: PNG, JPEG |
+
+### 예시
+
+```bash
+curl -X POST "http://localhost:8000/api/analyses/screenshot" \
+  -H "Authorization: Bearer {accessToken}" \
+  -F "url=https://example.com/article" \
+  -F "title=페이지 제목" \
+  -F "image=@screenshot.png;type=image/png"
+```
 
 ## RESPONSE `200`
 
@@ -56,5 +60,4 @@
 | 코드 | HTTP Status | 설명 |
 | --- | --- | --- |
 | `AUTH_UNAUTHORIZED` | 401 | 인증 토큰 없음 또는 유효하지 않음 |
-| `SCREENSHOT_FAILED` | 502 | 페이지 스크린샷 캡처 실패 (URL 접근 불가 등) |
 | `OCR_FAILED` | 500 | 스크린샷에서 텍스트 추출 실패 |

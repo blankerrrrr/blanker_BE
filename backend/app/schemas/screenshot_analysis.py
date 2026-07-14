@@ -9,6 +9,7 @@ from app.schemas.common import CamelModel
 
 class ScreenshotAnalysisRequestCreate(CamelModel):
     url: str
+    image_bytes: bytes
     title: str | None = None
 
 

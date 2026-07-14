@@ -2,7 +2,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.content_classifier import RuleBasedContentClassifier
 from app.core.ocr import extract_text
-from app.core.screenshot import take_screenshot
 from app.db.models.analysis import AnalysisContent, AnalysisRequest, AnalysisResult
 from app.db.repositories.analysis_repository import AnalysisRepository
 from app.db.repositories.interest_target_repository import InterestTargetRepository
@@ -32,8 +31,7 @@ class ScreenshotAnalysisService:
         user_id: str,
         request: ScreenshotAnalysisRequestCreate,
     ) -> ScreenshotAnalysisRequestResponse:
-        image_bytes = await take_screenshot(request.url)
-        extracted_text = await extract_text(image_bytes)
+        extracted_text = await extract_text(request.image_bytes)
 
         interest_terms = await self._load_interest_terms(user_id)
 

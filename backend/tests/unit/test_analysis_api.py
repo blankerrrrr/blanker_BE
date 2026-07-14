@@ -48,6 +48,7 @@ class FakeScreenshotAnalysisService:
         user_id: str,
         request: ScreenshotAnalysisRequestCreate,
     ) -> ScreenshotAnalysisRequestResponse:
+        assert request.image_bytes == b"fake image"
         return ScreenshotAnalysisRequestResponse(
             analysis_request_id="req_screenshot_1",
             extracted_text="추출된 텍스트",
@@ -68,6 +69,7 @@ class FakeScreenshotAnalysisServiceBlocked:
         user_id: str,
         request: ScreenshotAnalysisRequestCreate,
     ) -> ScreenshotAnalysisRequestResponse:
+        assert request.image_bytes == b"fake image"
         return ScreenshotAnalysisRequestResponse(
             analysis_request_id="req_screenshot_2",
             extracted_text="스포일러 포함 텍스트",
@@ -160,7 +162,8 @@ def test_create_screenshot_analysis_returns_extracted_text(monkeypatch) -> None:
 
     response = client.post(
         "/api/analyses/screenshot",
-        json={"url": "https://example.com", "title": "스크린샷 테스트"},
+        data={"url": "https://example.com", "title": "스크린샷 테스트"},
+        files={"image": ("screenshot.png", b"fake image", "image/png")},
     )
 
     app.dependency_overrides.clear()
@@ -186,7 +189,8 @@ def test_create_screenshot_analysis_blocked_includes_block_action(monkeypatch) -
 
     response = client.post(
         "/api/analyses/screenshot",
-        json={"url": "https://example.com"},
+        data={"url": "https://example.com"},
+        files={"image": ("screenshot.png", b"fake image", "image/png")},
     )
 
     app.dependency_overrides.clear()
@@ -202,7 +206,8 @@ def test_create_screenshot_analysis_requires_auth() -> None:
 
     response = client.post(
         "/api/analyses/screenshot",
-        json={"url": "https://example.com"},
+        data={"url": "https://example.com"},
+        files={"image": ("screenshot.png", b"fake image", "image/png")},
     )
 
     assert response.status_code == 401
@@ -212,7 +217,10 @@ def test_create_screenshot_analysis_requires_url() -> None:
     app.dependency_overrides[get_current_user_id] = fake_current_user_id
     client = TestClient(app, raise_server_exceptions=False)
 
-    response = client.post("/api/analyses/screenshot", json={})
+    response = client.post(
+        "/api/analyses/screenshot",
+        files={"image": ("screenshot.png", b"fake image", "image/png")},
+    )
 
     app.dependency_overrides.clear()
     assert response.status_code == 422
