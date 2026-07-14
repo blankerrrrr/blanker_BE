@@ -91,6 +91,19 @@ async def me(
     return success_response(result.model_dump(mode="json", by_alias=True))
 
 
+@router.delete("/me")
+async def withdraw(
+    response: Response,
+    user_id: CurrentUserId,
+    session: DbSession,
+    refresh_token_store: RefreshStore,
+) -> dict[str, object]:
+    service = AuthService(session, refresh_token_store)
+    await service.withdraw(user_id)
+    response.delete_cookie(key="refreshToken", path="/api/auth")
+    return success_response(None)
+
+
 def _set_refresh_token_cookie(response: Response, refresh_token: str) -> None:
     response.set_cookie(
         key="refreshToken",

@@ -37,6 +37,10 @@ class TokenService:
         new_refresh_token = await self.issue_refresh_token(user_id)
         return user_id, new_refresh_token
 
+    # 유저의 모든 refresh token을 저장소에서 삭제한다.
+    async def delete_all_refresh_tokens(self, user_id: str) -> None:
+        await self.refresh_token_store.delete_all_by_user_id(user_id)
+
     # 전달된 refresh token이 있으면 저장소에서 삭제한다.
     async def delete_refresh_token(self, refresh_token: str | None) -> None:
         if refresh_token is None:

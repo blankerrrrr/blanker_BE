@@ -79,3 +79,12 @@ class AuthService:
         if user is None:
             raise AppException(ErrorCode.USER_NOT_FOUND)
         return UserResponse.model_validate(user)
+
+    # 회원탈퇴
+    async def withdraw(self, user_id: str) -> None:
+        user = await self.users.get_by_user_id(user_id)
+        if user is None:
+            raise AppException(ErrorCode.USER_NOT_FOUND)
+        await self.tokens.delete_all_refresh_tokens(user_id)
+        await self.users.delete(user)
+        await self.session.commit()

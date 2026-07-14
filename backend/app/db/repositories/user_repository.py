@@ -19,3 +19,6 @@ class UserRepository:
 
     async def save(self, user: User) -> User:
         return await save_with_public_id(self.session, user, "user_id", "user")
+
+    async def delete(self, user: User) -> None:
+        await self.session.delete(user)

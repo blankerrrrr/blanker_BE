@@ -21,6 +21,11 @@ class RefreshTokenStore:
     async def delete(self, user_id: str, token_id: str) -> None:
         await self.redis.delete(self._key(user_id, token_id))
 
+    async def delete_all_by_user_id(self, user_id: str) -> None:
+        keys = await self.redis.keys(f"auth:refresh:{user_id}:*")
+        if keys:
+            await self.redis.delete(*keys)
+
     @staticmethod
     def _key(user_id: str, token_id: str) -> str:
         return f"auth:refresh:{user_id}:{token_id}"
