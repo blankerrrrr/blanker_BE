@@ -1,0 +1,15 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "id": 215482,
+      "name": "폭싹 속았수다",
+      "poster_path": "/def456.jpg",
+      "genre_ids": [18],
+      "overview": "...",
+      "popularity": 120.3
+    }
+  ],
+  "total_pages": 500,
+  "total_results": 10000
+}

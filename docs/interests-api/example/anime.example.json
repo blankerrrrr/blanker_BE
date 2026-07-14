@@ -1,0 +1,15 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "id": 114410,
+      "name": "귀멸의 칼날: 무한열차편",
+      "poster_path": "/ghi789.jpg",
+      "genre_ids": [16, 28],
+      "overview": "...",
+      "popularity": 210.7
+    }
+  ],
+  "total_pages": 500,
+  "total_results": 10000
+}

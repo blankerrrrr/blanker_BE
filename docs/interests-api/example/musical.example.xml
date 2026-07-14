@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dbs>
+  <db>
+    <mt20id>PF123456</mt20id>
+    <prfnm>레미제라블</prfnm>
+    <prfpdfrom>2026.03.01</prfpdfrom>
+    <prfpdto>2026.06.30</prfpdto>
+    <fcltynm>블루스퀘어 신한카드홀</fcltynm>
+    <poster>http://www.kopis.or.kr/upload/pfmPoster/PF_PF123456.jpg</poster>
+    <genrenm>뮤지컬</genrenm>
+    <prfstate>공연중</prfstate>
+    <openrun>N</openrun>
+  </db>
+</dbs>

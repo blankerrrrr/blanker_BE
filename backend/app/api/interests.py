@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user_id, get_db_session
 from app.core.response import success_response
-from app.schemas.interest import InterestSelectRequest
+from app.schemas.interest import InterestSelectRequest, InterestType
 from app.schemas.interest_target import InterestTargetCreateRequest
 from app.services.interest_service import InterestService
 from app.services.interest_target_service import InterestTargetService
@@ -20,7 +20,7 @@ CurrentUserId = Annotated[str, Depends(get_current_user_id)]
 async def list_interests(
     session: DbSession,
     user_id: CurrentUserId,
-    interest_type: Annotated[str, Query(alias="interestType")],
+    interest_type: Annotated[InterestType, Query(alias="interestType")],
     genre: str = "전체",
     keyword: str | None = None,
 ) -> dict[str, object]:

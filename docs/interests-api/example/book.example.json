@@ -1,0 +1,18 @@
+{
+  "version": "20131101",
+  "logo": "http://image.aladin.co.kr/img/logo/aladin_logo.gif",
+  "title": "알라딘 베스트셀러",
+  "totalResults": 100,
+  "item": [
+    {
+      "title": "해리 포터와 마법사의 돌",
+      "author": "조앤 롤링",
+      "pubDate": "2019-12-10",
+      "description": "...",
+      "isbn13": "9788983921208",
+      "cover": "https://image.aladin.co.kr/product/21229/98/cover/k082635038_1.jpg",
+      "categoryName": "국내도서>소설/시/희곡>영미소설",
+      "publisher": "문학수첩"
+    }
+  ]
+}

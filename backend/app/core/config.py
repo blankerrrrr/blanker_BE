@@ -31,9 +31,16 @@ class Settings(BaseSettings):
         alias="AI_REQUEST_TIMEOUT_SECONDS",
     )
     tmdb_access_token: str | None = Field(default=None, alias="TMDB_ACCESS_TOKEN")
+    tmdb_api_url: str = Field(default="https://api.themoviedb.org/3", alias="TMDB_API_URL")
+    tmdb_image_url: str = Field(default="https://image.tmdb.org/t/p/w500", alias="TMDB_IMAGE_URL")
     rawg_api_key: str | None = Field(default=None, alias="RAWG_API_KEY")
+    rawg_api_url: str = Field(default="https://api.rawg.io/api", alias="RAWG_API_URL")
     aladin_ttb_key: str | None = Field(default=None, alias="ALADIN_TTB_KEY")
+    aladin_api_url: str = Field(default="http://www.aladin.co.kr/ttb/api", alias="ALADIN_API_URL")
     kopis_service_key: str | None = Field(default=None, alias="KOPIS_SERVICE_KEY")
+    kopis_api_url: str = Field(default="http://www.kopis.or.kr/openApi/restful", alias="KOPIS_API_URL")
+    kmas_api_key: str | None = Field(default=None, alias="KMAS_API_KEY")
+    kmas_base_url: str = Field(default="https://www.kmas.or.kr/openapi", alias="KMAS_BASE_URL")
 
 
 settings = Settings()

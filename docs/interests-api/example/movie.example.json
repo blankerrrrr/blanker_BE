@@ -1,0 +1,15 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "id": 1233069,
+      "title": "옵세션",
+      "poster_path": "/abc123.jpg",
+      "genre_ids": [18, 10749],
+      "overview": "...",
+      "popularity": 98.5
+    }
+  ],
+  "total_pages": 500,
+  "total_results": 10000
+}

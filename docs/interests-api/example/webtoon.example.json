@@ -1,0 +1,18 @@
+{
+  "result": {
+    "total": 500,
+    "pageNo": 0,
+    "viewItemCnt": 10,
+    "list": [
+      {
+        "sno": "12345",
+        "titleNm": "전지적 독자 시점",
+        "writerNm": "싱숑",
+        "publishOrgnztNm": "네이버웹툰",
+        "genreNm": "판타지",
+        "imgPath": "https://www.kmas.or.kr/images/webtoon/12345.jpg",
+        "listSeCd": "1"
+      }
+    ]
+  }
+}

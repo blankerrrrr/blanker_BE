@@ -1,9 +1,21 @@
 from datetime import datetime
+from enum import StrEnum
 
 from pydantic import Field
 
 from app.schemas.common import CamelModel
 from app.schemas.interest_target import InterestTargetResponse
+
+
+class InterestType(StrEnum):
+    MOVIE = "영화"
+    DRAMA = "드라마"
+    ANIMATION = "애니메이션"
+    NOVEL = "소설"
+    GAME = "게임"
+    MUSICAL = "뮤지컬"
+    WEBTOON = "웹툰"
+    OTHER = "기타"
 
 
 class InterestResponse(CamelModel):

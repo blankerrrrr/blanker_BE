@@ -4,11 +4,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.interest import Interest
 from app.db.repositories.interest_repository import InterestRepository
+from app.schemas.interest import InterestType
 
 
 @dataclass(frozen=True)
 class InterestCatalogItem:
-    interest_type: str
+    interest_type: InterestType
     title: str
     genre: str
     image_url: str | None = None
