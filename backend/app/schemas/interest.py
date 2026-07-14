@@ -42,6 +42,14 @@ class InterestTypeListResponse(CamelModel):
     items: list[InterestTypeResponse]
 
 
+class SelectedInterestTypeResponse(CamelModel):
+    name: str
+
+
+class SelectedInterestTypeListResponse(CamelModel):
+    items: list[SelectedInterestTypeResponse]
+
+
 class InterestGenreResponse(CamelModel):
     name: str
 

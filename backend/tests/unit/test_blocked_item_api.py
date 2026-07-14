@@ -21,10 +21,12 @@ class FakeBlockedItemService:
         self,
         user_id: str,
         interest_target_id: str | None,
+        interest_type: str | None,
         category: BlockCategory | None,
     ) -> BlockedItemListResponse:
         assert user_id == "user_1"
         assert interest_target_id == "interest_target_1"
+        assert interest_type == "애니메이션"
         assert category == BlockCategory.SPOILER
         return BlockedItemListResponse(
             root=[
@@ -74,7 +76,7 @@ def test_list_blocked_items_filters_by_interest_target(monkeypatch) -> None:
     client = TestClient(app)
 
     response = client.get(
-        "/api/blocked-items?interestTargetId=interest_target_1&type=SPOILER",
+        "/api/blocked-items?interestTargetId=interest_target_1&interestType=애니메이션&type=SPOILER",
     )
 
     app.dependency_overrides.clear()

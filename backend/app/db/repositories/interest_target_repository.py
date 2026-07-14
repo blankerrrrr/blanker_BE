@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.db.models.interest import Interest, InterestCatalog
 from app.db.models.interest_target import InterestTarget
 from app.db.repositories.public_id import save_with_public_id
 
@@ -9,11 +10,37 @@ class InterestTargetRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def find_all_by_user_id(self, user_id: str) -> list[InterestTarget]:
+    async def find_all_by_user_id(
+        self,
+        user_id: str,
+        interest_type: str | None = None,
+    ) -> list[InterestTarget]:
+        statement = select(InterestTarget).where(InterestTarget.user_id == user_id)
+        if interest_type is not None:
+            statement = (
+                statement.join(
+                    Interest,
+                    Interest.interest_id == InterestTarget.interest_id,
+                )
+                .join(InterestCatalog)
+                .where(InterestCatalog.name == interest_type)
+            )
         result = await self.session.execute(
-            select(InterestTarget)
+            statement.order_by(InterestTarget.created_at.desc()),
+        )
+        return list(result.scalars().all())
+
+    async def find_selected_type_names(self, user_id: str) -> list[str]:
+        result = await self.session.execute(
+            select(InterestCatalog.name)
+            .join(Interest)
+            .join(
+                InterestTarget,
+                InterestTarget.interest_id == Interest.interest_id,
+            )
             .where(InterestTarget.user_id == user_id)
-            .order_by(InterestTarget.created_at.desc()),
+            .group_by(InterestCatalog.id, InterestCatalog.name)
+            .order_by(InterestCatalog.id.asc()),
         )
         return list(result.scalars().all())
 

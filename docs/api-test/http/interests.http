@@ -9,6 +9,10 @@ Authorization: Bearer {{accessToken}}
 GET {{host}}/api/interests/genres?interestType=게임
 Authorization: Bearer {{accessToken}}
 
+### 개인 관심사 분류 목록 조회
+GET {{host}}/api/interest-targets/types
+Authorization: Bearer {{accessToken}}
+
 ### 관심사 목록 조회
 GET {{host}}/api/interests?interestType=영화
 Authorization: Bearer {{accessToken}}

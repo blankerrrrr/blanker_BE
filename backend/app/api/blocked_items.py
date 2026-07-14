@@ -22,10 +22,11 @@ async def list_blocked_items(
     user_id: CurrentUserId,
     session: DbSession,
     interest_target_id: Annotated[str | None, Query(alias="interestTargetId")] = None,
+    interest_type: Annotated[str | None, Query(alias="interestType")] = None,
     type: CategoryFilter = None,
 ) -> dict[str, object]:
     service = BlockedItemService(session)
-    result = await service.list(user_id, interest_target_id, type)
+    result = await service.list(user_id, interest_target_id, interest_type, type)
     return success_response(jsonable_encoder(result.root, by_alias=True))
 
 

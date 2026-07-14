@@ -1,10 +1,10 @@
 # 보관함 목록 조회 API
 
-`GET /api/blocked-items?interestTargetId=interest_target_1&type=SPOILER`
+`GET /api/blocked-items?interestType=애니메이션&type=SPOILER`
 
 ## 설명
 
-사용자가 나중에 보기 보관함에 저장한 차단 콘텐츠 목록을 관심 대상 제목별로 조회한다. `interestTargetId`를 전달하면 해당 관심 대상만 조회하고, 전달하지 않으면 사용자의 모든 관심 대상을 반환한다. 보관함 항목이 없는 관심 대상도 빈 배열로 포함한다.
+사용자가 나중에 보기 보관함에 저장한 차단 콘텐츠 목록을 관심 대상 제목별로 조회한다. `interestType`을 전달하면 해당 관심사 분류에 속한 항목만 조회한다. 필터를 전달하지 않으면 사용자의 모든 관심 대상을 반환하며, 보관함 항목이 없는 관심 대상도 빈 배열로 포함한다.
 
 ## REQUEST
 
@@ -17,6 +17,7 @@
 | 필드 | 필수 | 기본값 | 설명 |
 | --- | --- | --- | --- |
 | `interestTargetId` | No | - | 조회할 관심 대상 ID |
+| `interestType` | No | - | `interest_catalog.name` 기준 관심사 분류 필터 |
 | `type` | No | - | 차단 유형 필터. 예: `SPOILER`, `HARMFUL`, `INTEREST` |
 
 ## RESPONSE `200`

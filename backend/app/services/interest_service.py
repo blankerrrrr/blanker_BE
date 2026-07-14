@@ -23,6 +23,8 @@ from app.schemas.interest import (
     InterestTypeResponse,
     SelectedInterestListResponse,
     SelectedInterestResponse,
+    SelectedInterestTypeListResponse,
+    SelectedInterestTypeResponse,
 )
 from app.schemas.interest_target import (
     InterestTargetResponse,
@@ -142,6 +144,16 @@ class InterestService:
             if interest:
                 items.append(self._to_selected_response(target, interest))
         return SelectedInterestListResponse(items=items)
+
+    # 사용자가 선택한 관심사가 속한 관심사 종류만 조회한다.
+    async def list_selected_types(
+        self,
+        user_id: str,
+    ) -> SelectedInterestTypeListResponse:
+        names = await self.interest_targets.find_selected_type_names(user_id)
+        return SelectedInterestTypeListResponse(
+            items=[SelectedInterestTypeResponse(name=name) for name in names],
+        )
 
     # 카탈로그 관심사 선택 목록을 동기화한다 (추가 및 제거).
     async def sync(

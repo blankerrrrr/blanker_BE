@@ -35,6 +35,16 @@ async def list_interest_target_titles(
     return success_response(result.model_dump(mode="json", by_alias=True))
 
 
+@router.get("/types")
+async def list_selected_interest_types(
+    user_id: CurrentUserId,
+    session: DbSession,
+) -> dict[str, object]:
+    service = InterestService(session)
+    result = await service.list_selected_types(user_id)
+    return success_response(result.model_dump(mode="json", by_alias=True))
+
+
 @router.put("")
 async def sync_interest_targets(
     request: InterestTargetSyncRequest,

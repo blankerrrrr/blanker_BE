@@ -25,9 +25,14 @@ class BlockedItemService:
         self,
         user_id: str,
         interest_target_id: str | None,
+        interest_type: str | None,
         category: BlockCategory | None,
     ) -> BlockedItemListResponse:
-        targets = await self._find_list_targets(user_id, interest_target_id)
+        targets = await self._find_list_targets(
+            user_id,
+            interest_target_id,
+            interest_type,
+        )
         category_value = category.value if category is not None else None
 
         target_ids = [
@@ -105,13 +110,24 @@ class BlockedItemService:
         self,
         user_id: str,
         interest_target_id: str | None,
+        interest_type: str | None,
     ):
         if interest_target_id is None:
-            return await self.interest_targets.find_all_by_user_id(user_id)
+            return await self.interest_targets.find_all_by_user_id(
+                user_id,
+                interest_type,
+            )
 
         target = await self.interest_targets.get_by_id(user_id, interest_target_id)
         if target is None:
             raise AppException(ErrorCode.INTEREST_TARGET_NOT_FOUND)
+        if interest_type is not None:
+            targets = await self.interest_targets.find_all_by_user_id(
+                user_id,
+                interest_type,
+            )
+            if all(item.interest_target_id != interest_target_id for item in targets):
+                return []
         return [target]
 
     # 사용자가 소유한 보관함 항목을 삭제한다.

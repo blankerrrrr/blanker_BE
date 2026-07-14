@@ -4,6 +4,10 @@ from fastapi.testclient import TestClient
 
 from app.api.deps import get_current_user_id, get_db_session
 from app.main import app
+from app.schemas.interest import (
+    SelectedInterestTypeListResponse,
+    SelectedInterestTypeResponse,
+)
 from app.schemas.interest_target import (
     InterestTargetTitleListResponse,
     InterestTargetTitleResponse,
@@ -23,6 +27,20 @@ class FakeInterestTargetService:
                     title="작품명",
                 ),
             ],
+        )
+
+
+class FakeInterestService:
+    def __init__(self, session: object) -> None:
+        self.session = session
+
+    async def list_selected_types(
+        self,
+        user_id: str,
+    ) -> SelectedInterestTypeListResponse:
+        assert user_id == "user_1"
+        return SelectedInterestTypeListResponse(
+            items=[SelectedInterestTypeResponse(name="애니메이션")],
         )
 
 
@@ -65,3 +83,18 @@ def test_list_interest_target_titles_requires_auth() -> None:
     response = client.get("/api/interest-targets/titles")
 
     assert response.status_code == 401
+
+
+def test_list_selected_interest_types(monkeypatch) -> None:
+    from app.api import interest_targets
+
+    monkeypatch.setattr(interest_targets, "InterestService", FakeInterestService)
+    app.dependency_overrides[get_db_session] = fake_db_session
+    app.dependency_overrides[get_current_user_id] = fake_current_user_id
+    client = TestClient(app)
+
+    response = client.get("/api/interest-targets/types")
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    assert response.json()["data"]["items"] == [{"name": "애니메이션"}]
