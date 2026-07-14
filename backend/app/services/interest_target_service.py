@@ -10,6 +10,8 @@ from app.schemas.interest_target import (
     InterestTargetCreateRequest,
     InterestTargetListResponse,
     InterestTargetResponse,
+    InterestTargetTitleListResponse,
+    InterestTargetTitleResponse,
     InterestTargetUpdateRequest,
 )
 
@@ -29,6 +31,19 @@ class InterestTargetService:
         targets = await self.interest_targets.find_all_by_user_id(user_id)
         return InterestTargetListResponse(
             items=[self._to_response(target) for target in targets],
+        )
+
+    # 보관함 필터 등에 사용할 관심 대상 ID와 제목만 조회한다.
+    async def list_titles(self, user_id: str) -> InterestTargetTitleListResponse:
+        targets = await self.interest_targets.find_all_by_user_id(user_id)
+        return InterestTargetTitleListResponse(
+            items=[
+                InterestTargetTitleResponse(
+                    interest_target_id=target.interest_target_id,
+                    title=target.name,
+                )
+                for target in targets
+            ],
         )
 
     # 새 관심 대상을 생성하고 사용자 내 중복 등록을 막는다.

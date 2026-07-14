@@ -36,5 +36,14 @@ class InterestTargetListResponse(CamelModel):
     items: list[InterestTargetResponse]
 
 
+class InterestTargetTitleResponse(CamelModel):
+    interest_target_id: str
+    title: str
+
+
+class InterestTargetTitleListResponse(CamelModel):
+    items: list[InterestTargetTitleResponse]
+
+
 class InterestTargetSyncRequest(CamelModel):
     interest_ids: list[str] = Field(min_length=1)

@@ -14,6 +14,7 @@ Base URL: `/api`
 | API-006 | 로그인 및 회원가입 | 회원탈퇴 | DELETE | `/api/auth/me` | Yes | [DELETE-api-auth-me.md](./DELETE-api-auth-me.md) |
 | API-007 | 관심 대상 설정 | 선택한 관심사 목록 조회 | GET | `/api/interest-targets` | Yes | [GET-api-interest-targets.md](./GET-api-interest-targets.md) |
 | API-008 | 관심 대상 설정 | 관심사 선택 동기화 | PUT | `/api/interest-targets` | Yes | [PUT-api-interest-targets.md](./PUT-api-interest-targets.md) |
+| API-009 | 관심 대상 설정 | 관심사 제목 목록 조회 | GET | `/api/interest-targets/titles` | Yes | [GET-api-interest-targets-titles.md](./GET-api-interest-targets-titles.md) |
 | API-011 | 차단 유형 및 민감도 설정 | 차단 설정 조회 | GET | `/api/block-settings` | Yes | [GET-api-block-settings.md](./GET-api-block-settings.md) |
 | API-012 | 차단 유형 및 민감도 설정 | 차단 설정 수정 | PUT | `/api/block-settings` | Yes | [PUT-api-block-settings.md](./PUT-api-block-settings.md) |
 | API-013 | 웹 콘텐츠 분석 | 콘텐츠 분석 요청 | POST | `/api/analyses` | Yes | [POST-api-analyses.md](./POST-api-analyses.md) |
