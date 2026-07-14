@@ -47,7 +47,7 @@ class InterestRepository:
     async def find_types(self) -> list[tuple[str, str | None]]:
         result = await self.session.execute(
             select(InterestCatalog.name, InterestCatalog.image_url).order_by(
-                InterestCatalog.name,
+                InterestCatalog.id.asc(),
             ),
         )
         return [(row[0], row[1]) for row in result.all()]
