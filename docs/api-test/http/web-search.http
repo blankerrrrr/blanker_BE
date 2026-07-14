@@ -4,3 +4,6 @@
 ### 웹 검색
 GET {{host}}/api/web-search?query=테스트&count=5
 Authorization: Bearer {{accessToken}}
+
+### 웹 검색 - 인증 누락
+GET {{host}}/api/web-search?query=테스트&count=5
