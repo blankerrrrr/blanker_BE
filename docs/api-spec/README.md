@@ -26,3 +26,5 @@ Base URL: `/api`
 | API-018 | 관심 정보 자동 수집 | 관심 정보 수집 저장 | POST | `/api/interest-items` | Yes | [POST-api-interest-items.md](./POST-api-interest-items.md) |
 | API-019 | 중복 콘텐츠 통합 | 중복 그룹 상세 조회 | GET | `/api/interest-item-groups/{interestItemGroupId}` | Yes | [GET-api-interest-item-groups-interestItemGroupId.md](./GET-api-interest-item-groups-interestItemGroupId.md) |
 | API-020 | 중복 콘텐츠 통합 | 중복 그룹 병합 | POST | `/api/interest-item-groups/{interestItemGroupId}/sources` | Yes | [POST-api-interest-item-groups-interestItemGroupId-sources.md](./POST-api-interest-item-groups-interestItemGroupId-sources.md) |
+| API-021 | 온보딩 관심사 | 관심사 목록 조회 | GET | `/api/interests` | No | [GET-api-interests.md](./GET-api-interests.md) |
+| API-022 | 온보딩 관심사 | 관심사 선택 | POST | `/api/interests/select` | Yes | [POST-api-interests-select.md](./POST-api-interests-select.md) |

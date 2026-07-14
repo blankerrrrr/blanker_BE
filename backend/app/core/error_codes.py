@@ -69,6 +69,11 @@ class ErrorCode(StrEnum):
         status.HTTP_404_NOT_FOUND,
         "사용자를 찾을 수 없습니다.",
     )
+    INTEREST_NOT_FOUND = (
+        "INTEREST_NOT_FOUND",
+        status.HTTP_404_NOT_FOUND,
+        "관심사를 찾을 수 없습니다.",
+    )
     INTEREST_TARGET_INVALID_TYPE = (
         "INTEREST_TARGET_INVALID_TYPE",
         status.HTTP_400_BAD_REQUEST,

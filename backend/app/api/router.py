@@ -8,10 +8,16 @@ from app.api import (
     interest_item_groups,
     interest_items,
     interest_targets,
+    interests,
 )
 
 api_router = APIRouter()
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+api_router.include_router(
+    interests.router,
+    prefix="/interests",
+    tags=["interests"],
+)
 api_router.include_router(
     interest_targets.router,
     prefix="/interest-targets",
