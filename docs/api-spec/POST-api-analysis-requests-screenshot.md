@@ -1,7 +1,4 @@
-> **이 파일은 잘못된 경로로 작성된 파일입니다.**
-> 올바른 명세는 [POST-api-analysis-requests-screenshot.md](./POST-api-analysis-requests-screenshot.md)를 참고하세요.
-
-# 스크린샷 분석 요청 API (Deprecated)
+# 스크린샷 분석 요청 API
 
 `POST /api/analysis-requests/screenshot`
 

@@ -51,6 +51,6 @@ api_router.include_router(
 )
 api_router.include_router(
     screenshot_analysis_requests.router,
-    prefix="/screenshot-analysis-requests",
-    tags=["screenshot-analysis-requests"],
+    prefix="/analysis-requests/screenshot",
+    tags=["analysis-requests"],
 )
