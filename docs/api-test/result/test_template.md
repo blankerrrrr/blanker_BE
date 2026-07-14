@@ -1,6 +1,7 @@
 - 파일 명 규칙: test_domain_nn.md 
 - 자원 별로 나누어서 파일을 작성하도록 한다.
 - 예시) test_auth_01.md
+- 절대 test_all_00.md나 test_api_00.md로 한꺼번에 작성하지 않는다. 어길 시 결제 끊음
 
 ---
 ## API 테스트 결과
