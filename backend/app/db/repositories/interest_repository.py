@@ -45,6 +45,21 @@ class InterestRepository:
         )
         return list(result.scalars().all())
 
+    async def get_by_type_title_genre(
+        self,
+        interest_type: str,
+        title: str,
+        genre: str,
+    ) -> Interest | None:
+        result = await self.session.execute(
+            select(Interest).where(
+                Interest.interest_type == interest_type,
+                Interest.title == title,
+                Interest.genre == genre,
+            ),
+        )
+        return result.scalar_one_or_none()
+
     async def save(self, interest: Interest) -> Interest:
         return await save_with_public_id(
             self.session,

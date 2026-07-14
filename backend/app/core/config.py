@@ -31,6 +31,10 @@ class Settings(BaseSettings):
         default=30,
         alias="OPENAI_REQUEST_TIMEOUT_SECONDS",
     )
+    tmdb_access_token: str | None = Field(default=None, alias="TMDB_ACCESS_TOKEN")
+    rawg_api_key: str | None = Field(default=None, alias="RAWG_API_KEY")
+    aladin_ttb_key: str | None = Field(default=None, alias="ALADIN_TTB_KEY")
+    kopis_service_key: str | None = Field(default=None, alias="KOPIS_SERVICE_KEY")
 
 
 settings = Settings()
