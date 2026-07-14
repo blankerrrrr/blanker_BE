@@ -11,6 +11,8 @@ __pycache__/
 .idea
 .agents
 *.local
+*.local.*
 TASK.md
+TASK.*.md
 INSTRUCTION.md
 KEYS.md
