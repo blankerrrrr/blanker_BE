@@ -10,5 +10,6 @@ __pycache__/
 .uv-cache
 .idea
 .agents
+*.local
 TASK.md
 INSTRUCTION.md
