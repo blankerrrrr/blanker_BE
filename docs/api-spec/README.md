@@ -30,3 +30,4 @@ Base URL: `/api`
 | API-024 | 온보딩 관심사 | 관심사 종류 목록 조회 | GET | `/api/interests/types` | Yes | [GET-api-interests-types.md](./GET-api-interests-types.md) |
 | API-025 | 온보딩 관심사 | 관심사 선택 | POST | `/api/interests/select` | Yes | [POST-api-interests-select.md](./POST-api-interests-select.md) |
 | API-026 | 온보딩 관심사 | 관심사 검색 및 생성 | POST | `/api/interests/targets` | Yes | [POST-api-interests-targets.md](./POST-api-interests-targets.md) |
+| API-027 | 온보딩 관심사 | 관심사 장르 목록 조회 | GET | `/api/interests/genres` | Yes | [GET-api-interests-genres.md](./GET-api-interests-genres.md) |

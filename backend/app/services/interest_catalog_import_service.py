@@ -2,7 +2,12 @@ from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models.interest import Interest, InterestCatalog
+from app.db.models.interest import (
+    Interest,
+    InterestCatalog,
+    InterestGenre,
+    InterestGenreMapping,
+)
 from app.db.repositories.interest_repository import InterestRepository
 from app.schemas.interest import InterestType
 
@@ -11,7 +16,7 @@ from app.schemas.interest import InterestType
 class InterestCatalogItem:
     interest_type: InterestType
     title: str
-    genre: str
+    genres: list[str]
     image_url: str | None = None
     interest_type_image_url: str | None = None
 
@@ -29,25 +34,28 @@ class InterestCatalogImportService:
                 item.interest_type.value,
                 item.interest_type_image_url,
             )
-            existing_interest = await self.interests.get_by_type_title_genre(
+            existing_interest = await self.interests.get_by_type_title(
                 item.interest_type.value,
                 item.title,
-                item.genre,
             )
             if existing_interest is None:
-                await self.interests.save(
+                existing_interest = await self.interests.save(
                     Interest(
                         interest_catalog_id=catalog.id,
                         title=item.title,
-                        genre=item.genre,
                         image_url=item.image_url,
                     ),
                 )
                 imported_count += 1
-                continue
+            else:
+                existing_interest.image_url = item.image_url
+                await self.interests.save(existing_interest)
 
-            existing_interest.image_url = item.image_url
-            await self.interests.save(existing_interest)
+            for genre_name in item.genres or ["전체"]:
+                await self._find_or_create_genre_mapping(
+                    existing_interest,
+                    genre_name,
+                )
 
         await self.session.commit()
         return imported_count
@@ -85,3 +93,24 @@ class InterestCatalogImportService:
         return await self.interests.save_catalog(
             InterestCatalog(name=name, image_url=image_url),
         )
+
+    async def _find_or_create_genre_mapping(
+        self,
+        interest: Interest,
+        genre_name: str,
+    ) -> None:
+        normalized_name = genre_name.strip()
+        if not normalized_name:
+            return
+
+        genre = await self.interests.get_genre_by_name(normalized_name)
+        if genre is None:
+            genre = await self.interests.save_genre(
+                InterestGenre(name=normalized_name),
+            )
+
+        mapping = await self.interests.get_genre_mapping(interest.id, genre.id)
+        if mapping is None:
+            await self.interests.save_genre_mapping(
+                InterestGenreMapping(interest_id=interest.id, genre_id=genre.id),
+            )

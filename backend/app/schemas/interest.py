@@ -42,6 +42,14 @@ class InterestTypeListResponse(CamelModel):
     items: list[InterestTypeResponse]
 
 
+class InterestGenreResponse(CamelModel):
+    name: str
+
+
+class InterestGenreListResponse(CamelModel):
+    items: list[InterestGenreResponse]
+
+
 class InterestSelectRequest(CamelModel):
     interest_ids: list[str] = Field(min_length=1)
 

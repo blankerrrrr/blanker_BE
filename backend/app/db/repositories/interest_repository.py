@@ -2,7 +2,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.db.models.interest import Interest, InterestCatalog
+from app.db.models.interest import (
+    Interest,
+    InterestCatalog,
+    InterestGenre,
+    InterestGenreMapping,
+)
 from app.db.repositories.public_id import save_with_public_id
 
 
@@ -19,18 +24,25 @@ class InterestRepository:
         statement = (
             select(Interest)
             .join(InterestCatalog)
-            .options(selectinload(Interest.catalog))
+            .options(
+                selectinload(Interest.catalog),
+                selectinload(Interest.genre_mappings).selectinload(
+                    InterestGenreMapping.genre,
+                ),
+            )
             .where(InterestCatalog.name == interest_type)
         )
         if keyword:
             statement = statement.where(Interest.title.ilike(f"%{keyword}%"))
         elif genre != "전체":
-            statement = statement.where(Interest.genre == genre)
+            statement = statement.join(InterestGenreMapping).join(InterestGenre).where(
+                InterestGenre.name == genre,
+            )
 
         result = await self.session.execute(
-            statement.order_by(Interest.genre.asc(), Interest.title.asc()),
+            statement.order_by(Interest.title.asc()),
         )
-        return list(result.scalars().all())
+        return list(result.scalars().unique().all())
 
     async def find_types(self) -> list[tuple[str, str | None]]:
         result = await self.session.execute(
@@ -45,25 +57,45 @@ class InterestRepository:
             return []
         result = await self.session.execute(
             select(Interest)
-            .options(selectinload(Interest.catalog))
+            .options(
+                selectinload(Interest.catalog),
+                selectinload(Interest.genre_mappings).selectinload(
+                    InterestGenreMapping.genre,
+                ),
+            )
             .where(Interest.interest_id.in_(interest_ids)),
         )
         return list(result.scalars().all())
 
-    async def get_by_type_title_genre(
+    async def find_genres_by_type(self, interest_type: str) -> list[str]:
+        result = await self.session.execute(
+            select(InterestGenre.name)
+            .join(InterestGenreMapping)
+            .join(Interest)
+            .join(InterestCatalog)
+            .where(InterestCatalog.name == interest_type)
+            .distinct()
+            .order_by(InterestGenre.name.asc()),
+        )
+        return list(result.scalars().all())
+
+    async def get_by_type_title(
         self,
         interest_type: str,
         title: str,
-        genre: str,
     ) -> Interest | None:
         result = await self.session.execute(
             select(Interest)
             .join(InterestCatalog)
-            .options(selectinload(Interest.catalog))
+            .options(
+                selectinload(Interest.catalog),
+                selectinload(Interest.genre_mappings).selectinload(
+                    InterestGenreMapping.genre,
+                ),
+            )
             .where(
                 InterestCatalog.name == interest_type,
                 Interest.title == title,
-                Interest.genre == genre,
             ),
         )
         return result.scalar_one_or_none()
@@ -79,6 +111,40 @@ class InterestRepository:
         await self.session.flush()
         await self.session.refresh(catalog)
         return catalog
+
+    async def get_genre_by_name(self, name: str) -> InterestGenre | None:
+        result = await self.session.execute(
+            select(InterestGenre).where(InterestGenre.name == name),
+        )
+        return result.scalar_one_or_none()
+
+    async def save_genre(self, genre: InterestGenre) -> InterestGenre:
+        self.session.add(genre)
+        await self.session.flush()
+        await self.session.refresh(genre)
+        return genre
+
+    async def get_genre_mapping(
+        self,
+        interest_id: int,
+        genre_id: int,
+    ) -> InterestGenreMapping | None:
+        result = await self.session.execute(
+            select(InterestGenreMapping).where(
+                InterestGenreMapping.interest_id == interest_id,
+                InterestGenreMapping.genre_id == genre_id,
+            ),
+        )
+        return result.scalar_one_or_none()
+
+    async def save_genre_mapping(
+        self,
+        mapping: InterestGenreMapping,
+    ) -> InterestGenreMapping:
+        self.session.add(mapping)
+        await self.session.flush()
+        await self.session.refresh(mapping)
+        return mapping
 
     async def save(self, interest: Interest) -> Interest:
         return await save_with_public_id(

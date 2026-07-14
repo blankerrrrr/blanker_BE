@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.error_codes import ErrorCode
@@ -7,6 +9,8 @@ from app.db.models.interest_target import InterestTarget
 from app.db.repositories.interest_repository import InterestRepository
 from app.db.repositories.interest_target_repository import InterestTargetRepository
 from app.schemas.interest import (
+    InterestGenreListResponse,
+    InterestGenreResponse,
     InterestListResponse,
     InterestResponse,
     InterestSelectRequest,
@@ -48,6 +52,13 @@ class InterestService:
                 InterestTypeResponse(name=name, image_url=image_url)
                 for name, image_url in interest_types
             ],
+        )
+
+    # 관심사 종류별 장르 목록을 조회한다.
+    async def list_genres(self, interest_type: str) -> InterestGenreListResponse:
+        genre_names = await self.interests.find_genres_by_type(interest_type)
+        return InterestGenreListResponse(
+            items=[InterestGenreResponse(name=name) for name in genre_names],
         )
 
     # 선택한 관심사를 현재 사용자의 개인 관심사로 저장한다.
@@ -121,7 +132,7 @@ class InterestService:
                 name=interest.title,
                 interest_id=interest.interest_id,
                 aliases=[],
-                keywords=[interest.catalog.name, interest.genre],
+                keywords=[interest.catalog.name, *self._genre_names(interest)],
             )
             await self.interest_targets.save(target)
             new_targets.append(target)
@@ -169,7 +180,7 @@ class InterestService:
             name=interest.title,
             interest_id=interest.interest_id,
             aliases=[],
-            keywords=[interest.catalog.name, interest.genre],
+            keywords=[interest.catalog.name, *self._genre_names(interest)],
         )
         await self.interest_targets.save(target)
         return target
@@ -185,7 +196,7 @@ class InterestService:
             interest_type=interest.catalog.name,
             interest_type_image_url=interest.catalog.image_url,
             title=interest.title,
-            genre=interest.genre,
+            genre=InterestService._genres_text(interest),
             image_url=interest.image_url,
             created_at=target.created_at,
         )
@@ -198,7 +209,7 @@ class InterestService:
             interest_type=interest.catalog.name,
             interest_type_image_url=interest.catalog.image_url,
             title=interest.title,
-            genre=interest.genre,
+            genre=InterestService._genres_text(interest),
             image_url=interest.image_url,
             created_at=interest.created_at,
             updated_at=interest.updated_at,
@@ -216,3 +227,16 @@ class InterestService:
             created_at=target.created_at,
             updated_at=target.updated_at,
         )
+
+    @staticmethod
+    def _genre_names(interest: Interest) -> list[str]:
+        return [
+            mapping.genre.name
+            for mapping in interest.genre_mappings
+            if mapping.genre is not None
+        ]
+
+    @staticmethod
+    def _genres_text(interest: Interest) -> str:
+        names = InterestService._genre_names(interest)
+        return ", ".join(names) if names else "전체"

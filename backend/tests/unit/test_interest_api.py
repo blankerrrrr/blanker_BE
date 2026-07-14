@@ -5,6 +5,8 @@ from fastapi.testclient import TestClient
 from app.api.deps import get_current_user_id, get_db_session
 from app.main import app
 from app.schemas.interest import (
+    InterestGenreListResponse,
+    InterestGenreResponse,
     InterestListResponse,
     InterestResponse,
     InterestSelectResponse,
@@ -47,6 +49,15 @@ class FakeInterestService:
                     name="애니메이션",
                     image_url="https://example.com/anime.jpg",
                 ),
+            ],
+        )
+
+    async def list_genres(self, interest_type: str) -> InterestGenreListResponse:
+        assert interest_type == "게임"
+        return InterestGenreListResponse(
+            items=[
+                InterestGenreResponse(name="Action"),
+                InterestGenreResponse(name="Adventure"),
             ],
         )
 
@@ -133,6 +144,24 @@ def test_list_interest_types(monkeypatch) -> None:
     app.dependency_overrides.clear()
     assert response.status_code == 200
     assert response.json()["data"]["items"][0]["name"] == "애니메이션"
+
+
+def test_list_interest_genres(monkeypatch) -> None:
+    from app.api import interests
+
+    monkeypatch.setattr(interests, "InterestService", FakeInterestService)
+    app.dependency_overrides[get_db_session] = fake_db_session
+    app.dependency_overrides[get_current_user_id] = fake_current_user_id
+    client = TestClient(app)
+
+    response = client.get("/api/interests/genres?interestType=게임")
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    assert response.json()["data"]["items"] == [
+        {"name": "Action"},
+        {"name": "Adventure"},
+    ]
 
 
 def test_select_interests(monkeypatch) -> None:

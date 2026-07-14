@@ -20,15 +20,28 @@ erDiagram
         timestamptz updatedAt
     }
 
+    interest_genres {
+        integer id PK
+        varchar name UK
+        timestamptz createdAt
+        timestamptz updatedAt
+    }
+
     interests {
         integer id PK
         varchar interestId UK
         integer interestCatalogId FK
         varchar title
-        varchar genre
         varchar imageUrl
         timestamptz createdAt
         timestamptz updatedAt
+    }
+
+    interest_genre_mappings {
+        integer id PK
+        integer interestId FK
+        integer genreId FK
+        timestamptz createdAt
     }
 
     interest_targets {
@@ -130,6 +143,8 @@ erDiagram
     users ||--o{ interest_items : collects
 
     interest_catalog ||--o{ interests : classifies
+    interests ||--o{ interest_genre_mappings : has
+    interest_genres ||--o{ interest_genre_mappings : maps
     interests ||--o{ interest_targets : selected_as
 
     analysis_requests ||--o{ analysis_contents : contains

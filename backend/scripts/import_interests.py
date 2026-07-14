@@ -38,9 +38,41 @@ def _tmdb_image(path: str | None) -> str | None:
     return f"{settings.tmdb_image_url}{path}"
 
 
+def _split_genres(value: str | None) -> list[str]:
+    if not value:
+        return ["전체"]
+    genres = [
+        genre.strip()
+        for part in value.split(",")
+        for genre in part.split(">")
+        if genre.strip()
+    ]
+    return list(dict.fromkeys(genres)) or ["전체"]
+
+
+def _tmdb_genres(media_type: str) -> dict[int, str]:
+    if settings.tmdb_access_token is None:
+        return {}
+    payload = _read_json(
+        f"{settings.tmdb_api_url}/genre/{media_type}/list?language=ko-KR",
+        _tmdb_headers(),
+    )
+    return {
+        int(item["id"]): item["name"]
+        for item in payload.get("genres", [])
+        if item.get("id") is not None and item.get("name")
+    }
+
+
+def _genre_names_from_ids(ids: list[int], genre_map: dict[int, str]) -> list[str]:
+    names = [genre_map[genre_id] for genre_id in ids if genre_id in genre_map]
+    return list(dict.fromkeys(names)) or ["전체"]
+
+
 def fetch_tmdb_movies(limit: int) -> list[InterestCatalogItem]:
     if settings.tmdb_access_token is None:
         return []
+    genres = _tmdb_genres("movie")
     payload = _read_json(
         f"{settings.tmdb_api_url}/movie/popular?language=ko-KR&page=1",
         _tmdb_headers(),
@@ -49,7 +81,7 @@ def fetch_tmdb_movies(limit: int) -> list[InterestCatalogItem]:
         InterestCatalogItem(
             interest_type=InterestType.MOVIE,
             title=item["title"],
-            genre="전체",
+            genres=_genre_names_from_ids(item.get("genre_ids", []), genres),
             image_url=_tmdb_image(item.get("poster_path")),
         )
         for item in payload.get("results", [])[:limit]
@@ -60,6 +92,7 @@ def fetch_tmdb_movies(limit: int) -> list[InterestCatalogItem]:
 def fetch_tmdb_dramas(limit: int) -> list[InterestCatalogItem]:
     if settings.tmdb_access_token is None:
         return []
+    genres = _tmdb_genres("tv")
     payload = _read_json(
         f"{settings.tmdb_api_url}/tv/popular?language=ko-KR&page=1",
         _tmdb_headers(),
@@ -68,7 +101,7 @@ def fetch_tmdb_dramas(limit: int) -> list[InterestCatalogItem]:
         InterestCatalogItem(
             interest_type=InterestType.DRAMA,
             title=item["name"],
-            genre="전체",
+            genres=_genre_names_from_ids(item.get("genre_ids", []), genres),
             image_url=_tmdb_image(item.get("poster_path")),
         )
         for item in payload.get("results", [])[:limit]
@@ -79,6 +112,7 @@ def fetch_tmdb_dramas(limit: int) -> list[InterestCatalogItem]:
 def fetch_anime(limit: int) -> list[InterestCatalogItem]:
     if settings.tmdb_access_token is None:
         return []
+    genres = _tmdb_genres("tv")
     query = urllib.parse.urlencode(
         {"with_genres": 16, "language": "ko-KR", "sort_by": "popularity.desc"},
     )
@@ -90,7 +124,7 @@ def fetch_anime(limit: int) -> list[InterestCatalogItem]:
         InterestCatalogItem(
             interest_type=InterestType.ANIMATION,
             title=item["name"],
-            genre="전체",
+            genres=_genre_names_from_ids(item.get("genre_ids", []), genres),
             image_url=_tmdb_image(item.get("poster_path")),
         )
         for item in payload.get("results", [])[:limit]
@@ -115,7 +149,7 @@ def fetch_books(limit: int) -> list[InterestCatalogItem]:
         InterestCatalogItem(
             interest_type=InterestType.NOVEL,
             title=item["title"],
-            genre=item.get("categoryName") or "전체",
+            genres=_split_genres(item.get("categoryName")),
             image_url=item.get("cover"),
         )
         for item in payload.get("item", [])[:limit]
@@ -133,7 +167,12 @@ def fetch_games(limit: int) -> list[InterestCatalogItem]:
         InterestCatalogItem(
             interest_type=InterestType.GAME,
             title=item["name"],
-            genre=(item.get("genres") or [{"name": "전체"}])[0]["name"],
+            genres=[
+                genre["name"]
+                for genre in item.get("genres", [])
+                if genre.get("name")
+            ]
+            or ["전체"],
             image_url=item.get("background_image"),
         )
         for item in payload.get("results", [])[:limit]
@@ -159,7 +198,7 @@ def fetch_musicals(limit: int) -> list[InterestCatalogItem]:
             InterestCatalogItem(
                 interest_type=InterestType.MUSICAL,
                 title=title,
-                genre="뮤지컬",
+                genres=_split_genres(node.findtext("genrenm") or "뮤지컬"),
                 image_url=node.findtext("poster"),
             ),
         )
@@ -175,7 +214,7 @@ def fetch_webtoons(limit: int) -> list[InterestCatalogItem]:
         InterestCatalogItem(
             interest_type=InterestType.WEBTOON,
             title=item["title"],
-            genre=item.get("genre") or "전체",
+            genres=_split_genres(item.get("genre") or item.get("genreNm")),
             image_url=item.get("thumbnail"),
         )
         for item in payload.get("webtoons", [])

@@ -39,6 +39,17 @@ async def list_interest_types(
     return success_response(result.model_dump(mode="json", by_alias=True))
 
 
+@router.get("/genres")
+async def list_interest_genres(
+    session: DbSession,
+    user_id: CurrentUserId,
+    interest_type: Annotated[InterestType, Query(alias="interestType")],
+) -> dict[str, object]:
+    service = InterestService(session)
+    result = await service.list_genres(interest_type)
+    return success_response(result.model_dump(mode="json", by_alias=True))
+
+
 @router.post("/select")
 async def select_interests(
     request: InterestSelectRequest,

@@ -21,7 +21,7 @@
 | Query String | 필수 | 기본값 | 설명 |
 | --- | --- | --- | --- |
 | `interestType` | Yes | - | 관심사 종류. 예: `영화`, `드라마`, `애니메이션`, `소설`, `게임`, `웹툰`, `뮤지컬`, `기타` |
-| `genre` | No | `전체` | 장르 필터. `전체`이면 장르 필터를 적용하지 않음 |
+| `genre` | No | `전체` | 장르 필터. `interest_genres` 기준으로 필터링하며 `전체`이면 장르 필터를 적용하지 않음 |
 | `keyword` | No | - | 제목 검색어. 입력 시 장르와 관계없이 관심사 종류 안에서 검색 |
 
 ## RESPONSE `200`
@@ -36,7 +36,7 @@
         "interestType": "애니메이션",
         "interestTypeImageUrl": "https://example.com/type.jpg",
         "title": "작품명",
-        "genre": "애니메이션",
+        "genre": "Action, Adventure",
         "imageUrl": "https://example.com/image.jpg",
         "createdAt": "2026-07-14T05:00:00Z",
         "updatedAt": "2026-07-14T05:00:00Z"
