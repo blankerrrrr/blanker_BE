@@ -17,6 +17,7 @@ CurrentUserId = Annotated[str, Depends(get_current_user_id)]
 @router.get("")
 async def list_interests(
     session: DbSession,
+    user_id: CurrentUserId,
     interest_type: Annotated[str, Query(alias="interestType")],
     genre: str = "전체",
     keyword: str | None = None,
@@ -27,7 +28,7 @@ async def list_interests(
 
 
 @router.get("/types")
-async def list_interest_types(session: DbSession) -> dict[str, object]:
+async def list_interest_types(session: DbSession, user_id: CurrentUserId) -> dict[str, object]:
     service = InterestService(session)
     result = await service.list_types()
     return success_response(result.model_dump(mode="json", by_alias=True))

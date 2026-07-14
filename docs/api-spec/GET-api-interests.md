@@ -10,6 +10,14 @@
 
 ## REQUEST
 
+### Header
+
+| Header | 필수 | 설명 |
+| --- | --- | --- |
+| `Authorization` | Yes | `Bearer {accessToken}` |
+
+### Query String
+
 | Query String | 필수 | 기본값 | 설명 |
 | --- | --- | --- | --- |
 | `interestType` | Yes | - | 관심사 종류. 예: `영화`, `드라마`, `애니메이션`, `소설`, `게임`, `웹툰`, `뮤지컬`, `기타` |
@@ -42,4 +50,5 @@
 
 | 코드 | HTTP Status | 설명 |
 | --- | --- | --- |
+| `AUTH_UNAUTHORIZED` | 401 | 인증 토큰 없음 또는 유효하지 않음 |
 | `INVALID_REQUEST_BODY` | 422 | 필수 query string 누락 또는 요청 형식 오류 |
