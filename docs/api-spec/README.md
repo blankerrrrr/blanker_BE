@@ -18,8 +18,8 @@ Base URL: `/api`
 | API-010 | 관심 대상 설정 | 관심 대상 삭제 | DELETE | `/api/interest-targets/{interestTargetId}` | Yes | [DELETE-api-interest-targets-interestTargetId.md](./DELETE-api-interest-targets-interestTargetId.md) |
 | API-011 | 차단 유형 및 민감도 설정 | 차단 설정 조회 | GET | `/api/block-settings` | Yes | [GET-api-block-settings.md](./GET-api-block-settings.md) |
 | API-012 | 차단 유형 및 민감도 설정 | 차단 설정 수정 | PUT | `/api/block-settings` | Yes | [PUT-api-block-settings.md](./PUT-api-block-settings.md) |
-| API-013 | 웹 콘텐츠 분석 | 콘텐츠 분석 요청 | POST | `/api/analysis-requests` | Yes | [POST-api-analysis-requests.md](./POST-api-analysis-requests.md) |
-| API-014 | 웹 콘텐츠 분석 | 스크린샷 분석 요청 | POST | `/api/analysis-requests/screenshot` | Yes | [POST-api-analysis-requests-screenshot.md](./POST-api-analysis-requests-screenshot.md) |
+| API-013 | 웹 콘텐츠 분석 | 콘텐츠 분석 요청 | POST | `/api/analyses` | Yes | [POST-api-analyses.md](./POST-api-analyses.md) |
+| API-014 | 웹 콘텐츠 분석 | 스크린샷 분석 요청 | POST | `/api/analyses/screenshot` | Yes | [POST-api-analyses-screenshot.md](./POST-api-analyses-screenshot.md) |
 | API-015 | 차단 콘텐츠 저장 | 보관함 목록 조회 | GET | `/api/blocked-items` | Yes | [GET-api-blocked-items.md](./GET-api-blocked-items.md) |
 | API-016 | 차단 콘텐츠 저장 | 보관함 저장 | POST | `/api/blocked-items` | Yes | [POST-api-blocked-items.md](./POST-api-blocked-items.md) |
 | API-017 | 차단 콘텐츠 저장 | 보관함 항목 삭제 | DELETE | `/api/blocked-items/{blockedItemId}` | Yes | [DELETE-api-blocked-items-blockedItemId.md](./DELETE-api-blocked-items-blockedItemId.md) |

@@ -31,8 +31,8 @@ api_router.include_router(
 )
 api_router.include_router(
     analysis_requests.router,
-    prefix="/analysis-requests",
-    tags=["analysis-requests"],
+    prefix="/analyses",
+    tags=["analyses"],
 )
 api_router.include_router(
     blocked_items.router,
@@ -51,6 +51,6 @@ api_router.include_router(
 )
 api_router.include_router(
     screenshot_analysis_requests.router,
-    prefix="/analysis-requests/screenshot",
-    tags=["analysis-requests"],
+    prefix="/analyses/screenshot",
+    tags=["analyses"],
 )

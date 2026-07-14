@@ -1,7 +1,4 @@
-> **이 파일은 엔드포인트 변경 전 문서입니다.**
-> 올바른 명세는 [POST-api-analyses-screenshot.md](./POST-api-analyses-screenshot.md)를 참고하세요.
-
-# 스크린샷 분석 요청 API (Deprecated)
+# 스크린샷 분석 요청 API
 
 `POST /api/analyses/screenshot`
 

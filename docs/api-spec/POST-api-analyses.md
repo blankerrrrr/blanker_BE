@@ -1,7 +1,4 @@
-> **이 파일은 엔드포인트 변경 전 문서입니다.**
-> 올바른 명세는 [POST-api-analyses.md](./POST-api-analyses.md)를 참고하세요.
-
-# 콘텐츠 분석 요청 API (Deprecated)
+# 콘텐츠 분석 요청 API
 
 `POST /api/analyses`
 
@@ -10,6 +7,14 @@
 확장 프로그램이 수집한 웹페이지의 텍스트, 이미지, 영역 단위 콘텐츠를 서버에 분석 요청한다. 서버는 분류, 위험도, 관련도, 차단 여부, 차단 사유를 반환한다.
 
 ## REQUEST
+
+### Header
+
+| Header | 필수 | 설명 |
+| --- | --- | --- |
+| `Authorization` | Yes | `Bearer {accessToken}` |
+
+### Body
 
 ```json
 {
