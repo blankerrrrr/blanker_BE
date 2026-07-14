@@ -52,6 +52,12 @@ class InterestRepository:
         )
         return [(row[0], row[1]) for row in result.all()]
 
+    async def find_type_title_pairs(self) -> list[tuple[str, str]]:
+        result = await self.session.execute(
+            select(InterestCatalog.name, Interest.title).join(Interest),
+        )
+        return [(row[0], row[1]) for row in result.all()]
+
     async def find_all_by_ids(self, interest_ids: list[str]) -> list[Interest]:
         if not interest_ids:
             return []

@@ -45,3 +45,34 @@ def test_fetch_webtoons_skips_when_api_url_is_not_configured(
     monkeypatch.setattr(settings, "korea_webtoon_api_url", None)
 
     assert import_interests.fetch_webtoons(10) == []
+
+
+def test_fetch_tmdb_movies_skips_existing_titles_and_reads_next_page(
+    monkeypatch,
+) -> None:
+    requested_urls: list[str] = []
+
+    def fake_read_json(
+        url: str,
+        headers: dict[str, str] | None = None,
+    ) -> dict[str, Any]:
+        requested_urls.append(url)
+        if "/genre/" in url:
+            return {"genres": []}
+        if "page=1" in url:
+            return {
+                "results": [{"title": "기존 영화"}],
+                "total_pages": 2,
+            }
+        return {
+            "results": [{"title": "새 영화"}],
+            "total_pages": 2,
+        }
+
+    monkeypatch.setattr(settings, "tmdb_access_token", "token")
+    monkeypatch.setattr(import_interests, "_read_json", fake_read_json)
+
+    items = import_interests.fetch_tmdb_movies(1, {"기존 영화"})
+
+    assert [item.title for item in items] == ["새 영화"]
+    assert any("page=2" in url for url in requested_urls)

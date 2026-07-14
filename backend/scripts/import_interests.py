@@ -77,160 +77,305 @@ def _genre_names_from_ids(ids: list[int], genre_map: dict[int, str]) -> list[str
     return list(dict.fromkeys(names)) or ["전체"]
 
 
-def fetch_tmdb_movies(limit: int) -> list[InterestCatalogItem]:
+def _is_new_title(
+    title: str,
+    existing_titles: set[str],
+    collected_titles: set[str],
+) -> bool:
+    return title not in existing_titles and title not in collected_titles
+
+
+def fetch_tmdb_movies(
+    limit: int,
+    existing_titles: set[str] | None = None,
+) -> list[InterestCatalogItem]:
     if settings.tmdb_access_token is None:
         return []
     genres = _tmdb_genres("movie")
-    payload = _read_json(
-        f"{settings.tmdb_api_url}/movie/popular?language=ko-KR&page=1",
-        _tmdb_headers(),
+    return _fetch_tmdb_pages(
+        "/movie/popular",
+        "title",
+        InterestType.MOVIE,
+        genres,
+        limit,
+        existing_titles or set(),
     )
-    return [
-        InterestCatalogItem(
-            interest_type=InterestType.MOVIE,
-            title=item["title"],
-            genres=_genre_names_from_ids(item.get("genre_ids", []), genres),
-            image_url=_tmdb_image(item.get("poster_path")),
-        )
-        for item in payload.get("results", [])[:limit]
-        if item.get("title")
-    ]
 
 
-def fetch_tmdb_dramas(limit: int) -> list[InterestCatalogItem]:
+def fetch_tmdb_dramas(
+    limit: int,
+    existing_titles: set[str] | None = None,
+) -> list[InterestCatalogItem]:
     if settings.tmdb_access_token is None:
         return []
     genres = _tmdb_genres("tv")
-    payload = _read_json(
-        f"{settings.tmdb_api_url}/tv/popular?language=ko-KR&page=1",
-        _tmdb_headers(),
+    return _fetch_tmdb_pages(
+        "/tv/popular",
+        "name",
+        InterestType.DRAMA,
+        genres,
+        limit,
+        existing_titles or set(),
     )
-    return [
-        InterestCatalogItem(
-            interest_type=InterestType.DRAMA,
-            title=item["name"],
-            genres=_genre_names_from_ids(item.get("genre_ids", []), genres),
-            image_url=_tmdb_image(item.get("poster_path")),
-        )
-        for item in payload.get("results", [])[:limit]
-        if item.get("name")
-    ]
 
 
-def fetch_anime(limit: int) -> list[InterestCatalogItem]:
+def fetch_anime(
+    limit: int,
+    existing_titles: set[str] | None = None,
+) -> list[InterestCatalogItem]:
     if settings.tmdb_access_token is None:
         return []
     genres = _tmdb_genres("tv")
-    query = urllib.parse.urlencode(
-        {"with_genres": 16, "language": "ko-KR", "sort_by": "popularity.desc"},
+    return _fetch_tmdb_pages(
+        "/discover/tv",
+        "name",
+        InterestType.ANIMATION,
+        genres,
+        limit,
+        existing_titles or set(),
+        {"with_genres": 16, "sort_by": "popularity.desc"},
     )
-    payload = _read_json(
-        f"{settings.tmdb_api_url}/discover/tv?{query}",
-        _tmdb_headers(),
-    )
-    return [
-        InterestCatalogItem(
-            interest_type=InterestType.ANIMATION,
-            title=item["name"],
-            genres=_genre_names_from_ids(item.get("genre_ids", []), genres),
-            image_url=_tmdb_image(item.get("poster_path")),
-        )
-        for item in payload.get("results", [])[:limit]
-        if item.get("name")
-    ]
 
 
-def fetch_books(limit: int) -> list[InterestCatalogItem]:
-    if settings.aladin_ttb_key is None:
-        return []
-    query = urllib.parse.urlencode(
-        {
-            "ttbkey": settings.aladin_ttb_key,
-            "QueryType": "Bestseller",
-            "SearchTarget": "Book",
-            "output": "js",
-            "Version": "20131101",
-        },
-    )
-    payload = _read_json(f"{settings.aladin_api_url}/ItemList.aspx?{query}")
-    return [
-        InterestCatalogItem(
-            interest_type=InterestType.NOVEL,
-            title=item["title"],
-            genres=_split_genres(item.get("categoryName")),
-            image_url=item.get("cover"),
-        )
-        for item in payload.get("item", [])[:limit]
-        if item.get("title")
-    ]
-
-
-def fetch_games(limit: int) -> list[InterestCatalogItem]:
-    if settings.rawg_api_key is None:
-        return []
-    payload = _read_json(
-        f"{settings.rawg_api_url}/games?key={settings.rawg_api_key}&ordering=-rating",
-    )
-    return [
-        InterestCatalogItem(
-            interest_type=InterestType.GAME,
-            title=item["name"],
-            genres=[
-                genre["name"]
-                for genre in item.get("genres", [])
-                if genre.get("name")
-            ]
-            or ["전체"],
-            image_url=item.get("background_image"),
-        )
-        for item in payload.get("results", [])[:limit]
-        if item.get("name")
-    ]
-
-
-def fetch_musicals(limit: int) -> list[InterestCatalogItem]:
-    if settings.kopis_service_key is None:
-        return []
-    url = (
-        f"{settings.kopis_api_url}/pblprfr"
-        f"?service={settings.kopis_service_key}"
-        "&stdate=20260101&eddate=20261231&cpage=1&rows=100&shcate=GGGD"
-    )
-    root = ET.fromstring(_read_text(url))
+def _fetch_tmdb_pages(
+    path: str,
+    title_key: str,
+    interest_type: InterestType,
+    genres: dict[int, str],
+    limit: int,
+    existing_titles: set[str],
+    extra_params: dict[str, Any] | None = None,
+) -> list[InterestCatalogItem]:
     items: list[InterestCatalogItem] = []
-    for node in root.findall("db")[:limit]:
-        title = node.findtext("prfnm")
-        if not title:
-            continue
-        items.append(
-            InterestCatalogItem(
-                interest_type=InterestType.MUSICAL,
-                title=title,
-                genres=_split_genres(node.findtext("genrenm") or "뮤지컬"),
-                image_url=node.findtext("poster"),
-            ),
+    collected_titles: set[str] = set()
+    page = 1
+    while len(items) < limit:
+        query = urllib.parse.urlencode(
+            {"language": "ko-KR", "page": page, **(extra_params or {})},
         )
+        payload = _read_json(f"{settings.tmdb_api_url}{path}?{query}", _tmdb_headers())
+        results = payload.get("results", [])
+        if not results:
+            break
+        for raw_item in results:
+            title = raw_item.get(title_key)
+            if not title or not _is_new_title(
+                title,
+                existing_titles,
+                collected_titles,
+            ):
+                continue
+            items.append(
+                InterestCatalogItem(
+                    interest_type=interest_type,
+                    title=title,
+                    genres=_genre_names_from_ids(
+                        raw_item.get("genre_ids", []),
+                        genres,
+                    ),
+                    image_url=_tmdb_image(raw_item.get("poster_path")),
+                ),
+            )
+            collected_titles.add(title)
+            if len(items) == limit:
+                break
+        if page >= int(payload.get("total_pages", page)):
+            break
+        page += 1
     return items
 
 
-def fetch_webtoons(limit: int) -> list[InterestCatalogItem]:
+def fetch_books(
+    limit: int,
+    existing_titles: set[str] | None = None,
+) -> list[InterestCatalogItem]:
+    if settings.aladin_ttb_key is None:
+        return []
+    existing_titles = existing_titles or set()
+    items: list[InterestCatalogItem] = []
+    collected_titles: set[str] = set()
+    page = 1
+    while len(items) < limit:
+        query = urllib.parse.urlencode(
+            {
+                "ttbkey": settings.aladin_ttb_key,
+                "QueryType": "Bestseller",
+                "SearchTarget": "Book",
+                "output": "js",
+                "Version": "20131101",
+                "MaxResults": min(limit, 50),
+                "start": page,
+            },
+        )
+        payload = _read_json(f"{settings.aladin_api_url}/ItemList.aspx?{query}")
+        results = payload.get("item", [])
+        for raw_item in results:
+            title = raw_item.get("title")
+            if not title or not _is_new_title(
+                title,
+                existing_titles,
+                collected_titles,
+            ):
+                continue
+            items.append(
+                InterestCatalogItem(
+                    interest_type=InterestType.NOVEL,
+                    title=title,
+                    genres=_split_genres(raw_item.get("categoryName")),
+                    image_url=raw_item.get("cover"),
+                ),
+            )
+            collected_titles.add(title)
+            if len(items) == limit:
+                break
+        if not results or len(results) < min(limit, 50) or page >= 100:
+            break
+        page += 1
+    return items
+
+
+def fetch_games(
+    limit: int,
+    existing_titles: set[str] | None = None,
+) -> list[InterestCatalogItem]:
+    if settings.rawg_api_key is None:
+        return []
+    existing_titles = existing_titles or set()
+    items: list[InterestCatalogItem] = []
+    collected_titles: set[str] = set()
+    page = 1
+    while len(items) < limit:
+        query = urllib.parse.urlencode(
+            {
+                "key": settings.rawg_api_key,
+                "ordering": "-rating",
+                "page": page,
+                "page_size": min(limit, 40),
+            },
+        )
+        payload = _read_json(f"{settings.rawg_api_url}/games?{query}")
+        results = payload.get("results", [])
+        for raw_item in results:
+            title = raw_item.get("name")
+            if not title or not _is_new_title(
+                title,
+                existing_titles,
+                collected_titles,
+            ):
+                continue
+            items.append(
+                InterestCatalogItem(
+                    interest_type=InterestType.GAME,
+                    title=title,
+                    genres=[
+                        genre["name"]
+                        for genre in raw_item.get("genres", [])
+                        if genre.get("name")
+                    ]
+                    or ["전체"],
+                    image_url=raw_item.get("background_image"),
+                ),
+            )
+            collected_titles.add(title)
+            if len(items) == limit:
+                break
+        if not results or payload.get("next") is None or page >= 100:
+            break
+        page += 1
+    return items
+
+
+def fetch_musicals(
+    limit: int,
+    existing_titles: set[str] | None = None,
+) -> list[InterestCatalogItem]:
+    if settings.kopis_service_key is None:
+        return []
+    items: list[InterestCatalogItem] = []
+    existing_titles = existing_titles or set()
+    collected_titles: set[str] = set()
+    page = 1
+    while len(items) < limit:
+        url = (
+            f"{settings.kopis_api_url}/pblprfr"
+            f"?service={settings.kopis_service_key}"
+            "&stdate=20260101&eddate=20261231"
+            f"&cpage={page}&rows={min(limit, 100)}&shcate=GGGD"
+        )
+        nodes = ET.fromstring(_read_text(url)).findall("db")
+        for node in nodes:
+            title = node.findtext("prfnm")
+            if not title or not _is_new_title(
+                title,
+                existing_titles,
+                collected_titles,
+            ):
+                continue
+            items.append(
+                InterestCatalogItem(
+                    interest_type=InterestType.MUSICAL,
+                    title=title,
+                    genres=_split_genres(node.findtext("genrenm") or "뮤지컬"),
+                    image_url=node.findtext("poster"),
+                ),
+            )
+            collected_titles.add(title)
+            if len(items) == limit:
+                break
+        if not nodes or len(nodes) < min(limit, 100) or page >= 100:
+            break
+        page += 1
+    return items
+
+
+def fetch_webtoons(
+    limit: int,
+    existing_titles: set[str] | None = None,
+) -> list[InterestCatalogItem]:
     if settings.korea_webtoon_api_url is None:
         return []
-    query = urllib.parse.urlencode({"perPage": limit})
-    payload = _read_json(f"{settings.korea_webtoon_api_url}/webtoons?{query}")
-    return [
-        InterestCatalogItem(
-            interest_type=InterestType.WEBTOON,
-            title=item["title"],
-            genres=_split_genres(item.get("genre") or item.get("genreNm")),
-            image_url=_first_string(item.get("thumbnail")),
-        )
-        for item in payload.get("webtoons", [])
-        if item.get("title")
-    ]
+    existing_titles = existing_titles or set()
+    items: list[InterestCatalogItem] = []
+    collected_titles: set[str] = set()
+    page = 1
+    while len(items) < limit:
+        params = {"perPage": limit}
+        if page > 1:
+            params["page"] = page
+        query = urllib.parse.urlencode(params)
+        payload = _read_json(f"{settings.korea_webtoon_api_url}/webtoons?{query}")
+        results = payload.get("webtoons", [])
+        for raw_item in results:
+            title = raw_item.get("title")
+            if not title or not _is_new_title(
+                title,
+                existing_titles,
+                collected_titles,
+            ):
+                continue
+            items.append(
+                InterestCatalogItem(
+                    interest_type=InterestType.WEBTOON,
+                    title=title,
+                    genres=_split_genres(
+                        raw_item.get("genre") or raw_item.get("genreNm"),
+                    ),
+                    image_url=_first_string(raw_item.get("thumbnail")),
+                ),
+            )
+            collected_titles.add(title)
+            if len(items) == limit:
+                break
+        if not results or len(results) < limit or page >= 100:
+            break
+        page += 1
+    return items
 
 
-def fetch_all(limit: int) -> list[InterestCatalogItem]:
+def fetch_all(
+    limit: int,
+    existing_titles: dict[InterestType, set[str]] | None = None,
+) -> list[InterestCatalogItem]:
     items: list[InterestCatalogItem] = []
     fetchers = (
         fetch_tmdb_movies,
@@ -243,7 +388,16 @@ def fetch_all(limit: int) -> list[InterestCatalogItem]:
     )
     for fetcher in fetchers:
         try:
-            items.extend(fetcher(limit))
+            interest_type = {
+                fetch_tmdb_movies: InterestType.MOVIE,
+                fetch_tmdb_dramas: InterestType.DRAMA,
+                fetch_anime: InterestType.ANIMATION,
+                fetch_books: InterestType.NOVEL,
+                fetch_games: InterestType.GAME,
+                fetch_musicals: InterestType.MUSICAL,
+                fetch_webtoons: InterestType.WEBTOON,
+            }[fetcher]
+            items.extend(fetcher(limit, (existing_titles or {}).get(interest_type)))
         except Exception as exc:
             print(f"{fetcher.__name__} failed: {exc}")
     return items
@@ -254,7 +408,16 @@ async def main() -> None:
     parser.add_argument("--limit", type=int, default=20)
     args = parser.parse_args()
 
-    items = await asyncio.to_thread(fetch_all, args.limit)
+    async with async_session() as session:
+        repository = InterestCatalogImportService(session).interests
+        pairs = await repository.find_type_title_pairs()
+    existing_titles = {
+        interest_type: {
+            title for type_name, title in pairs if type_name == interest_type.value
+        }
+        for interest_type in InterestType
+    }
+    items = await asyncio.to_thread(fetch_all, args.limit, existing_titles)
     async with async_session() as session:
         imported_count = await InterestCatalogImportService(session).import_items(items)
     print(f"fetched={len(items)} imported={imported_count}")
