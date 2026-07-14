@@ -1,6 +1,6 @@
 services:
   api:
-    image: ${API_IMAGE}
+    image: ${DOCKERHUB_USERNAME}/${DOCKERHUB_IMAGE}:latest
     expose:
       - "8000"
     env_file:
