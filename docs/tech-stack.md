@@ -16,7 +16,7 @@
 | ORM | SQLAlchemy 2.0 | DB 모델 및 쿼리 작성 |
 | Migration | Alembic | DB schema migration |
 | Validation | Pydantic v2 | 요청/응답 DTO 검증 |
-| AI Analysis | OpenAI API | 텍스트/이미지 콘텐츠 분석 |
+| AI Analysis | Anthropic API | 텍스트/이미지 콘텐츠 분석 |
 | Browser Extension | WXT + TypeScript | 웹 콘텐츠 감지, DOM 분석, 블러 처리 |
 | Extension UI | React | 팝업, 설정 화면, 보관함 UI |
 | Test | pytest | 백엔드 단위/통합 테스트 |
@@ -36,7 +36,7 @@
 | Password Hash | Argon2 또는 bcrypt |
 | API 문서 | FastAPI OpenAPI, Swagger UI |
 
-FastAPI는 API 서버와 AI 분석 로직을 Python 기반으로 통합하기 좋다. 콘텐츠 분석, 유사도 계산, 중복 판단, OpenAI API 연동이 모두 Python 생태계와 잘 맞기 때문에 MVP에서는 백엔드와 분석 서버를 하나의 FastAPI 애플리케이션으로 시작한다.
+FastAPI는 API 서버와 AI 분석 로직을 Python 기반으로 통합하기 좋다. 콘텐츠 분석, 유사도 계산, 중복 판단, Anthropic API 연동을 하나의 Python 백엔드에서 다루기 위해 MVP에서는 백엔드와 분석 서버를 하나의 FastAPI 애플리케이션으로 시작한다.
 
 백엔드 의존성 설치와 실행은 `uv`를 기준으로 한다. 로컬 개발 환경은 `backend` 디렉터리에서 `uv sync`로 구성하고, 서버 실행은 `uv run uvicorn app.main:app --reload`를 사용한다.
 
@@ -80,7 +80,7 @@ Redis는 인증 세션성 데이터에만 사용하고, 영속 데이터는 Post
 
 | 항목 | 선택 |
 | --- | --- |
-| Provider | OpenAI API |
+| Provider | Anthropic API |
 | 분석 대상 | 텍스트, 이미지 URL, 주변 문맥 |
 | 주요 결과 | 분류, 위험도, 관련도, 차단 여부, 차단 사유 |
 | 후처리 | Python 기반 규칙/유사도 처리 |
