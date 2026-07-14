@@ -20,30 +20,28 @@ class FakeBlockedItemService:
     async def list(
         self,
         user_id: str,
-        page: int,
-        size: int,
-        interest_target_id: str,
+        interest_target_id: str | None,
         category: BlockCategory | None,
     ) -> BlockedItemListResponse:
         assert user_id == "user_1"
         assert interest_target_id == "interest_target_1"
         assert category == BlockCategory.SPOILER
         return BlockedItemListResponse(
-            items=[
-                BlockedItemListItemResponse(
-                    blocked_item_id="blocked_item_1",
-                    interest_target_id=interest_target_id,
-                    summary="요약",
-                    categories=[BlockCategory.SPOILER],
-                    related_topics=["작품명"],
-                    source_url="https://example.com/article",
-                    found_at=datetime.now(UTC),
-                ),
+            root=[
+                {
+                    "작품명": [
+                        BlockedItemListItemResponse(
+                            blocked_item_id="blocked_item_1",
+                            interest_target_id=interest_target_id,
+                            summary="요약",
+                            categories=[BlockCategory.SPOILER],
+                            related_topics=["작품명"],
+                            source_url="https://example.com/article",
+                            found_at=datetime(2026, 7, 13, 5, 0, tzinfo=UTC),
+                        ),
+                    ],
+                },
             ],
-            page=page,
-            size=size,
-            total_elements=1,
-            total_pages=1,
         )
 
     async def create(
@@ -67,16 +65,6 @@ async def fake_current_user_id() -> str:
     return "user_1"
 
 
-def test_list_blocked_items_requires_interest_target_id() -> None:
-    app.dependency_overrides[get_current_user_id] = fake_current_user_id
-    client = TestClient(app, raise_server_exceptions=False)
-
-    response = client.get("/api/blocked-items")
-
-    app.dependency_overrides.clear()
-    assert response.status_code == 422
-
-
 def test_list_blocked_items_filters_by_interest_target(monkeypatch) -> None:
     from app.api import blocked_items
 
@@ -92,7 +80,21 @@ def test_list_blocked_items_filters_by_interest_target(monkeypatch) -> None:
     app.dependency_overrides.clear()
     assert response.status_code == 200
     data = response.json()["data"]
-    assert data["items"][0]["interestTargetId"] == "interest_target_1"
+    assert data == [
+        {
+            "작품명": [
+                {
+                    "blockedItemId": "blocked_item_1",
+                    "interestTargetId": "interest_target_1",
+                    "summary": "요약",
+                    "categories": ["SPOILER"],
+                    "relatedTopics": ["작품명"],
+                    "sourceUrl": "https://example.com/article",
+                    "foundAt": "2026-07-13T05:00:00Z",
+                },
+            ],
+        },
+    ]
 
 
 def test_create_blocked_item_accepts_interest_target_id(monkeypatch) -> None:

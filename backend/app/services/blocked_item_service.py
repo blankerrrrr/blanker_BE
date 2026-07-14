@@ -1,5 +1,3 @@
-from math import ceil
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.error_codes import ErrorCode
@@ -26,31 +24,37 @@ class BlockedItemService:
     async def list(
         self,
         user_id: str,
-        page: int,
-        size: int,
-        interest_target_id: str,
+        interest_target_id: str | None,
         category: BlockCategory | None,
     ) -> BlockedItemListResponse:
-        await self._validate_interest_target(user_id, interest_target_id)
+        targets = await self._find_list_targets(user_id, interest_target_id)
         category_value = category.value if category is not None else None
-        total_elements = await self.blocked_items.count(
+
+        target_ids = [
+            target.interest_target_id
+            for target in targets
+            if target.interest_target_id is not None
+        ]
+        items = await self.blocked_items.find_all_by_interest_target_ids(
             user_id,
-            interest_target_id,
+            target_ids,
             category_value,
         )
-        items = await self.blocked_items.find_all(
-            user_id,
-            interest_target_id,
-            category_value,
-            offset=(page - 1) * size,
-            limit=size,
-        )
+        items_by_target_id: dict[str, list[BlockedItemListItemResponse]] = {
+            target_id: [] for target_id in target_ids
+        }
+        for item in items:
+            if item.interest_target_id is None:
+                continue
+            items_by_target_id.setdefault(item.interest_target_id, []).append(
+                self._to_list_item(item),
+            )
+
         return BlockedItemListResponse(
-            items=[self._to_list_item(item) for item in items],
-            page=page,
-            size=size,
-            total_elements=total_elements,
-            total_pages=ceil(total_elements / size) if total_elements else 0,
+            root=[
+                {target.name: items_by_target_id[target.interest_target_id or ""]}
+                for target in targets
+            ],
         )
 
     # 새 보관함 항목을 저장하고 중복 원본은 거부한다.
@@ -96,6 +100,19 @@ class BlockedItemService:
         target = await self.interest_targets.get_by_id(user_id, interest_target_id)
         if target is None:
             raise AppException(ErrorCode.INTEREST_TARGET_NOT_FOUND)
+
+    async def _find_list_targets(
+        self,
+        user_id: str,
+        interest_target_id: str | None,
+    ):
+        if interest_target_id is None:
+            return await self.interest_targets.find_all_by_user_id(user_id)
+
+        target = await self.interest_targets.get_by_id(user_id, interest_target_id)
+        if target is None:
+            raise AppException(ErrorCode.INTEREST_TARGET_NOT_FOUND)
+        return [target]
 
     # 사용자가 소유한 보관함 항목을 삭제한다.
     async def delete(self, user_id: str, blocked_item_id: str) -> None:

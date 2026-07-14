@@ -29,11 +29,7 @@ class BlockedItemListItemResponse(CamelModel):
 
 
 class BlockedItemListResponse(CamelModel):
-    items: list[BlockedItemListItemResponse]
-    page: int
-    size: int
-    total_elements: int
-    total_pages: int
+    root: list[dict[str, list[BlockedItemListItemResponse]]]
 
 
 class BlockedItemCreateResponse(CamelModel):

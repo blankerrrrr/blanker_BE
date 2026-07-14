@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, status
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user_id, get_db_session
@@ -20,14 +21,12 @@ CategoryFilter = Annotated[BlockCategory | None, Query()]
 async def list_blocked_items(
     user_id: CurrentUserId,
     session: DbSession,
-    interest_target_id: Annotated[str, Query(alias="interestTargetId")],
-    page: int = Query(default=1, ge=1),
-    size: int = Query(default=20, ge=1, le=100),
+    interest_target_id: Annotated[str | None, Query(alias="interestTargetId")] = None,
     type: CategoryFilter = None,
 ) -> dict[str, object]:
     service = BlockedItemService(session)
-    result = await service.list(user_id, page, size, interest_target_id, type)
-    return success_response(result.model_dump(mode="json", by_alias=True))
+    result = await service.list(user_id, interest_target_id, type)
+    return success_response(jsonable_encoder(result.root, by_alias=True))
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

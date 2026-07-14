@@ -48,6 +48,28 @@ class BlockedItemRepository:
         )
         return list(result.scalars().all())
 
+    async def find_all_by_interest_target_ids(
+        self,
+        user_id: str,
+        interest_target_ids: list[str],
+        category: str | None,
+    ) -> list[BlockedItem]:
+        if not interest_target_ids:
+            return []
+
+        statement = select(BlockedItem).where(
+            BlockedItem.user_id == user_id,
+            BlockedItem.interest_target_id.in_(interest_target_ids),
+        )
+        if category is not None:
+            statement = statement.where(
+                cast(BlockedItem.categories, JSONB).contains([category]),
+            )
+        result = await self.session.execute(
+            statement.order_by(BlockedItem.saved_at.desc()),
+        )
+        return list(result.scalars().all())
+
     async def get_by_id(self, user_id: str, blocked_item_id: str) -> BlockedItem | None:
         result = await self.session.execute(
             select(BlockedItem).where(
