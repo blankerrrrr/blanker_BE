@@ -202,14 +202,7 @@ class InterestService:
             interest = interest_map[iid]
             target = current_map.get(iid)
             if target is None:
-                target = InterestTarget(
-                    user_id=user_id,
-                    type="WORK",
-                    name=interest.title,
-                    interest_id=interest.interest_id,
-                    aliases=[],
-                    keywords=[],
-                )
+                target = await self._find_or_create_target(user_id, interest)
 
             target.type = "WORK"
             target.name = interest.title
