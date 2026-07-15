@@ -17,7 +17,7 @@ from app.schemas.interest_target import InterestTargetResponse
 
 
 class FakeInterestService:
-    list_args: tuple[str, list[str], str | None] | None = None
+    list_args: tuple[str, list[str], str | None, int, int] | None = None
 
     def __init__(self, session: object, query_cache: object | None = None) -> None:
         self.session = session
@@ -28,8 +28,10 @@ class FakeInterestService:
         interest_type: str,
         genres: list[str],
         keyword: str | None,
+        page: int,
+        size: int,
     ) -> InterestListResponse:
-        FakeInterestService.list_args = (interest_type, genres, keyword)
+        FakeInterestService.list_args = (interest_type, genres, keyword, page, size)
         return InterestListResponse(
             items=[
                 InterestResponse(
@@ -42,6 +44,10 @@ class FakeInterestService:
                     image_url="https://example.com/image.jpg",
                 ),
             ],
+            page=page,
+            size=size,
+            total_elements=1,
+            total_pages=1,
         )
 
     async def list_types(self) -> InterestTypeListResponse:
@@ -119,7 +125,13 @@ def test_list_interests_uses_required_type_and_default_genre(monkeypatch) -> Non
 
     app.dependency_overrides.clear()
     assert response.status_code == 200
-    assert FakeInterestService.list_args == ("애니메이션", ["전체"], None)
+    assert FakeInterestService.list_args == (
+        "애니메이션",
+        ["전체"],
+        None,
+        1,
+        20,
+    )
     assert response.json()["data"]["items"][0]["interestType"] == "애니메이션"
     assert response.json()["data"]["items"][0]["summary"] == "작품 설명"
 
@@ -142,7 +154,28 @@ def test_list_interests_accepts_multiple_genres(monkeypatch) -> None:
         "애니메이션",
         ["액션", "판타지"],
         None,
+        1,
+        20,
     )
+
+
+def test_list_interests_uses_requested_page(monkeypatch) -> None:
+    from app.api import interests
+
+    monkeypatch.setattr(interests, "InterestService", FakeInterestService)
+    app.dependency_overrides[get_db_session] = fake_db_session
+    app.dependency_overrides[get_current_user_id] = fake_current_user_id
+    client = TestClient(app)
+
+    response = client.get(
+        "/api/interests?interestType=영화&page=2&size=10",
+    )
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    assert FakeInterestService.list_args == ("영화", ["전체"], None, 2, 10)
+    assert response.json()["data"]["page"] == 2
+    assert response.json()["data"]["size"] == 10
 
 
 def test_list_interests_requires_interest_type() -> None:

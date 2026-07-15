@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -20,6 +20,8 @@ class InterestRepository:
         interest_type: str,
         genres: list[str],
         keyword: str | None,
+        offset: int,
+        limit: int,
     ) -> list[Interest]:
         statement = (
             select(Interest)
@@ -40,9 +42,31 @@ class InterestRepository:
             )
 
         result = await self.session.execute(
-            statement.order_by(Interest.title.asc()),
+            statement.order_by(Interest.title.asc()).offset(offset).limit(limit),
         )
         return list(result.scalars().unique().all())
+
+    async def count_all(
+        self,
+        interest_type: str,
+        genres: list[str],
+        keyword: str | None,
+    ) -> int:
+        statement = (
+            select(func.count(func.distinct(Interest.id)))
+            .select_from(Interest)
+            .join(InterestCatalog)
+            .where(InterestCatalog.name == interest_type)
+        )
+        if keyword:
+            statement = statement.where(Interest.title.ilike(f"%{keyword}%"))
+        elif "전체" not in genres:
+            statement = statement.join(InterestGenreMapping).join(
+                InterestGenre,
+            ).where(InterestGenre.name.in_(genres))
+
+        result = await self.session.execute(statement)
+        return int(result.scalar_one())
 
     async def find_types(self) -> list[tuple[str, str | None]]:
         result = await self.session.execute(

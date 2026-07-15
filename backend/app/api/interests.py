@@ -26,9 +26,17 @@ async def list_interests(
     interest_type: Annotated[InterestType, Query(alias="interestType")],
     genre: Annotated[list[str] | None, Query()] = None,
     keyword: str | None = None,
+    page: int = Query(default=1, ge=1),
+    size: int = Query(default=20, ge=1, le=100),
 ) -> dict[str, object]:
     service = InterestService(session, query_cache=query_cache)
-    result = await service.list(interest_type, genre or ["전체"], keyword)
+    result = await service.list(
+        interest_type,
+        genre or ["전체"],
+        keyword,
+        page,
+        size,
+    )
     return success_response(result.model_dump(mode="json", by_alias=True))
 
 

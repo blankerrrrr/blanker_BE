@@ -33,6 +33,8 @@ async def test_find_all_filters_by_multiple_genres() -> None:
         "애니메이션",
         ["액션", "판타지"],
         None,
+        offset=20,
+        limit=10,
     )
 
     statement = session.execute.await_args.args[0]
@@ -43,3 +45,4 @@ async def test_find_all_filters_by_multiple_genres() -> None:
         ),
     )
     assert "interest_genres.name IN ('액션', '판타지')" in compiled
+    assert "LIMIT 10 OFFSET 20" in compiled

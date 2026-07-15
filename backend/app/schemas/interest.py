@@ -32,6 +32,10 @@ class InterestResponse(CamelModel):
 
 class InterestListResponse(CamelModel):
     items: list[InterestResponse]
+    page: int
+    size: int
+    total_elements: int
+    total_pages: int
 
 
 class InterestTypeResponse(CamelModel):

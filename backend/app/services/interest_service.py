@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from math import ceil
 from typing import TypeVar
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,6 +54,8 @@ class InterestService:
         interest_type: str,
         genres: list[str],
         keyword: str | None,
+        page: int,
+        size: int,
     ) -> InterestListResponse:
         cache_key = QueryCache.key(
             "interests:list",
@@ -60,15 +63,32 @@ class InterestService:
                 "interestType": interest_type,
                 "genre": genres,
                 "keyword": keyword,
+                "page": page,
+                "size": size,
             },
         )
         cached = await self._get_cached(cache_key, InterestListResponse)
         if cached is not None:
             return cached
 
-        interests = await self.interests.find_all(interest_type, genres, keyword)
+        total_elements = await self.interests.count_all(
+            interest_type,
+            genres,
+            keyword,
+        )
+        interests = await self.interests.find_all(
+            interest_type,
+            genres,
+            keyword,
+            offset=(page - 1) * size,
+            limit=size,
+        )
         result = InterestListResponse(
             items=[self._to_response(interest) for interest in interests],
+            page=page,
+            size=size,
+            total_elements=total_elements,
+            total_pages=ceil(total_elements / size) if total_elements else 0,
         )
         await self._set_cached(cache_key, result)
         return result
