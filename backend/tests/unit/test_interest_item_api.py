@@ -24,6 +24,7 @@ class FakeInterestItemService:
                         InterestItemUrlResponse(
                             interest_item_id="interest_item_1",
                             source_url="https://example.com/article",
+                            summary="관심 정보 요약",
                             discovered_at=datetime(2026, 7, 14, 1, 2, 3, tzinfo=UTC),
                         ),
                     ],
@@ -63,6 +64,7 @@ def test_list_interest_item_urls(monkeypatch) -> None:
                 {
                     "interestItemId": "interest_item_1",
                     "sourceUrl": "https://example.com/article",
+                    "summary": "관심 정보 요약",
                     "discoveredAt": "2026-07-14T01:02:03Z",
                 },
             ],

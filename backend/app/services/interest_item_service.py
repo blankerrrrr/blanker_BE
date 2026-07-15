@@ -158,6 +158,7 @@ class InterestItemService:
         return InterestItemUrlResponse(
             interest_item_id=item.interest_item_id or "",
             source_url=item.source_url,
+            summary=item.summary,
             discovered_at=item.discovered_at,
         )
 

@@ -42,6 +42,7 @@ def test_interest_item_url_response_includes_source_url() -> None:
     item = SimpleNamespace(
         interest_item_id="interest_item_1",
         source_url="https://example.com/article",
+        summary="관심 정보 요약",
         discovered_at=datetime.now(UTC),
     )
 
@@ -49,6 +50,7 @@ def test_interest_item_url_response_includes_source_url() -> None:
 
     assert response.interest_item_id == "interest_item_1"
     assert response.source_url == "https://example.com/article"
+    assert response.summary == "관심 정보 요약"
 
 
 @pytest.mark.asyncio
@@ -56,16 +58,19 @@ async def test_interest_item_url_list_is_ordered_by_latest() -> None:
     older_item = SimpleNamespace(
         interest_item_id="interest_item_1",
         source_url="https://example.com/older",
+        summary="이전 요약",
         discovered_at=datetime(2026, 7, 14, 1, 2, 3, tzinfo=UTC),
     )
     newer_same_date_item = SimpleNamespace(
         interest_item_id="interest_item_2",
         source_url="https://example.com/newer-same-date",
+        summary="같은 날짜의 최신 요약",
         discovered_at=datetime(2026, 7, 14, 3, 2, 1, tzinfo=UTC),
     )
     newest_item = SimpleNamespace(
         interest_item_id="interest_item_3",
         source_url="https://example.com/newest",
+        summary="최신 요약",
         discovered_at=datetime(2026, 7, 15, 1, 2, 3, tzinfo=UTC),
     )
 

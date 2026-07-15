@@ -35,6 +35,7 @@ class InterestItemListResponse(CamelModel):
 class InterestItemUrlResponse(CamelModel):
     interest_item_id: str
     source_url: str
+    summary: str
     discovered_at: datetime
 
 

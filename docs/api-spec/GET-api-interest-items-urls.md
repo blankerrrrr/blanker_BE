@@ -23,6 +23,7 @@
         {
           "interestItemId": "interest_item_2",
           "sourceUrl": "https://example.com/newer-article",
+          "summary": "관심 정보 요약",
           "discoveredAt": "2026-07-15T01:02:03Z"
         }
       ]
@@ -32,6 +33,7 @@
         {
           "interestItemId": "interest_item_1",
           "sourceUrl": "https://example.com/article",
+          "summary": "관심 정보 요약",
           "discoveredAt": "2026-07-14T01:02:03Z"
         }
       ]
