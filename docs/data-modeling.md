@@ -225,7 +225,7 @@
 | `user_id`           | varchar(64) | FK, NOT NULL           | `users.user_id`                          |
 | `analysis_request_id` | varchar(64) | NULL                  | 저장 근거가 된 분석 요청 Public ID. 실제 FK 제약은 없음 |
 | `client_content_id`  | varchar(100) | NULL                  | 분석 요청 내 콘텐츠 ID                          |
-| `interest_target_id` | varchar(64) | FK, NULL              | `interest_targets.interest_target_id`     |
+| `interest_target_id` | varchar(64) | FK, NULL              | `interest_targets.interest_target_id`; 관심 대상 삭제 시 `NULL`로 변경 |
 | `summary`          | text        | NOT NULL               | 차단 콘텐츠 요약                               |
 | `categories`       | json        | NOT NULL, ORM default `[]` | 차단 유형 목록                                |
 | `related_topics`    | json        | NOT NULL, ORM default `[]` | 관련 주제                                   |

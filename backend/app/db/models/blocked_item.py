@@ -35,7 +35,10 @@ class BlockedItem(Base):
     client_content_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
     interest_target_id: Mapped[str | None] = mapped_column(
         String(64),
-        ForeignKey("interest_targets.interest_target_id"),
+        ForeignKey(
+            "interest_targets.interest_target_id",
+            ondelete="SET NULL",
+        ),
         index=True,
         nullable=True,
     )
