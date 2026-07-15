@@ -20,7 +20,7 @@ from app.ai.schemas import (
 )
 from app.core.config import settings
 
-DEFAULT_ANTHROPIC_MODEL = "claude-3-5-haiku-latest"
+DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6"
 ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_VERSION = "2023-06-01"
 
@@ -62,7 +62,9 @@ class AIClient:
             user_prompt=build_classification_user_prompt(analysis_input),
         )
         try:
-            return ClassificationResult.model_validate_json(response_content)
+            return ClassificationResult.model_validate_json(
+                self._normalize_json_response(response_content),
+            )
         except ValueError as exc:
             raise AIClientResponseError("Invalid classification response.") from exc
 
@@ -77,7 +79,9 @@ class AIClient:
             user_prompt=build_duplicate_detection_user_prompt(target, candidates),
         )
         try:
-            return DuplicateResult.model_validate_json(response_content)
+            return DuplicateResult.model_validate_json(
+                self._normalize_json_response(response_content),
+            )
         except ValueError as exc:
             raise AIClientResponseError(
                 "Invalid duplicate detection response.",
@@ -94,7 +98,7 @@ class AIClient:
         )
         try:
             return InterestTargetEnrichmentResult.model_validate_json(
-                response_content,
+                self._normalize_json_response(response_content),
             )
         except ValueError as exc:
             raise AIClientResponseError(
@@ -173,3 +177,15 @@ class AIClient:
             if isinstance(block, dict) and block.get("type") == "text"
         ]
         return "".join(text_parts).strip()
+
+    @staticmethod
+    def _normalize_json_response(response_content: str) -> str:
+        normalized = response_content.strip()
+        if not normalized.startswith("```"):
+            return normalized
+
+        lines = normalized.splitlines()
+        lines = lines[1:]
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        return "\n".join(lines).strip()
