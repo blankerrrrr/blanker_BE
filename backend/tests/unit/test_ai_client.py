@@ -73,6 +73,34 @@ async def test_classify_content_uses_anthropic_json_response() -> None:
 
 
 @pytest.mark.asyncio
+async def test_classify_content_accepts_json_code_fence() -> None:
+    anthropic_client = FakeAnthropicClient(
+        """
+        ```json
+        {
+          "categories": ["SPOILER"],
+          "riskLevel": "MEDIUM",
+          "relevanceLevel": "LOW",
+          "relatedTopics": [],
+          "reason": "스포일러 가능성이 있습니다."
+        }
+        ```
+        """,
+    )
+    client = AIClient(api_key="test-key", anthropic_client=anthropic_client)
+
+    result = await client.classify_content(
+        AnalysisInput(
+            client_content_id="content_1",
+            unit_type=ContentUnitType.TEXT,
+            text="본문",
+        ),
+    )
+
+    assert result.risk_level == RiskLevel.MEDIUM
+
+
+@pytest.mark.asyncio
 async def test_detect_duplicate_uses_anthropic_json_response() -> None:
     anthropic_client = FakeAnthropicClient(
         """

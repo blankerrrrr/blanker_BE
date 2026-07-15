@@ -1,6 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.ai.client import AIClient, AIClientError, AIClientUnavailableError
 from app.ai.content_classifier import RuleBasedContentClassifier
+from app.ai.schemas import AnalysisInput, ClassificationResult
 from app.core.error_codes import ErrorCode
 from app.core.exceptions import AppException
 from app.db.models.analysis import AnalysisContent, AnalysisRequest, AnalysisResult
@@ -12,8 +14,6 @@ from app.schemas.analysis import (
     AnalysisRequestResponse,
     AnalysisResultResponse,
     BlockActionResponse,
-    RelevanceLevel,
-    RiskLevel,
 )
 
 MAX_CONTENTS = 50
@@ -21,10 +21,15 @@ MAX_TEXT_LENGTH = 20_000
 
 
 class AnalysisService:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(
+        self,
+        session: AsyncSession,
+        ai_client: AIClient | None = None,
+    ) -> None:
         self.session = session
         self.analysis = AnalysisRepository(session)
         self.interest_targets = InterestTargetRepository(session)
+        self.ai_client = ai_client or AIClient()
         self.classifier = RuleBasedContentClassifier()
 
     # 분석 요청을 저장하고 각 콘텐츠의 차단 판단 결과를 반환한다.
@@ -110,40 +115,67 @@ class AnalysisService:
         request: AnalysisContentRequest,
         interest_terms: set[str],
     ) -> AnalysisResultResponse:
-        categories, risk_level, relevance_level, related_topics, reason = (
-            self.classifier.classify(self._content_text(request), interest_terms)
-        )
-        should_block = risk_level == RiskLevel.HIGH or (
-            risk_level == RiskLevel.MEDIUM
-            and relevance_level != RelevanceLevel.LOW
-        )
+        classification = await self._classify(request, interest_terms)
+        should_block = classification.should_block
 
         await self.analysis.save_result(
             AnalysisResult(
                 analysis_content_id=content.analysis_content_id,
-                categories=[category.value for category in categories],
-                risk_level=risk_level.value,
-                relevance_level=relevance_level.value,
+                categories=[category.value for category in classification.categories],
+                risk_level=classification.risk_level.value,
+                relevance_level=classification.relevance_level.value,
                 should_block=should_block,
-                block_reason=reason,
-                related_topics=related_topics,
+                block_reason=classification.reason,
+                related_topics=classification.related_topics,
             ),
         )
 
         return AnalysisResultResponse(
             client_content_id=request.client_content_id,
-            categories=categories,
-            risk_level=risk_level,
-            relevance_level=relevance_level,
+            categories=classification.categories,
+            risk_level=classification.risk_level,
+            relevance_level=classification.relevance_level,
             should_block=should_block,
             block_action=BlockActionResponse(
                 unit_type=request.unit_type,
-                reason=reason or "차단이 필요한 콘텐츠로 판단되었습니다.",
-                related_topics=related_topics,
+                reason=(
+                    classification.reason
+                    or "차단이 필요한 콘텐츠로 판단되었습니다."
+                ),
+                related_topics=classification.related_topics,
             )
             if should_block
             else None,
         )
+
+    async def _classify(
+        self,
+        request: AnalysisContentRequest,
+        interest_terms: set[str],
+    ) -> ClassificationResult:
+        analysis_input = AnalysisInput(
+            client_content_id=request.client_content_id,
+            unit_type=request.unit_type,
+            text=request.text,
+            image_url=request.image_url,
+            alt_text=request.alt_text,
+            context_text=request.context_text,
+            selector=request.selector,
+            interest_terms=interest_terms,
+        )
+        try:
+            return await self.ai_client.classify_content(analysis_input)
+        except (AIClientError, AIClientUnavailableError):
+            categories, risk_level, relevance_level, related_topics, reason = (
+                self.classifier.classify(analysis_input.content_text, interest_terms)
+            )
+            return ClassificationResult(
+                categories=categories,
+                risk_level=risk_level,
+                relevance_level=relevance_level,
+                related_topics=related_topics,
+                reason=reason,
+            )
 
     # 콘텐츠의 텍스트 필드를 분석 가능한 하나의 문자열로 합친다.
     @staticmethod
