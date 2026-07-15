@@ -197,28 +197,31 @@ class InterestService:
                 await self.interest_targets.delete(target)
 
         interest_map = {i.interest_id: i for i in interests}
-        new_targets: list[InterestTarget] = []
+        synced_targets: list[InterestTarget] = []
         for iid in interest_ids:
-            if iid in current_map:
-                continue
             interest = interest_map[iid]
-            target = InterestTarget(
-                user_id=user_id,
-                type="WORK",
-                name=interest.title,
-                interest_id=interest.interest_id,
-                aliases=[],
-                keywords=[interest.catalog.name, *self._genre_names(interest)],
-            )
+            target = current_map.get(iid)
+            if target is None:
+                target = InterestTarget(
+                    user_id=user_id,
+                    type="WORK",
+                    name=interest.title,
+                    interest_id=interest.interest_id,
+                    aliases=[],
+                    keywords=[],
+                )
+
+            target.type = "WORK"
+            target.name = interest.title
+            target.interest_id = interest.interest_id
+            target.keywords = [interest.catalog.name, *self._genre_names(interest)]
             await self.interest_targets.save(target)
-            new_targets.append(target)
+            synced_targets.append(target)
 
         await self.session.commit()
 
-        kept = [current_map[iid] for iid in interest_ids if iid in current_map]
-        all_targets = kept + new_targets
         items = []
-        for target in all_targets:
+        for target in synced_targets:
             interest = interest_map.get(target.interest_id)
             if interest:
                 items.append(self._to_selected_response(target, interest))
