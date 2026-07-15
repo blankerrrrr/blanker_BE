@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.interest import Interest, InterestCatalog
@@ -68,6 +68,19 @@ class InterestTargetRepository:
                 InterestTarget.user_id == user_id,
                 InterestTarget.type == target_type,
                 InterestTarget.name == name,
+            ),
+        )
+        return result.scalar_one_or_none()
+
+    async def get_by_name(
+        self,
+        user_id: str,
+        name: str,
+    ) -> InterestTarget | None:
+        result = await self.session.execute(
+            select(InterestTarget).where(
+                InterestTarget.user_id == user_id,
+                func.lower(func.btrim(InterestTarget.name)) == name.lower(),
             ),
         )
         return result.scalar_one_or_none()

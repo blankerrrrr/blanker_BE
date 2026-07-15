@@ -263,3 +263,39 @@ def test_create_interest_target_accepts_name_only(monkeypatch) -> None:
     assert data["name"] == "user_1:작품명"
     assert data["aliases"] == ["별칭"]
     assert data["keywords"] == ["작품명"]
+
+
+def test_create_interest_target_strips_name(monkeypatch) -> None:
+    from app.api import interests
+
+    monkeypatch.setattr(
+        interests,
+        "InterestTargetService",
+        FakeInterestTargetService,
+    )
+    app.dependency_overrides[get_db_session] = fake_db_session
+    app.dependency_overrides[get_current_user_id] = fake_current_user_id
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/interests/targets",
+        json={"name": "  작품명  "},
+    )
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 201
+    assert response.json()["data"]["name"] == "user_1:작품명"
+
+
+def test_create_interest_target_rejects_blank_name() -> None:
+    app.dependency_overrides[get_db_session] = fake_db_session
+    app.dependency_overrides[get_current_user_id] = fake_current_user_id
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/interests/targets",
+        json={"name": "   "},
+    )
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 422

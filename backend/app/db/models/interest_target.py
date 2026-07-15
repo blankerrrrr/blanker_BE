@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import JSON, DateTime, ForeignKey, String, UniqueConstraint
+from sqlalchemy import JSON, DateTime, ForeignKey, Index, String, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.time import utc_now
@@ -15,6 +15,12 @@ class InterestTarget(Base):
             "type",
             "name",
             name="uk_interest_targets_user_type_name",
+        ),
+        Index(
+            "uk_interest_targets_user_name_ci",
+            "user_id",
+            text("lower(btrim(name))"),
+            unique=True,
         ),
     )
 

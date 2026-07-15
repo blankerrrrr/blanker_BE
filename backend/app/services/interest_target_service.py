@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.client import AIClient, AIClientError, AIClientUnavailableError
@@ -52,15 +53,14 @@ class InterestTargetService:
         user_id: str,
         request: InterestTargetCreateRequest,
     ) -> InterestTargetResponse:
-        enrichment = await self._enrich(request.name)
-        existing_target = await self.interest_targets.get_by_type_and_name(
+        existing_target = await self.interest_targets.get_by_name(
             user_id,
-            enrichment.type,
             request.name,
         )
         if existing_target is not None:
             raise AppException(ErrorCode.INTEREST_TARGET_ALREADY_EXISTS)
 
+        enrichment = await self._enrich(request.name)
         target = InterestTarget(
             user_id=user_id,
             type=enrichment.type,
@@ -68,8 +68,12 @@ class InterestTargetService:
             aliases=enrichment.aliases,
             keywords=enrichment.keywords,
         )
-        await self.interest_targets.save(target)
-        await self.session.commit()
+        try:
+            await self.interest_targets.save(target)
+            await self.session.commit()
+        except IntegrityError as exc:
+            await self.session.rollback()
+            raise AppException(ErrorCode.INTEREST_TARGET_ALREADY_EXISTS) from exc
         return self._to_response(target)
 
     async def _enrich(self, name: str) -> InterestTargetEnrichmentResult:
