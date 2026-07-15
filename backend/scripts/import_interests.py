@@ -40,16 +40,16 @@ def _tmdb_image(path: str | None) -> str | None:
     return f"{settings.tmdb_image_url}{path}"
 
 
-def _split_genres(value: str | None) -> list[str]:
+def _split_genres(value: str | None) -> list[str] | None:
     if not value:
-        return ["전체"]
+        return None
     genres = [
         genre.strip()
         for part in value.split(",")
         for genre in part.split(">")
         if genre.strip()
     ]
-    return list(dict.fromkeys(genres)) or ["전체"]
+    return list(dict.fromkeys(genres)) or None
 
 
 def _first_string(value: Any) -> str | None:
@@ -93,9 +93,12 @@ def _tmdb_genres(media_type: str) -> dict[int, str]:
     }
 
 
-def _genre_names_from_ids(ids: list[int], genre_map: dict[int, str]) -> list[str]:
+def _genre_names_from_ids(
+    ids: list[int],
+    genre_map: dict[int, str],
+) -> list[str] | None:
     names = [genre_map[genre_id] for genre_id in ids if genre_id in genre_map]
-    return list(dict.fromkeys(names)) or ["전체"]
+    return list(dict.fromkeys(names)) or None
 
 
 def _is_new_title(
@@ -295,7 +298,7 @@ def fetch_games(
                         for genre in raw_item.get("genres", [])
                         if genre.get("name")
                     ]
-                    or ["전체"],
+                    or None,
                     summary=_summary_from_fields(
                         raw_item,
                         "description_raw",

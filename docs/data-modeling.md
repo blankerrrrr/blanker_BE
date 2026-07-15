@@ -86,6 +86,8 @@
 | --- | --- | --- |
 | `uk_interest_genres_name` | `name` | 장르명 중복 방지 |
 
+장르 정보가 없는 관심사는 `interest_genres`에 `전체` 값을 생성하지 않고 `interest_genre_mappings`가 없는 상태로 저장한다.
+
 ### 4.4 `interests`
 
 | 컬럼          | 타입           | 제약               | 설명                              |

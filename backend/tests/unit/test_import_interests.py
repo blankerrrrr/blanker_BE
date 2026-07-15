@@ -37,7 +37,7 @@ def test_fetch_webtoons_uses_configured_api_url(
     assert len(items) == 1
     assert items[0].interest_type == InterestType.WEBTOON
     assert items[0].title == "테스트 웹툰"
-    assert items[0].genres == ["전체"]
+    assert items[0].genres is None
     assert items[0].summary == "테스트 웹툰 설명"
     assert items[0].image_url == "https://example.com/webtoon.png"
 

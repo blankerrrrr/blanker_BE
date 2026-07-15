@@ -16,7 +16,7 @@ from app.schemas.interest import InterestType
 class InterestCatalogItem:
     interest_type: InterestType
     title: str
-    genres: list[str]
+    genres: list[str] | None
     summary: str | None = None
     image_url: str | None = None
     interest_type_image_url: str | None = None
@@ -54,7 +54,7 @@ class InterestCatalogImportService:
                 existing_interest.image_url = item.image_url
                 await self.interests.save(existing_interest)
 
-            for genre_name in item.genres or ["전체"]:
+            for genre_name in item.genres or []:
                 await self._find_or_create_genre_mapping(
                     existing_interest,
                     genre_name,
