@@ -18,7 +18,7 @@ class InterestRepository:
     async def find_all(
         self,
         interest_type: str,
-        genre: str,
+        genres: list[str],
         keyword: str | None,
     ) -> list[Interest]:
         statement = (
@@ -34,9 +34,9 @@ class InterestRepository:
         )
         if keyword:
             statement = statement.where(Interest.title.ilike(f"%{keyword}%"))
-        elif genre != "전체":
+        elif "전체" not in genres:
             statement = statement.join(InterestGenreMapping).join(InterestGenre).where(
-                InterestGenre.name == genre,
+                InterestGenre.name.in_(genres),
             )
 
         result = await self.session.execute(

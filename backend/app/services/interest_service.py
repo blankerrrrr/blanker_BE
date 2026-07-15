@@ -51,14 +51,14 @@ class InterestService:
     async def list(
         self,
         interest_type: str,
-        genre: str,
+        genres: list[str],
         keyword: str | None,
     ) -> InterestListResponse:
         cache_key = QueryCache.key(
             "interests:list",
             {
                 "interestType": interest_type,
-                "genre": genre,
+                "genre": genres,
                 "keyword": keyword,
             },
         )
@@ -66,7 +66,7 @@ class InterestService:
         if cached is not None:
             return cached
 
-        interests = await self.interests.find_all(interest_type, genre, keyword)
+        interests = await self.interests.find_all(interest_type, genres, keyword)
         result = InterestListResponse(
             items=[self._to_response(interest) for interest in interests],
         )

@@ -24,11 +24,11 @@ async def list_interests(
     user_id: CurrentUserId,
     query_cache: QueryCacheDep,
     interest_type: Annotated[InterestType, Query(alias="interestType")],
-    genre: str = "전체",
+    genre: Annotated[list[str] | None, Query()] = None,
     keyword: str | None = None,
 ) -> dict[str, object]:
     service = InterestService(session, query_cache=query_cache)
-    result = await service.list(interest_type, genre, keyword)
+    result = await service.list(interest_type, genre or ["전체"], keyword)
     return success_response(result.model_dump(mode="json", by_alias=True))
 
 
